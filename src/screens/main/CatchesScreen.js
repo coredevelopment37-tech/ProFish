@@ -1,48 +1,86 @@
 /**
- * CatchesScreen — Catch log list view
+ * CatchesScreen — Catch log list with stats summary
  */
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
   StyleSheet,
+  RefreshControl,
+  Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import catchService from '../../services/catchService';
+import CatchCard from '../../components/CatchCard';
 
 export default function CatchesScreen({ navigation }) {
   const { t } = useTranslation();
   const [catches, setCatches] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [stats, setStats] = useState(null);
 
   useEffect(() => {
     loadCatches();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', loadCatches);
+    return unsubscribe;
+  }, [navigation]);
 
   async function loadCatches() {
-    await catchService.init();
-    const data = await catchService.getCatches();
-    setCatches(data);
+    try {
+      await catchService.init();
+      const [data, records, monthCount] = await Promise.all([
+        catchService.getCatches(),
+        catchService.getPersonalRecords(),
+        catchService.getMonthCatchCount(),
+      ]);
+      setCatches(data);
+      setStats({ records, monthCount, total: data.length });
+    } catch {}
     setLoading(false);
+    setRefreshing(false);
   }
 
-  function renderCatch({ item }) {
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    loadCatches();
+  }, []);
+
+  const handleDelete = useCallback(async id => {
+    try {
+      await catchService.deleteCatch(id);
+      setCatches(prev => prev.filter(c => c.id !== id));
+    } catch {}
+  }, []);
+
+  function renderHeader() {
+    if (!stats || stats.total === 0) return null;
     return (
-      <TouchableOpacity style={styles.card}>
-        <Text style={styles.species}>
-          {item.species || t('catches.unknownSpecies', 'Unknown species')}
-        </Text>
-        <View style={styles.row}>
-          {item.weight && <Text style={styles.detail}>{item.weight} kg</Text>}
-          {item.length && <Text style={styles.detail}>{item.length} cm</Text>}
+      <View style={styles.statsBar}>
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>{stats.total}</Text>
+          <Text style={styles.statLabel}>{t('catches.total', 'Total')}</Text>
         </View>
-        <Text style={styles.date}>
-          {new Date(item.createdAt).toLocaleDateString()}
-        </Text>
-      </TouchableOpacity>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>{stats.monthCount}</Text>
+          <Text style={styles.statLabel}>
+            {t('catches.thisMonth', 'This Month')}
+          </Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Text style={styles.statNumber}>
+            {Object.keys(stats.records).length}
+          </Text>
+          <Text style={styles.statLabel}>
+            {t('catches.species', 'Species')}
+          </Text>
+        </View>
+      </View>
     );
   }
 
@@ -76,9 +114,26 @@ export default function CatchesScreen({ navigation }) {
       <Text style={styles.header}>{t('catches.title', 'My Catches')}</Text>
       <FlatList
         data={catches}
-        renderItem={renderCatch}
+        renderItem={({ item }) => (
+          <CatchCard
+            catchData={item}
+            onPress={() => {
+              // Could navigate to catch detail in the future
+            }}
+            onLongPress={() => handleDelete(item.id)}
+          />
+        )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
+        ListHeaderComponent={renderHeader}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="#0080FF"
+          />
+        }
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
@@ -87,23 +142,31 @@ export default function CatchesScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a1a' },
   header: {
-    fontSize: 24,
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#fff',
     padding: 20,
-    paddingTop: 60,
+    paddingTop: Platform.OS === 'ios' ? 60 : 20,
+    paddingBottom: 4,
   },
-  list: { padding: 16 },
-  card: {
+  list: { padding: 16, paddingBottom: 100 },
+  statsBar: {
+    flexDirection: 'row',
     backgroundColor: '#1a1a2e',
     borderRadius: 12,
     padding: 16,
-    marginBottom: 12,
+    marginBottom: 16,
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
-  species: { fontSize: 18, fontWeight: '600', color: '#fff' },
-  row: { flexDirection: 'row', marginTop: 8, gap: 16 },
-  detail: { fontSize: 14, color: '#0080FF' },
-  date: { fontSize: 12, color: '#666', marginTop: 8 },
+  statBox: { alignItems: 'center' },
+  statNumber: { fontSize: 24, fontWeight: 'bold', color: '#0080FF' },
+  statLabel: { fontSize: 12, color: '#888', marginTop: 4 },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: '#333',
+  },
   empty: {
     flex: 1,
     backgroundColor: '#0a0a1a',

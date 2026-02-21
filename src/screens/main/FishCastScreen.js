@@ -1,37 +1,100 @@
 /**
  * FishCastScreen — Fishing activity prediction
- * Shows score (0-100), solunar periods, weather, tide
+ * Shows score (0-100), solunar timeline, weather, tide, factor breakdown
  */
 
-import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
+import React, { useState, useEffect, useCallback } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ActivityIndicator,
+  ScrollView,
+  RefreshControl,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Geolocation from '@react-native-community/geolocation';
 import { calculateFishCast } from '../../services/fishCastService';
+import weatherService from '../../services/weatherService';
+import tideService from '../../services/tideService';
+import ScoreCircle from '../../components/ScoreCircle';
+import WeatherCard from '../../components/WeatherCard';
+import SolunarTimeline from '../../components/SolunarTimeline';
+import TideChart from '../../components/TideChart';
+import FactorBreakdown from '../../components/FactorBreakdown';
 
 export default function FishCastScreen() {
   const { t } = useTranslation();
   const [forecast, setForecast] = useState(null);
+  const [marine, setMarine] = useState(null);
+  const [tide, setTide] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
+  const [coords, setCoords] = useState(null);
+  const [locationName, setLocationName] = useState('');
 
   useEffect(() => {
-    loadForecast();
+    getLocation();
   }, []);
 
-  async function loadForecast() {
+  async function getLocation() {
     try {
-      // Default to a sample location until we get user's GPS
-      const result = await calculateFishCast(25.276987, 55.296249); // Dubai as example
+      if (Platform.OS === 'android') {
+        await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+        );
+      }
+      Geolocation.getCurrentPosition(
+        pos => {
+          const { latitude, longitude } = pos.coords;
+          setCoords({ latitude, longitude });
+          loadForecast(latitude, longitude);
+        },
+        () => {
+          // Fallback: use a default location
+          loadForecast(59.3293, 18.0686); // Stockholm as default
+          setLocationName('Stockholm');
+        },
+        { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 },
+      );
+    } catch {
+      loadForecast(59.3293, 18.0686);
+      setLocationName('Stockholm');
+    }
+  }
+
+  async function loadForecast(lat, lng) {
+    try {
+      const [result, marineData, tideData] = await Promise.all([
+        calculateFishCast(lat, lng),
+        weatherService.getMarineWeather(lat, lng).catch(() => null),
+        tideService.getCurrentTideState(lat, lng).catch(() => null),
+      ]);
       setForecast(result);
+      setMarine(marineData);
+      setTide(tideData);
     } catch (e) {
       console.warn('[FishCast] Error:', e);
     } finally {
       setLoading(false);
+      setRefreshing(false);
     }
   }
 
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    if (coords) {
+      loadForecast(coords.latitude, coords.longitude);
+    } else {
+      loadForecast(59.3293, 18.0686);
+    }
+  }, [coords]);
+
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View style={styles.centerContainer}>
         <ActivityIndicator size="large" color="#0080FF" />
         <Text style={styles.loadingText}>
           {t('fishcast.loading', 'Calculating FishCast...')}
@@ -42,105 +105,148 @@ export default function FishCastScreen() {
 
   if (!forecast) {
     return (
-      <View style={styles.container}>
+      <View style={styles.centerContainer}>
+        <Text style={styles.errorIcon}>🌧️</Text>
         <Text style={styles.errorText}>
           {t('fishcast.error', 'Could not load forecast')}
+        </Text>
+        <Text style={styles.errorHint}>
+          {t(
+            'fishcast.errorHint',
+            'Check your internet connection and try again',
+          )}
         </Text>
       </View>
     );
   }
 
-  const scoreColor = getScoreColor(forecast.score);
-
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>{t('fishcast.title', 'FishCast')}</Text>
-
-      {/* Score circle */}
-      <View style={[styles.scoreCircle, { borderColor: scoreColor }]}>
-        <Text style={[styles.score, { color: scoreColor }]}>
-          {forecast.score}
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.content}
+      refreshControl={
+        <RefreshControl
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          tintColor="#0080FF"
+        />
+      }
+      showsVerticalScrollIndicator={false}
+    >
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>
+          {t('fishcast.title', 'FishCast')}
         </Text>
-        <Text style={[styles.label, { color: scoreColor }]}>
-          {forecast.label}
+        {locationName ? (
+          <Text style={styles.location}>📍 {locationName}</Text>
+        ) : null}
+        <Text style={styles.timestamp}>
+          {new Date(forecast.calculatedAt).toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
         </Text>
       </View>
 
-      {/* Weather summary */}
-      {forecast.weather && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {t('fishcast.weather', 'Weather')}
-          </Text>
-          <Text style={styles.detail}>
-            {forecast.weather.temp}° • {forecast.weather.description}
-          </Text>
-          <Text style={styles.detail}>
-            {t('fishcast.wind', 'Wind')}: {forecast.weather.wind} km/h
-          </Text>
-          <Text style={styles.detail}>
-            {t('fishcast.pressure', 'Pressure')}: {forecast.weather.pressure}{' '}
-            hPa
-          </Text>
-        </View>
+      {/* Score */}
+      <View style={styles.scoreContainer}>
+        <ScoreCircle score={forecast.score} label={forecast.label} size={200} />
+      </View>
+
+      {/* Quick summary */}
+      <Text style={styles.summary}>{getSummaryText(forecast.score, t)}</Text>
+
+      {/* Solunar Timeline */}
+      {forecast.solunar && (
+        <SolunarTimeline
+          solunar={{
+            moonPhase: forecast.solunar.moonPhase,
+            illumination: forecast.solunar.illumination,
+            majorPeriods: forecast.solunar.majorPeriods,
+            minorPeriods: forecast.solunar.minorPeriods,
+          }}
+          sunTimes={null}
+        />
       )}
 
-      {/* Solunar */}
-      {forecast.solunar && (
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            {t('fishcast.solunar', 'Solunar')}
-          </Text>
-          <Text style={styles.detail}>
-            🌙 {forecast.solunar.moonPhase} ({forecast.solunar.illumination}%)
-          </Text>
-        </View>
+      {/* Weather */}
+      {forecast.weather && (
+        <WeatherCard weather={forecast.weather} marine={marine} />
       )}
-    </View>
+
+      {/* Tide */}
+      <TideChart tide={tide || forecast.tide} />
+
+      {/* Factor Breakdown */}
+      <FactorBreakdown factors={forecast.factors} />
+
+      <View style={{ height: 100 }} />
+    </ScrollView>
   );
 }
 
-function getScoreColor(score) {
-  if (score >= 85) return '#4CAF50';
-  if (score >= 70) return '#8BC34A';
-  if (score >= 55) return '#FFC107';
-  if (score >= 40) return '#FF9800';
-  return '#F44336';
+function getSummaryText(score, t) {
+  if (score >= 85)
+    return t(
+      'fishcast.summaryExcellent',
+      '🔥 Outstanding conditions! Get out there now!',
+    );
+  if (score >= 70)
+    return t(
+      'fishcast.summaryVeryGood',
+      '🎣 Very good fishing conditions today.',
+    );
+  if (score >= 55)
+    return t('fishcast.summaryGood', '👍 Decent conditions — worth a trip.');
+  if (score >= 40)
+    return t(
+      'fishcast.summaryFair',
+      '🤷 Fair conditions — patience will be key.',
+    );
+  return t('fishcast.summaryPoor', '😴 Tough conditions — maybe try tomorrow.');
 }
 
 const styles = StyleSheet.create({
-  container: {
+  container: { flex: 1, backgroundColor: '#0a0a1a' },
+  content: { padding: 20, paddingTop: 50 },
+  centerContainer: {
     flex: 1,
     backgroundColor: '#0a0a1a',
-    alignItems: 'center',
-    paddingTop: 60,
-  },
-  header: { fontSize: 24, fontWeight: 'bold', color: '#fff', marginBottom: 30 },
-  scoreCircle: {
-    width: 180,
-    height: 180,
-    borderRadius: 90,
-    borderWidth: 6,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 30,
+    padding: 40,
   },
-  score: { fontSize: 56, fontWeight: 'bold' },
-  label: { fontSize: 18, fontWeight: '600' },
-  section: {
-    width: '90%',
-    backgroundColor: '#1a1a2e',
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
+  header: {
+    alignItems: 'center',
+    marginBottom: 20,
   },
-  sectionTitle: {
-    fontSize: 16,
-    fontWeight: '600',
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: 'bold',
     color: '#fff',
+    marginBottom: 4,
+  },
+  location: { fontSize: 14, color: '#888', marginBottom: 2 },
+  timestamp: { fontSize: 12, color: '#555' },
+  scoreContainer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  summary: {
+    fontSize: 16,
+    color: '#ccc',
+    textAlign: 'center',
+    marginBottom: 24,
+    lineHeight: 22,
+  },
+  loadingText: { color: '#888', marginTop: 16, fontSize: 16 },
+  errorIcon: { fontSize: 48, marginBottom: 16 },
+  errorText: {
+    color: '#F44336',
+    fontSize: 18,
+    fontWeight: '600',
     marginBottom: 8,
   },
-  detail: { fontSize: 14, color: '#ccc', marginBottom: 4 },
-  loadingText: { color: '#888', marginTop: 16, fontSize: 16 },
-  errorText: { color: '#F44336', fontSize: 16 },
+  errorHint: { color: '#666', fontSize: 14, textAlign: 'center' },
 });
