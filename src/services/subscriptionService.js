@@ -21,8 +21,21 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Platform } from 'react-native';
+import {
+  REVENUECAT_API_KEY_APPLE,
+  REVENUECAT_API_KEY_GOOGLE,
+} from '../config/env';
 
 const STORAGE_KEY = '@profish_subscription';
+
+// RevenueCat — graceful import
+let Purchases = null;
+try {
+  Purchases = require('react-native-purchases').default;
+} catch (e) {
+  // Not linked yet
+}
 
 // ── Tiers & SKUs ────────────────────────────────────────
 export const TIERS = {
@@ -160,7 +173,10 @@ let _expiresAt = null;
 let _listeners = [];
 
 const subscriptionService = {
-  async init() {
+  _initialized: false,
+
+  async init(userId = null) {
+    // Load local state first (fast)
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
       if (stored) {
@@ -168,16 +184,130 @@ const subscriptionService = {
         _currentTier = data.tier || TIERS.FREE;
         _expiresAt = data.expiresAt || null;
 
-        // Check expiry
         if (_expiresAt && new Date(_expiresAt) < new Date()) {
           _currentTier = TIERS.FREE;
           _expiresAt = null;
-          await this._persist();
         }
       }
     } catch (e) {
-      console.warn('[Subscription] Failed to load:', e);
-      _currentTier = TIERS.FREE;
+      console.warn('[Subscription] Failed to load local:', e);
+    }
+
+    // Initialize RevenueCat (if available and configured)
+    if (Purchases && !this._initialized) {
+      const apiKey = Platform.OS === 'ios'
+        ? REVENUECAT_API_KEY_APPLE
+        : REVENUECAT_API_KEY_GOOGLE;
+
+      if (apiKey) {
+        try {
+          Purchases.configure({ apiKey, appUserID: userId || null });
+          this._initialized = true;
+
+          // Check current entitlements
+          await this._syncFromRevenueCat();
+        } catch (e) {
+          console.warn('[Subscription] RevenueCat init error:', e);
+        }
+      }
+    }
+  },
+
+  /**
+   * Sync tier from RevenueCat entitlements
+   */
+  async _syncFromRevenueCat() {
+    if (!Purchases) return;
+    try {
+      const customerInfo = await Purchases.getCustomerInfo();
+      this._applyEntitlements(customerInfo);
+    } catch (e) {
+      console.warn('[Subscription] RevenueCat sync error:', e);
+    }
+  },
+
+  /**
+   * Map RevenueCat entitlements to our tier system
+   */
+  _applyEntitlements(customerInfo) {
+    const entitlements = customerInfo.entitlements.active;
+
+    let newTier = TIERS.FREE;
+    let newExpiry = null;
+
+    if (entitlements.guide) {
+      newTier = TIERS.GUIDE;
+      newExpiry = entitlements.guide.expirationDate;
+    } else if (entitlements.team) {
+      newTier = TIERS.TEAM;
+      newExpiry = entitlements.team.expirationDate;
+    } else if (entitlements.pro) {
+      newTier = TIERS.PRO;
+      newExpiry = entitlements.pro.expirationDate;
+    }
+
+    if (newTier !== _currentTier) {
+      _currentTier = newTier;
+      _expiresAt = newExpiry;
+      this._persist();
+      this._notifyListeners();
+    }
+  },
+
+  /**
+   * Get available packages for purchase
+   */
+  async getOfferings() {
+    if (!Purchases) return null;
+    try {
+      const offerings = await Purchases.getOfferings();
+      return offerings.current;
+    } catch (e) {
+      console.warn('[Subscription] Offerings error:', e);
+      return null;
+    }
+  },
+
+  /**
+   * Purchase a package from RevenueCat
+   */
+  async purchase(packageToPurchase) {
+    if (!Purchases) throw new Error('Purchases not available');
+    try {
+      const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
+      this._applyEntitlements(customerInfo);
+      return true;
+    } catch (e) {
+      if (e.userCancelled) return false;
+      throw e;
+    }
+  },
+
+  /**
+   * Restore previous purchases (required by App Store)
+   */
+  async restorePurchases() {
+    if (!Purchases) throw new Error('Purchases not available');
+    try {
+      const customerInfo = await Purchases.restorePurchases();
+      this._applyEntitlements(customerInfo);
+      return _currentTier;
+    } catch (e) {
+      console.warn('[Subscription] Restore error:', e);
+      throw e;
+    }
+  },
+
+  /**
+   * Identify user with RevenueCat (call after login)
+   */
+  async identify(userId) {
+    if (!Purchases || !userId) return;
+    try {
+      const { customerInfo } = await Purchases.logIn(userId);
+      this._applyEntitlements(customerInfo);
+    } catch (e) {
+      console.warn('[Subscription] Identify error:', e);
     }
   },
 

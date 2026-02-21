@@ -89,7 +89,83 @@ const tideService = {
   },
 
   // ── NOAA (US free) ─────────────────────────────────
+
+  // Cache the station list so we only fetch it once
+  _noaaStations: null,
+  _noaaStationsPromise: null,
+
+  /**
+   * Fetch all NOAA tide prediction stations (once, then cached)
+   * https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json
+   */
+  async _getNoaaStations() {
+    if (this._noaaStations) return this._noaaStations;
+    if (this._noaaStationsPromise) return this._noaaStationsPromise;
+
+    this._noaaStationsPromise = (async () => {
+      try {
+        const res = await fetch(
+          'https://api.tidesandcurrents.noaa.gov/mdapi/prod/webapi/stations.json?type=tidepredictions&units=metric',
+        );
+        if (!res.ok) throw new Error('NOAA stations API error');
+        const data = await res.json();
+        this._noaaStations = (data.stations || []).map(s => ({
+          id: s.id,
+          name: s.name,
+          lat: s.lat,
+          lng: s.lng,
+        }));
+        return this._noaaStations;
+      } catch (e) {
+        this._noaaStationsPromise = null;
+        throw e;
+      }
+    })();
+    return this._noaaStationsPromise;
+  },
+
+  /**
+   * Find the nearest NOAA station within 100km
+   */
+  async _findNearestStation(latitude, longitude) {
+    const stations = await this._getNoaaStations();
+    let nearest = null;
+    let minDist = Infinity;
+
+    for (const s of stations) {
+      const d = this._haversine(latitude, longitude, s.lat, s.lng);
+      if (d < minDist) {
+        minDist = d;
+        nearest = s;
+      }
+    }
+
+    // Only use if within 100km
+    if (nearest && minDist <= 100) {
+      return nearest;
+    }
+    return null;
+  },
+
+  /**
+   * Haversine distance in km between two points
+   */
+  _haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371;
+    const toRad = deg => (deg * Math.PI) / 180;
+    const dLat = toRad(lat2 - lat1);
+    const dLon = toRad(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  },
+
   async _getNoaaTides(latitude, longitude, days) {
+    // Find nearest tide prediction station
+    const station = await this._findNearestStation(latitude, longitude);
+    if (!station) throw new Error('No NOAA station nearby');
+
     const now = new Date();
     const end = new Date(now);
     end.setDate(end.getDate() + days);
@@ -97,7 +173,7 @@ const tideService = {
     const params = new URLSearchParams({
       begin_date: this._formatNoaaDate(now),
       end_date: this._formatNoaaDate(end),
-      station: '', // TODO: Find nearest station
+      station: station.id,
       product: 'predictions',
       datum: 'MLLW',
       units: 'metric',
@@ -111,7 +187,10 @@ const tideService = {
     if (!response.ok) throw new Error('NOAA API error');
 
     const data = await response.json();
-    return this._normalizeNoaaData(data);
+    const result = this._normalizeNoaaData(data);
+    result.stationName = station.name;
+    result.stationId = station.id;
+    return result;
   },
 
   // ── WorldTides (global) — costs ~1 token/day requested ──

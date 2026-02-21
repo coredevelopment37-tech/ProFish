@@ -26,6 +26,7 @@ import { MAPBOX_ACCESS_TOKEN } from '../../config/env';
 import {
   getDefaultLayers,
   getAvailableLayers,
+  getActiveTileLayers,
 } from '../../config/layerRegistry';
 import { AppContext } from '../../store/AppContext';
 import catchService from '../../services/catchService';
@@ -198,6 +199,23 @@ export default function MapScreen({ navigation }) {
         />
 
         <MapboxGL.UserLocation visible animated renderMode="native" />
+
+        {/* Raster tile layers (bathymetry, nautical charts, etc.) */}
+        {mapReady &&
+          getActiveTileLayers(activeLayers).map(layer => (
+            <MapboxGL.RasterSource
+              key={layer.id}
+              id={`source-${layer.id}`}
+              tileUrlTemplates={[layer.tileUrl]}
+              tileSize={256}
+            >
+              <MapboxGL.RasterLayer
+                id={`layer-${layer.id}`}
+                style={{ rasterOpacity: layer.opacity || 0.7 }}
+                belowLayerID="catch-circles"
+              />
+            </MapboxGL.RasterSource>
+          ))}
 
         {/* Catch markers */}
         {activeLayers.includes('catch_markers') && catches.length > 0 && (

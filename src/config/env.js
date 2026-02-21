@@ -49,6 +49,10 @@ export const GOOGLE_MAPS_API_KEY = get('GOOGLE_MAPS_API_KEY', '');
 // ── WorldTides ───────────────────────────────────────
 export const WORLDTIDES_API_KEY = get('WORLDTIDES_API_KEY', '');
 
+// ── RevenueCat ───────────────────────────────────────
+export const REVENUECAT_API_KEY_APPLE = get('REVENUECAT_API_KEY_APPLE', '');
+export const REVENUECAT_API_KEY_GOOGLE = get('REVENUECAT_API_KEY_GOOGLE', '');
+
 // ── Environment ──────────────────────────────────────
 export const IS_DEV =
   typeof __DEV__ !== 'undefined'
@@ -66,6 +70,8 @@ const envConfig = {
   GOOGLE_WEB_CLIENT_ID,
   GOOGLE_MAPS_API_KEY,
   WORLDTIDES_API_KEY,
+  REVENUECAT_API_KEY_APPLE,
+  REVENUECAT_API_KEY_GOOGLE,
   SENTRY_DSN,
   API_BASE_URL,
   IS_DEV,

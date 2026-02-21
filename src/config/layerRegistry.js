@@ -46,6 +46,10 @@ const LAYERS = {
     tier: 'free',
     source: 'open-meteo',
     default: true,
+    tileUrl:
+      'https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=',
+    type: 'raster',
+    opacity: 0.4,
   },
   WIND_ARROWS: {
     id: 'wind_arrows',
@@ -88,6 +92,10 @@ const LAYERS = {
     tier: 'pro',
     source: 'gebco',
     default: false,
+    tileUrl:
+      'https://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/GEBCO_basemap_NCEI/MapServer/tile/{z}/{y}/{x}',
+    type: 'raster',
+    opacity: 0.7,
   },
   SST: {
     id: 'sea_surface_temp',
@@ -96,6 +104,10 @@ const LAYERS = {
     tier: 'pro',
     source: 'copernicus',
     default: false,
+    tileUrl:
+      'https://coastwatch.pfeg.noaa.gov/erddap/griddap/jplMURSST41.transparentPng?analysed_sst%5B(last)%5D%5B({south}):({north})%5D%5B({west}):({east})%5D&.draw=surface&.vars=longitude%7Clatitude%7Canalysed_sst',
+    type: 'wms',
+    opacity: 0.6,
   },
   CHLOROPHYLL: {
     id: 'chlorophyll',
@@ -104,6 +116,10 @@ const LAYERS = {
     tier: 'pro',
     source: 'copernicus',
     default: false,
+    tileUrl:
+      'https://coastwatch.pfeg.noaa.gov/erddap/griddap/erdMH1chla1day.transparentPng',
+    type: 'wms',
+    opacity: 0.5,
   },
   NAUTICAL_CHARTS: {
     id: 'nautical_charts',
@@ -112,6 +128,10 @@ const LAYERS = {
     tier: 'pro',
     source: 'noaa',
     default: false,
+    tileUrl:
+      'https://tileservice.charts.noaa.gov/tiles/50000_1/{z}/{x}/{y}.png',
+    type: 'raster',
+    opacity: 0.7,
   },
   FISH_HOTSPOTS: {
     id: 'fish_hotspots',
@@ -157,6 +177,22 @@ const LAYERS = {
     default: false,
   },
 };
+
+/**
+ * Get a layer config by its ID
+ */
+function getLayerById(layerId) {
+  return Object.values(LAYERS).find(l => l.id === layerId) || null;
+}
+
+/**
+ * Get all raster tile layers that are currently active and have tile URLs
+ */
+function getActiveTileLayers(activeLayers) {
+  return activeLayers
+    .map(id => getLayerById(id))
+    .filter(l => l && l.tileUrl && l.type === 'raster');
+}
 
 /**
  * Calculate total CPU cost of active layers
@@ -208,6 +244,8 @@ export {
   canActivateLayer,
   getAvailableLayers,
   getDefaultLayers,
+  getLayerById,
+  getActiveTileLayers,
 };
 
 export default LAYERS;
