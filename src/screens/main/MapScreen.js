@@ -72,6 +72,9 @@ export default function MapScreen({ navigation }) {
   const [tideLoading, setTideLoading] = useState(false);
   const [fishCastScore, setFishCastScore] = useState(null);
   const [tilesLoading, setTilesLoading] = useState(false);
+  const [hotspotModal, setHotspotModal] = useState(null);
+  const [distanceMode, setDistanceMode] = useState(false);
+  const [distancePoints, setDistancePoints] = useState([]);
 
   // Request location permission and start tracking
   useEffect(() => {
@@ -207,20 +210,60 @@ export default function MapScreen({ navigation }) {
       const feature = event.features?.[0];
       if (!feature) return;
 
-      // If it's a cluster, zoom in to expand it
+      // If it's a cluster, show hotspot species breakdown modal
       if (
         feature.properties?.cluster === true ||
         feature.properties?.point_count
       ) {
         const coords = feature.geometry?.coordinates;
-        if (coords && cameraRef.current) {
-          const currentZoom = 12;
-          cameraRef.current.setCamera({
-            centerCoordinate: coords,
-            zoomLevel: Math.min((currentZoom || 12) + 2, 16),
-            animationDuration: 500,
+        const clusterCount = feature.properties?.point_count || 0;
+
+        // Find catches near this cluster center for species breakdown
+        if (coords) {
+          const [cLng, cLat] = coords;
+          const nearby = catches.filter(c => {
+            const dist = Math.sqrt(
+              Math.pow(c.latitude - cLat, 2) + Math.pow(c.longitude - cLng, 2),
+            );
+            return dist < 0.5; // ~50km rough bounding
           });
-          setFollowUser(false);
+
+          // Species breakdown
+          const speciesCount = {};
+          const hourCount = {};
+          nearby.forEach(c => {
+            const sp = c.species || 'Unknown';
+            speciesCount[sp] = (speciesCount[sp] || 0) + 1;
+            if (c.createdAt) {
+              const h = new Date(c.createdAt).getHours();
+              const period =
+                h >= 5 && h < 9
+                  ? 'Dawn (5-9)'
+                  : h >= 9 && h < 12
+                  ? 'Morning (9-12)'
+                  : h >= 12 && h < 17
+                  ? 'Afternoon (12-17)'
+                  : h >= 17 && h < 21
+                  ? 'Evening (17-21)'
+                  : 'Night';
+              hourCount[period] = (hourCount[period] || 0) + 1;
+            }
+          });
+
+          const speciesRanked = Object.entries(speciesCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 6);
+
+          const bestTimes = Object.entries(hourCount)
+            .sort((a, b) => b[1] - a[1])
+            .slice(0, 3);
+
+          setHotspotModal({
+            coords,
+            total: nearby.length || clusterCount,
+            species: speciesRanked,
+            bestTimes,
+          });
         }
         return;
       }
@@ -250,6 +293,39 @@ export default function MapScreen({ navigation }) {
       setTideLoading(false);
     }
   }, []);
+
+  // Handle distance measurement taps
+  const handleMapPress = useCallback(
+    event => {
+      if (!distanceMode) return;
+      const coords = event.geometry?.coordinates;
+      if (!coords || coords.length < 2) return;
+      const [lng, lat] = coords;
+
+      setDistancePoints(prev => {
+        if (prev.length >= 2) {
+          // Reset to new first point
+          return [{ lat, lng }];
+        }
+        return [...prev, { lat, lng }];
+      });
+    },
+    [distanceMode],
+  );
+
+  // Calculate haversine distance between two points (km)
+  const measureDistance = useCallback(() => {
+    if (distancePoints.length !== 2) return null;
+    const [a, b] = distancePoints;
+    const R = 6371;
+    const toRad = deg => (deg * Math.PI) / 180;
+    const dLat = toRad(b.lat - a.lat);
+    const dLon = toRad(b.lng - a.lng);
+    const sin2 =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(toRad(a.lat)) * Math.cos(toRad(b.lat)) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(sin2), Math.sqrt(1 - sin2));
+  }, [distancePoints]);
 
   // Build catch GeoJSON
   const catchGeoJSON = {
@@ -316,6 +392,7 @@ export default function MapScreen({ navigation }) {
         }
         onDidFinishLoadingMap={() => setMapReady(true)}
         onLongPress={handleMapLongPress}
+        onPress={handleMapPress}
         compassEnabled
         scaleBarEnabled={false}
         logoEnabled={false}
@@ -436,6 +513,54 @@ export default function MapScreen({ navigation }) {
             />
           </MapboxGL.ShapeSource>
         )}
+
+        {/* Distance measurement line */}
+        {distanceMode && distancePoints.length >= 1 && (
+          <>
+            <MapboxGL.ShapeSource
+              id="distance-points"
+              shape={{
+                type: 'FeatureCollection',
+                features: distancePoints.map((p, i) => ({
+                  type: 'Feature',
+                  geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
+                  properties: { idx: i },
+                })),
+              }}
+            >
+              <MapboxGL.CircleLayer
+                id="distance-point-circles"
+                style={{
+                  circleRadius: 8,
+                  circleColor: '#FF4081',
+                  circleStrokeWidth: 2,
+                  circleStrokeColor: '#fff',
+                }}
+              />
+            </MapboxGL.ShapeSource>
+            {distancePoints.length === 2 && (
+              <MapboxGL.ShapeSource
+                id="distance-line"
+                shape={{
+                  type: 'Feature',
+                  geometry: {
+                    type: 'LineString',
+                    coordinates: distancePoints.map(p => [p.lng, p.lat]),
+                  },
+                }}
+              >
+                <MapboxGL.LineLayer
+                  id="distance-line-layer"
+                  style={{
+                    lineColor: '#FF4081',
+                    lineWidth: 3,
+                    lineDasharray: [2, 2],
+                  }}
+                />
+              </MapboxGL.ShapeSource>
+            )}
+          </>
+        )}
       </MapboxGL.MapView>
 
       {/* Search bar */}
@@ -541,12 +666,19 @@ export default function MapScreen({ navigation }) {
         <TouchableOpacity
           style={styles.controlBtn}
           onPress={() => setLayerPickerVisible(true)}
+          accessibilityLabel={t('map.layers', 'Map layers')}
+          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>🗂️</Text>
         </TouchableOpacity>
 
         {/* Center on user */}
-        <TouchableOpacity style={styles.controlBtn} onPress={centerOnUser}>
+        <TouchableOpacity
+          style={styles.controlBtn}
+          onPress={centerOnUser}
+          accessibilityLabel={t('map.centerOnMe', 'Center on my location')}
+          accessibilityRole="button"
+        >
           <Text style={styles.controlIcon}>📍</Text>
         </TouchableOpacity>
 
@@ -554,8 +686,23 @@ export default function MapScreen({ navigation }) {
         <TouchableOpacity
           style={[styles.controlBtn, followUser && styles.controlBtnActive]}
           onPress={() => setFollowUser(!followUser)}
+          accessibilityLabel={t('map.followMe', 'Follow my location')}
+          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>🧭</Text>
+        </TouchableOpacity>
+
+        {/* Distance measurement tool */}
+        <TouchableOpacity
+          style={[styles.controlBtn, distanceMode && styles.controlBtnActive]}
+          onPress={() => {
+            setDistanceMode(!distanceMode);
+            setDistancePoints([]);
+          }}
+          accessibilityLabel={t('map.measureDistance', 'Measure distance')}
+          accessibilityRole="button"
+        >
+          <Text style={styles.controlIcon}>📏</Text>
         </TouchableOpacity>
       </View>
 
@@ -563,9 +710,134 @@ export default function MapScreen({ navigation }) {
       <TouchableOpacity
         style={styles.fab}
         onPress={() => navigation.navigate('LogCatch')}
+        accessibilityLabel={t('map.logCatch', 'Log a catch')}
+        accessibilityRole="button"
       >
         <Text style={styles.fabText}>🎣</Text>
       </TouchableOpacity>
+
+      {/* Distance measurement result */}
+      {distanceMode && (
+        <View style={styles.distanceBanner}>
+          {distancePoints.length === 2 ? (
+            <Text style={styles.distanceText}>
+              📏{' '}
+              {measureDistance() < 1
+                ? `${Math.round(measureDistance() * 1000)} m`
+                : `${measureDistance().toFixed(2)} km`}
+              {'  '}({(measureDistance() * 0.539957).toFixed(2)} nm)
+            </Text>
+          ) : (
+            <Text style={styles.distanceHint}>
+              {distancePoints.length === 0
+                ? t('map.tapFirstPoint', 'Tap map to set first point')
+                : t('map.tapSecondPoint', 'Tap map to set second point')}
+            </Text>
+          )}
+          <TouchableOpacity
+            onPress={() => {
+              setDistanceMode(false);
+              setDistancePoints([]);
+            }}
+          >
+            <Text style={styles.distanceClose}>✕</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      {/* Hotspot Species Breakdown Modal */}
+      <Modal
+        visible={!!hotspotModal}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setHotspotModal(null)}
+      >
+        <View style={styles.hotspotOverlay}>
+          <View style={styles.hotspotSheet}>
+            <View style={styles.hotspotHeader}>
+              <Text style={styles.hotspotTitle}>
+                🔥 {t('map.hotspot', 'Catch Hotspot')}
+              </Text>
+              <TouchableOpacity onPress={() => setHotspotModal(null)}>
+                <Text style={styles.hotspotClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.hotspotCount}>
+              {hotspotModal?.total || 0}{' '}
+              {t('map.catchesHere', 'catches in this area')}
+            </Text>
+
+            {/* Species Breakdown */}
+            {hotspotModal?.species?.length > 0 && (
+              <View style={styles.hotspotSection}>
+                <Text style={styles.hotspotSectionTitle}>
+                  🐟 {t('map.speciesBreakdown', 'Species Breakdown')}
+                </Text>
+                {hotspotModal.species.map(([name, count], i) => {
+                  const pct = hotspotModal.total
+                    ? Math.round((count / hotspotModal.total) * 100)
+                    : 0;
+                  return (
+                    <View key={i} style={styles.hotspotBarRow}>
+                      <Text style={styles.hotspotBarLabel} numberOfLines={1}>
+                        {name}
+                      </Text>
+                      <View style={styles.hotspotBarTrack}>
+                        <View
+                          style={[
+                            styles.hotspotBarFill,
+                            { width: `${Math.max(5, pct)}%` },
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.hotspotBarValue}>
+                        {count} ({pct}%)
+                      </Text>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
+            {/* Best Times */}
+            {hotspotModal?.bestTimes?.length > 0 && (
+              <View style={styles.hotspotSection}>
+                <Text style={styles.hotspotSectionTitle}>
+                  ⏰ {t('map.bestTimes', 'Best Times')}
+                </Text>
+                {hotspotModal.bestTimes.map(([period, count], i) => (
+                  <View key={i} style={styles.hotspotTimeRow}>
+                    <Text style={styles.hotspotTimeLabel}>{period}</Text>
+                    <Text style={styles.hotspotTimeCount}>{count} catches</Text>
+                  </View>
+                ))}
+              </View>
+            )}
+
+            {/* Zoom in button */}
+            {hotspotModal?.coords && (
+              <TouchableOpacity
+                style={styles.hotspotZoomBtn}
+                onPress={() => {
+                  if (cameraRef.current && hotspotModal.coords) {
+                    cameraRef.current.setCamera({
+                      centerCoordinate: hotspotModal.coords,
+                      zoomLevel: 14,
+                      animationDuration: 500,
+                    });
+                    setFollowUser(false);
+                  }
+                  setHotspotModal(null);
+                }}
+              >
+                <Text style={styles.hotspotZoomText}>
+                  🔍 {t('map.zoomIn', 'Zoom In')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </Modal>
 
       {/* Layer Picker Modal */}
       <LayerPicker
@@ -908,4 +1180,107 @@ const styles = StyleSheet.create({
   },
   tideBarFill: { height: 16, borderRadius: 8, minWidth: 4 },
   tideBarValue: { width: 55, color: '#ccc', fontSize: 12, textAlign: 'right' },
+
+  // Distance measurement
+  distanceBanner: {
+    position: 'absolute',
+    bottom: 100,
+    left: 16,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: 'rgba(255,64,129,0.92)',
+    borderRadius: 14,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+  },
+  distanceText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  distanceHint: {
+    color: '#fff',
+    fontSize: 14,
+    opacity: 0.9,
+  },
+  distanceClose: {
+    color: '#fff',
+    fontSize: 18,
+    padding: 4,
+    fontWeight: '700',
+  },
+
+  // Hotspot modal
+  hotspotOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+  hotspotSheet: {
+    backgroundColor: '#1a1a2e',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '65%',
+  },
+  hotspotHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  hotspotTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  hotspotClose: { color: '#888', fontSize: 22, padding: 4 },
+  hotspotCount: { color: '#888', fontSize: 14, marginBottom: 16 },
+  hotspotSection: { marginBottom: 18 },
+  hotspotSectionTitle: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 10,
+  },
+  hotspotBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  hotspotBarLabel: { width: 100, color: '#ccc', fontSize: 13 },
+  hotspotBarTrack: {
+    flex: 1,
+    height: 14,
+    backgroundColor: '#0a0a1a',
+    borderRadius: 7,
+    overflow: 'hidden',
+    marginHorizontal: 8,
+  },
+  hotspotBarFill: {
+    height: 14,
+    borderRadius: 7,
+    backgroundColor: '#FF6B00',
+  },
+  hotspotBarValue: {
+    width: 72,
+    color: '#888',
+    fontSize: 12,
+    textAlign: 'right',
+  },
+  hotspotTimeRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a1a2e',
+  },
+  hotspotTimeLabel: { color: '#ccc', fontSize: 14 },
+  hotspotTimeCount: { color: '#888', fontSize: 14 },
+  hotspotZoomBtn: {
+    backgroundColor: '#0080FF',
+    borderRadius: 12,
+    paddingVertical: 12,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+  hotspotZoomText: { color: '#fff', fontSize: 15, fontWeight: '600' },
 });

@@ -372,6 +372,11 @@ export default function ProfileScreen({ navigation }) {
               style={styles.linkBtn}
               onPress={handleLinkGoogle}
               disabled={linkLoading}
+              accessibilityLabel={t(
+                'auth.continueGoogle',
+                'Sign in with Google',
+              )}
+              accessibilityRole="button"
             >
               <Text style={styles.linkBtnText}>
                 G {t('auth.continueGoogle', 'Google')}
@@ -382,6 +387,11 @@ export default function ProfileScreen({ navigation }) {
                 style={[styles.linkBtn, styles.linkBtnApple]}
                 onPress={handleLinkApple}
                 disabled={linkLoading}
+                accessibilityLabel={t(
+                  'auth.continueApple',
+                  'Sign in with Apple',
+                )}
+                accessibilityRole="button"
               >
                 <Text style={styles.linkBtnText}>
                   🍎 {t('auth.continueApple', 'Apple')}
@@ -398,14 +408,26 @@ export default function ProfileScreen({ navigation }) {
           {t('profile.settings', 'Settings')}
         </Text>
 
-        <TouchableOpacity style={styles.row} onPress={handleLanguagePress}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={handleLanguagePress}
+          accessibilityLabel={
+            t('profile.language', 'Language') + ': ' + currentLang
+          }
+          accessibilityRole="button"
+        >
           <Text style={styles.rowLabel}>
             {t('profile.language', 'Language')}
           </Text>
           <Text style={styles.rowValue}>{currentLang}</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.row} onPress={handleUnitsToggle}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={handleUnitsToggle}
+          accessibilityLabel={t('profile.units', 'Units')}
+          accessibilityRole="button"
+        >
           <Text style={styles.rowLabel}>{t('profile.units', 'Units')}</Text>
           <Text style={styles.rowValue}>
             {units === 'metric'
@@ -414,7 +436,12 @@ export default function ProfileScreen({ navigation }) {
           </Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.row} onPress={handleThemeToggle}>
+        <TouchableOpacity
+          style={styles.row}
+          onPress={handleThemeToggle}
+          accessibilityLabel={t('profile.theme', 'Theme')}
+          accessibilityRole="button"
+        >
           <Text style={styles.rowLabel}>{t('profile.theme', 'Theme')}</Text>
           <Text style={styles.rowValue}>
             {(state.theme || 'dark') === 'dark'
@@ -426,6 +453,8 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity
           style={styles.row}
           onPress={() => setShowPaywall(true)}
+          accessibilityLabel={t('profile.subscription', 'Subscription')}
+          accessibilityRole="button"
         >
           <Text style={styles.rowLabel}>
             {t('profile.subscription', 'Subscription')}
@@ -438,6 +467,8 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity
           style={styles.row}
           onPress={() => navigation.navigate('CatchStats')}
+          accessibilityLabel={t('profile.catchStats', 'Catch Statistics')}
+          accessibilityRole="button"
         >
           <Text style={styles.rowLabel}>
             📊 {t('profile.catchStats', 'Catch Statistics')}
@@ -448,6 +479,11 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity
           style={styles.row}
           onPress={() => navigation.navigate('Settings')}
+          accessibilityLabel={t(
+            'profile.advancedSettings',
+            'Advanced Settings',
+          )}
+          accessibilityRole="button"
         >
           <Text style={styles.rowLabel}>
             ⚙️ {t('profile.advancedSettings', 'Advanced Settings')}
@@ -458,6 +494,8 @@ export default function ProfileScreen({ navigation }) {
         <TouchableOpacity
           style={styles.row}
           onPress={handleToggleFavoriteSpecies}
+          accessibilityLabel={t('profile.favoriteSpecies', 'Favorite Species')}
+          accessibilityRole="button"
         >
           <Text style={styles.rowLabel}>
             ⭐ {t('profile.favoriteSpecies', 'Favorite Species')}
@@ -473,6 +511,8 @@ export default function ProfileScreen({ navigation }) {
           style={styles.row}
           onPress={handleExportData}
           disabled={exporting}
+          accessibilityLabel={t('profile.exportData', 'Export My Data')}
+          accessibilityRole="button"
         >
           <Text style={styles.rowLabel}>
             📥 {t('profile.exportData', 'Export My Data')}
@@ -519,6 +559,8 @@ export default function ProfileScreen({ navigation }) {
             <TouchableOpacity
               style={styles.subUpgradeBtn}
               onPress={() => setShowPaywall(true)}
+              accessibilityLabel={t('profile.upgradePro', 'Upgrade to Pro')}
+              accessibilityRole="button"
             >
               <Text style={styles.subUpgradeText}>
                 {t('profile.upgradePro', 'Upgrade to Pro')}
@@ -534,6 +576,11 @@ export default function ProfileScreen({ navigation }) {
                     : 'https://play.google.com/store/account/subscriptions';
                 Linking.openURL(url).catch(() => {});
               }}
+              accessibilityLabel={t(
+                'profile.manageSubscription',
+                'Manage Subscription',
+              )}
+              accessibilityRole="link"
             >
               <Text style={styles.subManageText}>
                 {t('profile.manageSubscription', 'Manage Subscription')}
@@ -589,6 +636,8 @@ export default function ProfileScreen({ navigation }) {
           <TouchableOpacity
             style={styles.signOutButton}
             onPress={handleSignOut}
+            accessibilityLabel={t('profile.signOut', 'Sign Out')}
+            accessibilityRole="button"
           >
             <Text style={styles.signOutText}>
               {t('profile.signOut', 'Sign Out')}
@@ -600,6 +649,8 @@ export default function ProfileScreen({ navigation }) {
           <TouchableOpacity
             style={styles.deleteButton}
             onPress={handleDeleteAccount}
+            accessibilityLabel={t('profile.deleteAccount', 'Delete Account')}
+            accessibilityRole="button"
           >
             <Text style={styles.deleteText}>
               {t('profile.deleteAccount', 'Delete Account')}

@@ -22,6 +22,115 @@ import UpgradePrompt from '../../components/UpgradePrompt';
 const { width } = Dimensions.get('window');
 const BAR_MAX_W = width - 120;
 
+/**
+ * Conditions Correlation — correlates catch weight/count with recorded conditions.
+ * Uses weather data stored on catch records (pressure, temp, windSpeed, tideState).
+ */
+function buildConditionsCorrelation(catches) {
+  const pressureBuckets = {
+    '<1005': [],
+    '1005-1013': [],
+    '1013-1023': [],
+    '>1023': [],
+  };
+  const tempBuckets = {
+    '<10°C': [],
+    '10-18°C': [],
+    '18-25°C': [],
+    '>25°C': [],
+  };
+  const windBuckets = {
+    'Calm (<5)': [],
+    'Light (5-12)': [],
+    'Mod (12-20)': [],
+    'Strong (>20)': [],
+  };
+  const tideBuckets = { Rising: [], Falling: [], Slack: [], Unknown: [] };
+
+  catches.forEach(c => {
+    const w = c.weight || 0;
+    // Pressure
+    const p = c.pressure || c.conditions?.pressure;
+    if (p) {
+      if (p < 1005) pressureBuckets['<1005'].push(w);
+      else if (p < 1013) pressureBuckets['1005-1013'].push(w);
+      else if (p <= 1023) pressureBuckets['1013-1023'].push(w);
+      else pressureBuckets['>1023'].push(w);
+    }
+    // Temperature
+    const temp = c.temperature || c.conditions?.temperature;
+    if (temp != null) {
+      if (temp < 10) tempBuckets['<10°C'].push(w);
+      else if (temp < 18) tempBuckets['10-18°C'].push(w);
+      else if (temp <= 25) tempBuckets['18-25°C'].push(w);
+      else tempBuckets['>25°C'].push(w);
+    }
+    // Wind
+    const wind = c.windSpeed || c.conditions?.windSpeed;
+    if (wind != null) {
+      if (wind < 5) windBuckets['Calm (<5)'].push(w);
+      else if (wind < 12) windBuckets['Light (5-12)'].push(w);
+      else if (wind <= 20) windBuckets['Mod (12-20)'].push(w);
+      else windBuckets['Strong (>20)'].push(w);
+    }
+    // Tide
+    const tide = c.tideState || c.conditions?.tideState || 'Unknown';
+    if (tide === 'rising') tideBuckets.Rising.push(w);
+    else if (tide === 'falling') tideBuckets.Falling.push(w);
+    else if (tide === 'slack') tideBuckets.Slack.push(w);
+    else tideBuckets.Unknown.push(w);
+  });
+
+  const summarize = buckets =>
+    Object.entries(buckets)
+      .map(([label, weights]) => ({
+        label,
+        count: weights.length,
+        avgWeight: weights.length
+          ? weights.reduce((s, v) => s + v, 0) / weights.length
+          : 0,
+      }))
+      .filter(b => b.count > 0);
+
+  return {
+    pressure: summarize(pressureBuckets),
+    temperature: summarize(tempBuckets),
+    wind: summarize(windBuckets),
+    tide: summarize(tideBuckets),
+  };
+}
+
+/**
+ * Catch Rate Trend — catches per trip over time.
+ * Groups catches by date (one "trip" per day) and tracks rolling average.
+ */
+function buildCatchRateTrend(catches) {
+  const tripDays = {};
+  catches.forEach(c => {
+    const d = new Date(c.createdAt);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(
+      2,
+      '0',
+    )}-${String(d.getDate()).padStart(2, '0')}`;
+    if (!tripDays[key]) tripDays[key] = { date: key, count: 0, totalWeight: 0 };
+    tripDays[key].count++;
+    if (c.weight) tripDays[key].totalWeight += c.weight;
+  });
+
+  const trips = Object.values(tripDays).sort((a, b) =>
+    a.date.localeCompare(b.date),
+  );
+
+  // Calculate 5-trip rolling average
+  const withAvg = trips.map((trip, i) => {
+    const window = trips.slice(Math.max(0, i - 4), i + 1);
+    const avg = window.reduce((s, t) => s + t.count, 0) / window.length;
+    return { ...trip, rollingAvg: Math.round(avg * 10) / 10 };
+  });
+
+  return withAvg.slice(-20); // Last 20 trips
+}
+
 export default function CatchStatsScreen({ navigation }) {
   const { t } = useTranslation();
   const { state } = useApp();
@@ -181,6 +290,8 @@ export default function CatchStatsScreen({ navigation }) {
       bestDay,
       topBaits,
       topLocations,
+      conditionsCorrelation: buildConditionsCorrelation(filtered),
+      catchRateTrend: buildCatchRateTrend(filtered),
     };
   }, [filtered]);
 
@@ -686,6 +797,168 @@ export default function CatchStatsScreen({ navigation }) {
               </View>
             </View>
           )}
+
+          {/* Conditions Correlation */}
+          {stats.conditionsCorrelation && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                🌡️ {t('stats.conditionsCorrelation', 'Conditions Correlation')}
+              </Text>
+              <View style={styles.correlationCard}>
+                {[
+                  {
+                    key: 'pressure',
+                    icon: '📊',
+                    label: t('stats.pressure', 'Pressure (hPa)'),
+                  },
+                  {
+                    key: 'temperature',
+                    icon: '🌡️',
+                    label: t('stats.temperature', 'Temperature'),
+                  },
+                  {
+                    key: 'wind',
+                    icon: '💨',
+                    label: t('stats.wind', 'Wind Speed'),
+                  },
+                  {
+                    key: 'tide',
+                    icon: '🌊',
+                    label: t('stats.tide', 'Tide State'),
+                  },
+                ].map(({ key, icon, label }) => {
+                  const data = stats.conditionsCorrelation[key];
+                  if (!data || data.length === 0) return null;
+                  const maxCount = Math.max(...data.map(d => d.count), 1);
+                  return (
+                    <View key={key} style={styles.correlationGroup}>
+                      <Text style={styles.correlationGroupLabel}>
+                        {icon} {label}
+                      </Text>
+                      {data.map(bucket => (
+                        <View key={bucket.label} style={styles.correlationRow}>
+                          <Text
+                            style={styles.correlationLabel}
+                            numberOfLines={1}
+                          >
+                            {bucket.label}
+                          </Text>
+                          <View style={styles.correlationBarTrack}>
+                            <View
+                              style={[
+                                styles.correlationBarFill,
+                                {
+                                  width: `${Math.max(
+                                    5,
+                                    (bucket.count / maxCount) * 100,
+                                  )}%`,
+                                },
+                              ]}
+                            />
+                          </View>
+                          <Text style={styles.correlationValue}>
+                            {bucket.count}
+                            {bucket.avgWeight > 0
+                              ? ` · ${formatWeight(bucket.avgWeight, units)}`
+                              : ''}
+                          </Text>
+                        </View>
+                      ))}
+                    </View>
+                  );
+                })}
+                {stats.conditionsCorrelation.pressure.length === 0 &&
+                  stats.conditionsCorrelation.temperature.length === 0 && (
+                    <Text style={styles.correlationEmpty}>
+                      {t(
+                        'stats.conditionsHint',
+                        'Weather conditions are recorded automatically with each catch. Keep logging to see correlations.',
+                      )}
+                    </Text>
+                  )}
+              </View>
+            </View>
+          )}
+
+          {/* Catch Rate Trend */}
+          {stats.catchRateTrend && stats.catchRateTrend.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                📉 {t('stats.catchRateTrend', 'Catch Rate Trend')}
+              </Text>
+              <View style={styles.trendCard}>
+                <Text style={styles.trendSubtitle}>
+                  {t('stats.catchesPerTrip', 'Catches per trip (day)')}
+                </Text>
+                <View style={styles.rateTrendChart}>
+                  {(() => {
+                    const data = stats.catchRateTrend;
+                    const maxC = Math.max(...data.map(d => d.count), 1);
+                    const CHART_H = 100;
+                    return (
+                      <View style={styles.rateTrendBars}>
+                        {data.map((trip, i) => {
+                          const h = Math.max(4, (trip.count / maxC) * CHART_H);
+                          const avgH = Math.max(
+                            2,
+                            (trip.rollingAvg / maxC) * CHART_H,
+                          );
+                          return (
+                            <View key={trip.date} style={styles.rateTrendCol}>
+                              {/* Rolling average indicator */}
+                              <View
+                                style={[
+                                  styles.rateTrendAvgDot,
+                                  { bottom: avgH + 4 },
+                                ]}
+                              />
+                              <View
+                                style={{ flex: 1, justifyContent: 'flex-end' }}
+                              >
+                                <View
+                                  style={[styles.rateTrendBar, { height: h }]}
+                                />
+                              </View>
+                              {i % Math.max(1, Math.floor(data.length / 5)) ===
+                                0 && (
+                                <Text style={styles.rateTrendLabel}>
+                                  {trip.date.slice(5)}
+                                </Text>
+                              )}
+                            </View>
+                          );
+                        })}
+                      </View>
+                    );
+                  })()}
+                </View>
+                <View style={styles.rateTrendLegend}>
+                  <View style={styles.rateTrendLegendItem}>
+                    <View
+                      style={[
+                        styles.rateTrendLegendBox,
+                        { backgroundColor: '#0080FF' },
+                      ]}
+                    />
+                    <Text style={styles.rateTrendLegendText}>
+                      {t('stats.catchesPerDay', 'Catches/day')}
+                    </Text>
+                  </View>
+                  <View style={styles.rateTrendLegendItem}>
+                    <View
+                      style={[
+                        styles.rateTrendLegendBox,
+                        { backgroundColor: '#FF9800', borderRadius: 4 },
+                      ]}
+                    />
+                    <Text style={styles.rateTrendLegendText}>
+                      {t('stats.rollingAvg', '5-trip avg')}
+                    </Text>
+                  </View>
+                </View>
+              </View>
+            </View>
+          )}
         </>
       )}
 
@@ -1086,5 +1359,122 @@ const styles = StyleSheet.create({
     color: '#0080FF',
     fontSize: 11,
     marginTop: 2,
+  },
+
+  // Conditions Correlation
+  correlationCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 14,
+  },
+  correlationGroup: {
+    marginBottom: 16,
+  },
+  correlationGroupLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  correlationRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 6,
+  },
+  correlationLabel: {
+    width: 80,
+    color: '#888',
+    fontSize: 12,
+  },
+  correlationBarTrack: {
+    flex: 1,
+    height: 12,
+    backgroundColor: '#0a0a1a',
+    borderRadius: 6,
+    overflow: 'hidden',
+    marginHorizontal: 8,
+  },
+  correlationBarFill: {
+    height: 12,
+    borderRadius: 6,
+    backgroundColor: '#4CAF50',
+  },
+  correlationValue: {
+    width: 90,
+    color: '#888',
+    fontSize: 11,
+    textAlign: 'right',
+  },
+  correlationEmpty: {
+    color: '#666',
+    fontSize: 13,
+    textAlign: 'center',
+    padding: 20,
+    lineHeight: 20,
+  },
+
+  // Catch Rate Trend
+  trendCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 16,
+  },
+  trendSubtitle: {
+    color: '#888',
+    fontSize: 12,
+    marginBottom: 12,
+  },
+  rateTrendChart: {
+    height: 130,
+  },
+  rateTrendBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    height: 120,
+    gap: 2,
+  },
+  rateTrendCol: {
+    flex: 1,
+    alignItems: 'center',
+    height: '100%',
+  },
+  rateTrendBar: {
+    width: '80%',
+    borderRadius: 4,
+    backgroundColor: '#0080FF',
+    minHeight: 4,
+  },
+  rateTrendAvgDot: {
+    position: 'absolute',
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#FF9800',
+    zIndex: 1,
+  },
+  rateTrendLabel: {
+    color: '#666',
+    fontSize: 8,
+    marginTop: 4,
+  },
+  rateTrendLegend: {
+    flexDirection: 'row',
+    gap: 16,
+    marginTop: 10,
+    justifyContent: 'center',
+  },
+  rateTrendLegendItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  rateTrendLegendBox: {
+    width: 12,
+    height: 8,
+    borderRadius: 2,
+  },
+  rateTrendLegendText: {
+    color: '#888',
+    fontSize: 11,
   },
 });

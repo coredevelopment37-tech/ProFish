@@ -138,7 +138,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 84. Implement NOAA station finder using haversine distance (100km radius)
 - [x] 85. Fetch current tide state (rising, falling, high, low, slack)
 - [x] 86. Fetch tide predictions (24-hour high/low schedule)
-- [ ] 87. Implement tide height interpolation between prediction points
+- [x] 87. Implement tide height interpolation between prediction points
 - [x] 88. Cache tide predictions for 24 hours
 
 ### FishCast UI
@@ -210,12 +210,12 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 - [x] 132. Tap on catch marker → show catch detail popup
 - [x] 133. Tap on tide station → show tide chart modal
-- [ ] 134. Tap on fish hotspot → show species breakdown + best times
+- [x] 134. Tap on fish hotspot → show species breakdown + best times
 - [x] 135. Long-press → context menu (Log Catch Here, Get FishCast, Save Spot)
 - [x] 136. Cluster catch markers at low zoom levels (Supercluster)
 - [x] 137. De-cluster on zoom-in with animation
 - [x] 138. Implement fishing spot bookmarks (pin + label, saved to AsyncStorage)
-- [ ] 139. Add distance measurement tool (two-point line)
+- [x] 139. Add distance measurement tool (two-point line)
 - [x] 140. Show FishCast score badge on current location marker
 
 ### Offline Maps
@@ -308,7 +308,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 197. Show preferred bait/lure recommendations
 - [x] 198. Show preferred time of day + conditions (pressure, wind, temp)
 - [x] 199. Link to user's catches of this species
-- [ ] 200. Add "FishCast for this species" (species-adjusted algorithm)
+- [x] 200. Add "FishCast for this species" (species-adjusted algorithm)
 
 ### Database Expansion
 
@@ -378,7 +378,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 240. Implement unit conversion labels (kg/lb, cm/in, °C/°F, km/mi)
 - [x] 241. Add in-app language picker (ProfileScreen → immediate language switch)
 - [x] 242. Persist selected language to AsyncStorage (override device locale)
-- [ ] 243. Implement translation key coverage audit script (find missing keys per locale)
+- [x] 243. Implement translation key coverage audit script (find missing keys per locale)
 - [ ] 244. Set up community translation contribution flow (GitHub PR template for locale fixes)
 
 ---
@@ -530,8 +530,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 334. Handle safe area insets on all screens (notch, home indicator)
 - [x] 335. Handle keyboard avoidance on all input screens (LogCatch, Profile)
 - [ ] 336. Implement responsive layout for tablets (2-column grid)
-- [ ] 337. Test accessibility: screen reader labels, minimum touch targets (44×44 pt)
-- [ ] 338. Implement dynamic font scaling (respect system font size preference)
+- [x] 337. Test accessibility: screen reader labels, minimum touch targets (44×44 pt)
+- [x] 338. Implement dynamic font scaling (respect system font size preference)
 - [x] 339. Add launch screen / splash screen (iOS LaunchScreen.storyboard + Android splash)
 
 ---
@@ -567,13 +567,13 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ### Leaderboards
 
-- [ ] 358. Implement global leaderboard (most catches, largest catch, most species)
+- [x] 358. Implement global leaderboard (most catches, largest catch, most species)
 - [ ] 359. Implement regional leaderboard (per 12 regions)
 - [ ] 360. Implement species-specific leaderboard (biggest bass, biggest tuna, etc.)
 - [ ] 361. Implement friend leaderboard (among followed users)
 - [ ] 362. Implement weekly/monthly/all-time filters
 - [ ] 363. Implement anti-cheat: photo verification for leaderboard entries
-- [ ] 364. Award badges for milestones (first catch, 100 catches, 10 species, etc.)
+- [x] 364. Award badges for milestones (first catch, 100 catches, 10 species, etc.)
 
 ---
 
@@ -606,8 +606,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 384. Build heatmap of personal catch locations
 - [x] 385. Build time analysis (best hour, best day of week, best moon phase)
 - [x] 386. Build bait effectiveness analysis (success rate by bait type per species)
-- [ ] 387. Build conditions correlation (weight vs. pressure, temperature, tide)
-- [ ] 388. Build catch rate trend (catches per trip over time)
+- [x] 387. Build conditions correlation (weight vs. pressure, temperature, tide)
+- [x] 388. Build catch rate trend (catches per trip over time)
 - [ ] 389. Export analytics as PDF report (Guide tier — branded with logo)
 - [ ] 390. Implement catch comparison (compare two catches side-by-side)
 - [ ] 391. Build seasonal species calendar (when to target each species in user's region)
@@ -776,25 +776,25 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | ----------------------------------- | ------- | ------- | --------- | ------- |
 | 1. Project Setup & Infrastructure   | 32      | 27      | 5         | 84%     |
 | 2. Core Architecture                | 25      | 25      | 0         | 100%    |
-| 3. FishCast Engine                  | 38      | 36      | 2         | 95%     |
-| 4. Interactive Map                  | 51      | 43      | 8         | 84%     |
+| 3. FishCast Engine                  | 38      | 37      | 1         | 97%     |
+| 4. Interactive Map                  | 51      | 45      | 6         | 88%     |
 | 5. Catch Logging                    | 35      | 35      | 0         | 100%    |
-| 6. Species Database                 | 23      | 17      | 6         | 74%     |
-| 7. Internationalization             | 40      | 37      | 3         | 93%     |
+| 6. Species Database                 | 23      | 18      | 5         | 78%     |
+| 7. Internationalization             | 40      | 38      | 2         | 95%     |
 | 8. Subscriptions & Monetization     | 25      | 16      | 9         | 64%     |
 | 9. Authentication & User Management | 20      | 20      | 0         | 100%    |
 | 10. Offline & Data Sync             | 20      | 20      | 0         | 100%    |
-| 11. UI/UX & Components              | 30      | 27      | 3         | 90%     |
-| 12. Community & Social              | 25      | 12      | 13        | 48%     |
+| 11. UI/UX & Components              | 30      | 29      | 1         | 97%     |
+| 12. Community & Social              | 25      | 14      | 11        | 56%     |
 | 13. Tournaments                     | 15      | 0       | 15        | 0%      |
-| 14. Advanced Analytics              | 15      | 7       | 8         | 47%     |
+| 14. Advanced Analytics              | 15      | 9       | 6         | 60%     |
 | 15. AI Features                     | 15      | 0       | 15        | 0%      |
 | 16. Marketplace                     | 10      | 0       | 10        | 0%      |
 | 17. Testing & Quality               | 22      | 0       | 22        | 0%      |
 | 18. App Store Preparation           | 27      | 1       | 26        | 4%      |
 | 19. Launch & Marketing              | 15      | 0       | 15        | 0%      |
 | 20. Post-Launch & Scale             | 15      | 0       | 15        | 0%      |
-| **TOTAL**                           | **498** | **323** | **175**   | **65%** |
+| **TOTAL**                           | **498** | **334** | **164**   | **67%** |
 
 ---
 

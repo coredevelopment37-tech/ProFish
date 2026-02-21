@@ -321,7 +321,11 @@ export default function LogCatchScreen({ navigation, route }) {
       >
         {/* Header */}
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()}>
+          <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            accessibilityLabel={t('common.cancel', 'Cancel')}
+            accessibilityRole="button"
+          >
             <Text style={styles.cancel}>{t('common.cancel', 'Cancel')}</Text>
           </TouchableOpacity>
           <Text style={styles.title}>
@@ -329,7 +333,12 @@ export default function LogCatchScreen({ navigation, route }) {
               ? t('catch.editCatch', 'Edit Catch')
               : t('catch.logCatch', 'Log Catch')}
           </Text>
-          <TouchableOpacity onPress={handleSave} disabled={saving}>
+          <TouchableOpacity
+            onPress={handleSave}
+            disabled={saving}
+            accessibilityLabel={t('common.save', 'Save catch')}
+            accessibilityRole="button"
+          >
             <Text style={[styles.save, saving && { opacity: 0.5 }]}>
               {saving ? '...' : t('common.save', 'Save')}
             </Text>
@@ -337,7 +346,12 @@ export default function LogCatchScreen({ navigation, route }) {
         </View>
 
         {/* Photo */}
-        <TouchableOpacity style={styles.photoBox} onPress={handlePhoto}>
+        <TouchableOpacity
+          style={styles.photoBox}
+          onPress={handlePhoto}
+          accessibilityLabel={t('catch.addPhoto', 'Add Photo')}
+          accessibilityRole="imagebutton"
+        >
           {photoUri ? (
             <Image source={{ uri: photoUri }} style={styles.photoImage} />
           ) : (

@@ -79,9 +79,15 @@ const tideService = {
       if (now >= current && now <= next) {
         const isRising = extremes[i].type === 'Low';
         const progress = (now - current) / (next - current);
+        const height = this._interpolateHeight(
+          extremes[i].height,
+          extremes[i + 1].height,
+          progress,
+        );
         return {
           state: isRising ? 'rising' : 'falling',
           progress: Math.round(progress * 100),
+          height: Math.round(height * 100) / 100,
           lastExtreme: extremes[i],
           nextExtreme: extremes[i + 1],
         };
@@ -89,6 +95,116 @@ const tideService = {
     }
 
     return { state: 'unknown' };
+  },
+
+  /**
+   * Interpolate tide height at a specific time between known extremes.
+   * Uses cosine interpolation (Rule of Twelfths approximation).
+   *
+   * @param {number} h1 - Height at start extreme
+   * @param {number} h2 - Height at end extreme
+   * @param {number} fraction - 0..1 position between the two extremes
+   * @returns {number} Interpolated height
+   */
+  _interpolateHeight(h1, h2, fraction) {
+    // Cosine interpolation: smoother than linear, matches tidal curves well
+    const cosine = (1 - Math.cos(fraction * Math.PI)) / 2;
+    return h1 + (h2 - h1) * cosine;
+  },
+
+  /**
+   * Get tide height at any arbitrary time for a location.
+   * Returns the cosine-interpolated height between surrounding extremes.
+   *
+   * @param {number} latitude
+   * @param {number} longitude
+   * @param {Date} [time=now] - Target time (default: now)
+   * @returns {{ height: number, state: string, progress: number, extremes: object[] } | null}
+   */
+  async getHeightAtTime(latitude, longitude, time = new Date()) {
+    const tides = await this.getTides(latitude, longitude, { days: 2 });
+    if (!tides || !tides.extremes || tides.extremes.length < 2) {
+      return null;
+    }
+
+    const target = new Date(time).getTime();
+    const extremes = tides.extremes.sort(
+      (a, b) => new Date(a.date) - new Date(b.date),
+    );
+
+    for (let i = 0; i < extremes.length - 1; i++) {
+      const t1 = new Date(extremes[i].date).getTime();
+      const t2 = new Date(extremes[i + 1].date).getTime();
+
+      if (target >= t1 && target <= t2) {
+        const fraction = (target - t1) / (t2 - t1);
+        const height = this._interpolateHeight(
+          extremes[i].height,
+          extremes[i + 1].height,
+          fraction,
+        );
+        const isRising = extremes[i].type === 'Low';
+
+        return {
+          height: Math.round(height * 100) / 100,
+          state: isRising ? 'rising' : 'falling',
+          progress: Math.round(fraction * 100),
+          prevExtreme: extremes[i],
+          nextExtreme: extremes[i + 1],
+        };
+      }
+    }
+
+    return null;
+  },
+
+  /**
+   * Generate tide curve data points for charting.
+   * Returns an array of { time, height } for every `intervalMinutes` minutes.
+   *
+   * @param {number} latitude
+   * @param {number} longitude
+   * @param {number} [hours=24] - Total hours to generate
+   * @param {number} [intervalMinutes=15] - Interval between data points
+   */
+  async getTideCurve(latitude, longitude, hours = 24, intervalMinutes = 15) {
+    const tides = await this.getTides(latitude, longitude, { days: 2 });
+    if (!tides || !tides.extremes || tides.extremes.length < 2) {
+      return [];
+    }
+
+    const extremes = tides.extremes.sort(
+      (a, b) => new Date(a.date) - new Date(b.date),
+    );
+    const now = new Date();
+    const points = [];
+    const totalMinutes = hours * 60;
+
+    for (let m = 0; m <= totalMinutes; m += intervalMinutes) {
+      const t = new Date(now.getTime() + m * 60 * 1000);
+      const tMs = t.getTime();
+
+      for (let i = 0; i < extremes.length - 1; i++) {
+        const t1 = new Date(extremes[i].date).getTime();
+        const t2 = new Date(extremes[i + 1].date).getTime();
+
+        if (tMs >= t1 && tMs <= t2) {
+          const fraction = (tMs - t1) / (t2 - t1);
+          const height = this._interpolateHeight(
+            extremes[i].height,
+            extremes[i + 1].height,
+            fraction,
+          );
+          points.push({
+            time: t.toISOString(),
+            height: Math.round(height * 100) / 100,
+          });
+          break;
+        }
+      }
+    }
+
+    return points;
   },
 
   // ── NOAA (US free) ─────────────────────────────────

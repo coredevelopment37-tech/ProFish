@@ -365,12 +365,24 @@ export default function CommunityScreen({ navigation }) {
         <Text style={styles.headerTitle}>
           {t('community.title', 'Community')}
         </Text>
-        <TouchableOpacity
-          style={styles.composeBtn}
-          onPress={() => setShowCompose(true)}
-        >
-          <Text style={styles.composeBtnText}>✏️</Text>
-        </TouchableOpacity>
+        <View style={{ flexDirection: 'row', gap: 8 }}>
+          <TouchableOpacity
+            style={styles.composeBtn}
+            onPress={() => navigation.navigate('Leaderboard')}
+            accessibilityLabel={t('leaderboard.title', 'Leaderboard')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.composeBtnText}>🏆</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.composeBtn}
+            onPress={() => setShowCompose(true)}
+            accessibilityLabel={t('community.newPost', 'New post')}
+            accessibilityRole="button"
+          >
+            <Text style={styles.composeBtnText}>✏️</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Post type filters */}

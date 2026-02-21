@@ -25,6 +25,7 @@ import CatchDetailScreen from '../screens/main/CatchDetailScreen';
 import CatchStatsScreen from '../screens/main/CatchStatsScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import UserProfileScreen from '../screens/community/UserProfileScreen';
+import LeaderboardScreen from '../screens/main/LeaderboardScreen';
 
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
@@ -159,6 +160,11 @@ export default function RootNavigator() {
           <Stack.Screen
             name="UserProfile"
             component={UserProfileScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="Leaderboard"
+            component={LeaderboardScreen}
             options={{ presentation: 'card' }}
           />
         </>

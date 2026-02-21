@@ -18,6 +18,10 @@ import ErrorBoundary from './src/components/ErrorBoundary';
 import OfflineBanner from './src/components/OfflineBanner';
 import crashReporter from './src/services/crashReporter';
 import analyticsService from './src/services/analyticsService';
+import { setupDefaultTextProps } from './src/utils/fontScaling';
+
+// ── Enable dynamic font scaling with safety cap ────────
+setupDefaultTextProps();
 
 // ── Silence known third-party warnings ─────────────────
 LogBox.ignoreLogs([

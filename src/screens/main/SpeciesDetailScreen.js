@@ -11,10 +11,16 @@ import {
   ScrollView,
   TouchableOpacity,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import Geolocation from '@react-native-community/geolocation';
 import speciesDatabase from '../../services/speciesDatabase';
 import catchService from '../../services/catchService';
+import {
+  calculateFishCast,
+  adjustScoreForSpecies,
+} from '../../services/fishCastService';
 import { useApp } from '../../store/AppContext';
 import { formatWeight, formatLength } from '../../utils/units';
 
@@ -25,6 +31,8 @@ export default function SpeciesDetailScreen({ route, navigation }) {
   const { speciesId } = route.params || {};
   const species = speciesDatabase.getById(speciesId);
   const [myCatches, setMyCatches] = useState([]);
+  const [fishCast, setFishCast] = useState(null);
+  const [fishCastLoading, setFishCastLoading] = useState(false);
 
   useEffect(() => {
     if (speciesId) {
@@ -33,6 +41,30 @@ export default function SpeciesDetailScreen({ route, navigation }) {
         .then(setMyCatches)
         .catch(() => {});
     }
+  }, [speciesId]);
+
+  // Calculate species-adjusted FishCast using GPS
+  useEffect(() => {
+    if (!species) return;
+    setFishCastLoading(true);
+    Geolocation.getCurrentPosition(
+      async pos => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const base = await calculateFishCast(latitude, longitude);
+          const speciesName =
+            species.displayName || speciesId.replace(/_/g, ' ');
+          const adjusted = adjustScoreForSpecies(base, speciesName);
+          setFishCast(adjusted);
+        } catch {
+          setFishCast(null);
+        } finally {
+          setFishCastLoading(false);
+        }
+      },
+      () => setFishCastLoading(false),
+      { enableHighAccuracy: false, timeout: 8000 },
+    );
   }, [speciesId]);
 
   if (!species) {
@@ -203,6 +235,82 @@ export default function SpeciesDetailScreen({ route, navigation }) {
             ))}
           </View>
         )}
+
+        {/* FishCast for This Species */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>
+            🎯 {t('species.fishCast', 'FishCast for This Species')}
+          </Text>
+          {fishCastLoading ? (
+            <View style={styles.fishCastLoading}>
+              <ActivityIndicator size="small" color="#0080FF" />
+              <Text style={styles.fishCastLoadText}>
+                {t('common.calculating', 'Calculating...')}
+              </Text>
+            </View>
+          ) : fishCast ? (
+            <TouchableOpacity
+              style={styles.fishCastCard}
+              activeOpacity={0.8}
+              onPress={() => navigation.navigate('FishCast')}
+            >
+              <View style={styles.fishCastScoreRow}>
+                <View
+                  style={[
+                    styles.fishCastCircle,
+                    {
+                      borderColor:
+                        fishCast.score >= 70
+                          ? '#4CAF50'
+                          : fishCast.score >= 40
+                          ? '#FF9800'
+                          : '#F44336',
+                    },
+                  ]}
+                >
+                  <Text style={styles.fishCastScore}>{fishCast.score}</Text>
+                  <Text style={styles.fishCastLabel}>{fishCast.label}</Text>
+                </View>
+                <View style={styles.fishCastMeta}>
+                  {fishCast.speciesAdjusted &&
+                    fishCast.originalScore !== fishCast.score && (
+                      <Text style={styles.fishCastAdjusted}>
+                        {fishCast.score > fishCast.originalScore ? '↑' : '↓'}{' '}
+                        {t('species.adjustedFrom', 'Adjusted from')}{' '}
+                        {fishCast.originalScore}
+                      </Text>
+                    )}
+                  {fishCast.speciesInsights?.map((insight, i) => (
+                    <Text key={i} style={styles.fishCastInsight}>
+                      ✦ {insight}
+                    </Text>
+                  ))}
+                  {fishCast.weather && (
+                    <Text style={styles.fishCastCondition}>
+                      🌡️ {Math.round(fishCast.weather.temp)}°C {'  '}
+                      💨 {Math.round(fishCast.weather.wind)} km/h
+                    </Text>
+                  )}
+                  {fishCast.solunar && (
+                    <Text style={styles.fishCastCondition}>
+                      🌙 {fishCast.solunar.moonPhase}
+                    </Text>
+                  )}
+                </View>
+              </View>
+              <Text style={styles.fishCastHint}>
+                {t('species.viewFullFishCast', 'Tap for full FishCast →')}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <Text style={styles.fishCastUnavailable}>
+              {t(
+                'species.fishCastUnavailable',
+                'Enable location for species-specific FishCast',
+              )}
+            </Text>
+          )}
+        </View>
 
         <View style={{ height: 60 }} />
       </ScrollView>
@@ -383,4 +491,71 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backButtonText: { color: '#0080FF', fontSize: 16, fontWeight: '600' },
+
+  // FishCast for species
+  fishCastLoading: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    padding: 16,
+  },
+  fishCastLoadText: { color: '#888', fontSize: 14 },
+  fishCastCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  fishCastScoreRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 16,
+  },
+  fishCastCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    borderWidth: 3,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.3)',
+  },
+  fishCastScore: {
+    fontSize: 24,
+    fontWeight: '800',
+    color: '#fff',
+  },
+  fishCastLabel: {
+    fontSize: 10,
+    color: '#888',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  fishCastMeta: { flex: 1, gap: 4 },
+  fishCastAdjusted: {
+    fontSize: 12,
+    color: '#0080FF',
+    fontWeight: '600',
+  },
+  fishCastInsight: {
+    fontSize: 13,
+    color: '#ccc',
+  },
+  fishCastCondition: {
+    fontSize: 12,
+    color: '#888',
+    marginTop: 2,
+  },
+  fishCastHint: {
+    fontSize: 12,
+    color: '#0080FF',
+    textAlign: 'right',
+    marginTop: 10,
+  },
+  fishCastUnavailable: {
+    color: '#666',
+    fontSize: 14,
+    paddingVertical: 12,
+  },
 });
