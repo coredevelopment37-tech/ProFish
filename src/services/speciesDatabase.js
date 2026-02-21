@@ -328,6 +328,94 @@ const SPECIES_DB = [
     habitat: 'saltwater',
     regions: ['NA', 'EU'],
   },
+
+  // ── Anadromous (sea → freshwater to spawn) ─────
+  {
+    id: 'atlantic_salmon',
+    scientific: 'Salmo salar',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['NA', 'EU'],
+  },
+  {
+    id: 'chinook_salmon',
+    scientific: 'Oncorhynchus tshawytscha',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['NA', 'AS'],
+  },
+  {
+    id: 'coho_salmon',
+    scientific: 'Oncorhynchus kisutch',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['NA', 'AS'],
+  },
+  {
+    id: 'sockeye_salmon',
+    scientific: 'Oncorhynchus nerka',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['NA', 'AS'],
+  },
+  {
+    id: 'sea_trout',
+    scientific: 'Salmo trutta trutta',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['EU'],
+  },
+  {
+    id: 'steelhead',
+    scientific: 'Oncorhynchus mykiss irideus',
+    family: 'Salmonidae',
+    habitat: 'anadromous',
+    regions: ['NA'],
+  },
+  {
+    id: 'american_shad',
+    scientific: 'Alosa sapidissima',
+    family: 'Clupeidae',
+    habitat: 'anadromous',
+    regions: ['NA'],
+  },
+  {
+    id: 'sea_lamprey',
+    scientific: 'Petromyzon marinus',
+    family: 'Petromyzontidae',
+    habitat: 'anadromous',
+    regions: ['NA', 'EU'],
+  },
+
+  // ── Catadromous (freshwater → sea to spawn) ─────
+  {
+    id: 'european_eel',
+    scientific: 'Anguilla anguilla',
+    family: 'Anguillidae',
+    habitat: 'catadromous',
+    regions: ['EU', 'AF'],
+  },
+  {
+    id: 'american_eel',
+    scientific: 'Anguilla rostrata',
+    family: 'Anguillidae',
+    habitat: 'catadromous',
+    regions: ['NA', 'SA'],
+  },
+  {
+    id: 'japanese_eel',
+    scientific: 'Anguilla japonica',
+    family: 'Anguillidae',
+    habitat: 'catadromous',
+    regions: ['AS'],
+  },
+  {
+    id: 'barramundi',
+    scientific: 'Lates calcarifer',
+    family: 'Latidae',
+    habitat: 'catadromous',
+    regions: ['AS', 'OC'],
+  },
 ];
 
 const speciesDatabase = {

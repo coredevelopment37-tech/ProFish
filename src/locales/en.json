@@ -7,14 +7,18 @@
     "title": "Map",
     "setupRequired": "Mapbox not configured yet. Run npm install and link native modules.",
     "layers": "Layers",
-    "myLocation": "My Location"
+    "myLocation": "My Location",
+    "search": "Search location..."
   },
   "catches": {
     "title": "My Catches",
     "empty": "No catches yet",
     "emptyHint": "Tap the fish button on the map to log your first catch!",
     "logFirst": "Log First Catch",
-    "unknownSpecies": "Unknown species"
+    "unknownSpecies": "Unknown species",
+    "total": "Total",
+    "thisMonth": "This Month",
+    "species": "Species"
   },
   "catch": {
     "logCatch": "Log Catch",
@@ -29,25 +33,56 @@
     "notesPlaceholder": "Any details about the catch...",
     "released": "Catch & Release",
     "addPhoto": "Add Photo",
+    "takePhoto": "Take Photo",
+    "chooseFromLibrary": "Choose from Library",
+    "waterType": "Water Type",
+    "method": "Method",
+    "autoCapture": "Auto-captured",
     "error": "Error"
   },
   "fishcast": {
     "title": "FishCast",
     "loading": "Calculating FishCast...",
     "error": "Could not load forecast",
+    "errorHint": "Check your connection and try again",
     "weather": "Weather",
     "wind": "Wind",
     "pressure": "Pressure",
+    "humidity": "Humidity",
+    "clouds": "Clouds",
+    "waves": "Waves",
     "solunar": "Solunar",
+    "tide": "Tide",
+    "noTideData": "No tide data for this location",
+    "tideRising": "Rising",
+    "tideFalling": "Falling",
+    "nextTide": "Next",
+    "majorPeriod": "Major Period",
+    "minorPeriod": "Minor Period",
+    "night": "Night",
+    "factorBreakdown": "Score Breakdown",
     "excellent": "Excellent",
     "veryGood": "Very Good",
     "good": "Good",
     "fair": "Fair",
-    "poor": "Poor"
+    "poor": "Poor",
+    "summaryExcellent": "🔥 Outstanding conditions! Get out there now!",
+    "summaryVeryGood": "🎣 Very good fishing conditions today.",
+    "summaryGood": "👍 Decent conditions — worth a trip.",
+    "summaryFair": "🤷 Fair conditions — patience will be key.",
+    "summaryPoor": "😴 Tough conditions — maybe try tomorrow."
   },
   "community": {
     "title": "Community",
-    "comingSoon": "Community feed coming soon! Share your catches with anglers worldwide."
+    "comingSoon": "Community feed coming soon! Share your catches with anglers worldwide.",
+    "feed": "Feed",
+    "nearby": "Nearby",
+    "topAnglers": "Top Anglers",
+    "shareYourCatch": "Share your latest catch with the community!",
+    "noPosts": "No posts yet — be the first!",
+    "like": "Like",
+    "comment": "Comment",
+    "share": "Share"
   },
   "profile": {
     "angler": "Angler",
@@ -61,13 +96,27 @@
     "help": "Help",
     "suggestTranslation": "Suggest Better Translation",
     "reportBug": "Report a Bug",
-    "about": "About ProFish"
+    "about": "About ProFish",
+    "signOut": "Sign Out",
+    "signOutConfirm": "Are you sure you want to sign out?",
+    "deleteAccount": "Delete Account",
+    "deleteAccountConfirm": "This will permanently delete your account and all data. This cannot be undone.",
+    "offlineMaps": "Offline Maps",
+    "notifications": "Notifications",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "version": "Version"
   },
   "species": {
     "notFound": "Species not found",
     "family": "Family",
     "habitat": "Habitat",
-    "regions": "Regions"
+    "regions": "Regions",
+    "freshwater": "Freshwater",
+    "saltwater": "Saltwater",
+    "brackish": "Brackish",
+    "anadromous": "Anadromous",
+    "catadromous": "Catadromous"
   },
   "subscription": {
     "free": "Free",
@@ -75,7 +124,19 @@
     "team": "Team",
     "guide": "Guide",
     "upgrade": "Upgrade",
-    "restore": "Restore Purchase"
+    "restore": "Restore Purchase",
+    "currentPlan": "Current Plan",
+    "changePlan": "Change Plan"
+  },
+  "paywall": {
+    "title": "Upgrade to Pro",
+    "subtitle": "Unlock the full fishing experience",
+    "featureRequired": "This feature requires a Pro subscription",
+    "yearlyPlan": "Yearly Plan",
+    "monthlyPlan": "Monthly Plan",
+    "bestValue": "Best Value",
+    "notNow": "Not Now",
+    "terms": "By subscribing you agree to our Terms of Service and Privacy Policy. Payment will be charged to your account. Subscription auto-renews unless cancelled at least 24 hours before the end of the current period."
   },
   "layer": {
     "satellite": "Satellite",
@@ -102,6 +163,15 @@
     "error": "Error",
     "loading": "Loading...",
     "retry": "Retry",
-    "back": "Back"
+    "back": "Back",
+    "delete": "Delete",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "done": "Done",
+    "next": "Next",
+    "previous": "Previous",
+    "search": "Search",
+    "close": "Close"
   }
 }

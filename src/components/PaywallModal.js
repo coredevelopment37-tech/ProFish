@@ -1,9 +1,10 @@
 /**
  * PaywallModal — Subscription upgrade prompt
  * Shows when user hits a free tier limit
+ * Wired to RevenueCat for real purchases
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -11,9 +12,14 @@ import {
   TouchableOpacity,
   Modal,
   ScrollView,
+  ActivityIndicator,
+  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { TIERS, TIER_META, TIER_LIMITS } from '../services/subscriptionService';
+import subscriptionService, {
+  TIERS,
+  TIER_META,
+} from '../services/subscriptionService';
 
 const PRO_FEATURES = [
   { icon: '🎣', key: 'unlimitedCatches' },
@@ -29,6 +35,58 @@ const PRO_FEATURES = [
 export default function PaywallModal({ visible, onClose, feature }) {
   const { t } = useTranslation();
   const proMeta = TIER_META[TIERS.PRO];
+  const [offerings, setOfferings] = useState(null);
+  const [purchasing, setPurchasing] = useState(false);
+  const [restoring, setRestoring] = useState(false);
+
+  useEffect(() => {
+    if (visible) {
+      subscriptionService.getOfferings().then(o => setOfferings(o));
+    }
+  }, [visible]);
+
+  const yearlyPkg = offerings?.availablePackages?.find(
+    p => p.identifier === '$rc_annual' || p.packageType === 'ANNUAL',
+  );
+  const monthlyPkg = offerings?.availablePackages?.find(
+    p => p.identifier === '$rc_monthly' || p.packageType === 'MONTHLY',
+  );
+
+  async function handlePurchase(pkg) {
+    if (!pkg) {
+      // Fallback — no offerings loaded (dev/test mode)
+      Alert.alert(
+        'Not Available',
+        'In-app purchases are not configured yet. Set up products in RevenueCat & App Store Connect / Google Play Console.',
+      );
+      return;
+    }
+    setPurchasing(true);
+    try {
+      const success = await subscriptionService.purchase(pkg);
+      if (success) onClose();
+    } catch (e) {
+      Alert.alert(t('common.error', 'Error'), e.message);
+    } finally {
+      setPurchasing(false);
+    }
+  }
+
+  async function handleRestore() {
+    setRestoring(true);
+    try {
+      const tier = await subscriptionService.restorePurchases();
+      if (tier !== TIERS.FREE) {
+        onClose();
+      } else {
+        Alert.alert('', 'No previous purchases found.');
+      }
+    } catch (e) {
+      Alert.alert(t('common.error', 'Error'), e.message);
+    } finally {
+      setRestoring(false);
+    }
+  }
 
   return (
     <Modal
@@ -78,12 +136,18 @@ export default function PaywallModal({ visible, onClose, feature }) {
 
           {/* Pricing */}
           <View style={styles.pricing}>
-            <TouchableOpacity style={styles.yearlyButton}>
+            <TouchableOpacity
+              style={styles.yearlyButton}
+              disabled={purchasing}
+              onPress={() => handlePurchase(yearlyPkg)}
+            >
               <View>
                 <Text style={styles.yearlyLabel}>
                   {t('paywall.yearlyPlan', 'Yearly Plan')}
                 </Text>
-                <Text style={styles.yearlyPrice}>{proMeta.price}</Text>
+                <Text style={styles.yearlyPrice}>
+                  {yearlyPkg?.product?.priceString || proMeta.price}
+                </Text>
               </View>
               <View style={styles.saveBadge}>
                 <Text style={styles.saveText}>
@@ -92,13 +156,40 @@ export default function PaywallModal({ visible, onClose, feature }) {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.monthlyButton}>
+            <TouchableOpacity
+              style={styles.monthlyButton}
+              disabled={purchasing}
+              onPress={() => handlePurchase(monthlyPkg)}
+            >
               <Text style={styles.monthlyLabel}>
                 {t('paywall.monthlyPlan', 'Monthly Plan')}
               </Text>
-              <Text style={styles.monthlyPrice}>{proMeta.priceMonthly}</Text>
+              <Text style={styles.monthlyPrice}>
+                {monthlyPkg?.product?.priceString || proMeta.priceMonthly}
+              </Text>
             </TouchableOpacity>
           </View>
+
+          {purchasing && (
+            <ActivityIndicator
+              color="#FF9800"
+              size="small"
+              style={{ marginBottom: 10 }}
+            />
+          )}
+
+          {/* Restore */}
+          <TouchableOpacity
+            style={styles.restoreButton}
+            onPress={handleRestore}
+            disabled={restoring}
+          >
+            <Text style={styles.restoreText}>
+              {restoring
+                ? t('common.loading', 'Loading...')
+                : t('subscription.restore', 'Restore Purchase')}
+            </Text>
+          </TouchableOpacity>
 
           {/* Close */}
           <TouchableOpacity style={styles.closeButton} onPress={onClose}>
@@ -110,7 +201,7 @@ export default function PaywallModal({ visible, onClose, feature }) {
           <Text style={styles.terms}>
             {t(
               'paywall.terms',
-              'Cancel anytime. Prices may vary by region (PPP).',
+              'By subscribing you agree to our Terms of Service and Privacy Policy. Payment will be charged to your account. Subscription auto-renews unless cancelled at least 24 hours before the end of the current period.',
             )}
           </Text>
         </View>
@@ -198,6 +289,11 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   closeText: { fontSize: 15, color: '#666' },
+  restoreButton: {
+    alignItems: 'center',
+    paddingVertical: 8,
+  },
+  restoreText: { fontSize: 13, color: '#0080FF' },
   terms: {
     fontSize: 11,
     color: '#444',
