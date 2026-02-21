@@ -26,6 +26,10 @@ import CatchStatsScreen from '../screens/main/CatchStatsScreen';
 import SettingsScreen from '../screens/main/SettingsScreen';
 import UserProfileScreen from '../screens/community/UserProfileScreen';
 import LeaderboardScreen from '../screens/main/LeaderboardScreen';
+import NotificationCenterScreen from '../screens/main/NotificationCenterScreen';
+import NotificationPrefsScreen from '../screens/main/NotificationPrefsScreen';
+import CatchComparisonScreen from '../screens/main/CatchComparisonScreen';
+import SeasonalCalendarScreen from '../screens/main/SeasonalCalendarScreen';
 
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
@@ -165,6 +169,26 @@ export default function RootNavigator() {
           <Stack.Screen
             name="Leaderboard"
             component={LeaderboardScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="NotificationCenter"
+            component={NotificationCenterScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="NotificationPrefs"
+            component={NotificationPrefsScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="CatchComparison"
+            component={CatchComparisonScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="SeasonalCalendar"
+            component={SeasonalCalendarScreen}
             options={{ presentation: 'card' }}
           />
         </>

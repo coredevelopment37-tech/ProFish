@@ -130,7 +130,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 79. Calculate major solunar periods (moon transit, moon underfoot)
 - [x] 80. Calculate minor solunar periods (moonrise, moonset)
 - [x] 81. Map moon phases to fishing ratings (1-5 scale)
-- [ ] 82. Validate solunar calculations against USNO data for ±5 min accuracy
+- [x] 82. Validate solunar calculations against USNO data for ±5 min accuracy
 
 ### Tide Integration
 
@@ -371,7 +371,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 - [x] 234. Implement RTL layout mirroring for Arabic
 - [x] 235. Apply `I18nManager.forceRTL()` when Arabic is selected
-- [ ] 236. Test all screens in RTL mode (layouts, icons, swipe directions)
+- [x] 236. Test all screens in RTL mode (layouts, icons, swipe directions)
 - [x] 237. Implement pluralization rules (i18next plural keys: `_one`, `_other`, `_zero`)
 - [x] 238. Implement number formatting per locale (decimal separators: 1,000.50 vs 1.000,50)
 - [x] 239. Implement date formatting per locale (MM/DD vs DD/MM)
@@ -379,7 +379,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 241. Add in-app language picker (ProfileScreen → immediate language switch)
 - [x] 242. Persist selected language to AsyncStorage (override device locale)
 - [x] 243. Implement translation key coverage audit script (find missing keys per locale)
-- [ ] 244. Set up community translation contribution flow (GitHub PR template for locale fixes)
+- [x] 244. Set up community translation contribution flow (GitHub PR template for locale fixes)
 
 ---
 
@@ -529,7 +529,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 - [x] 334. Handle safe area insets on all screens (notch, home indicator)
 - [x] 335. Handle keyboard avoidance on all input screens (LogCatch, Profile)
-- [ ] 336. Implement responsive layout for tablets (2-column grid)
+- [x] 336. Implement responsive layout for tablets (2-column grid)
 - [x] 337. Test accessibility: screen reader labels, minimum touch targets (44×44 pt)
 - [x] 338. Implement dynamic font scaling (respect system font size preference)
 - [x] 339. Add launch screen / splash screen (iOS LaunchScreen.storyboard + Android splash)
@@ -559,11 +559,11 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ### Notifications
 
-- [ ] 353. Integrate Firebase Cloud Messaging (FCM) for push notifications
-- [ ] 354. Send notification on: new follower, comment on your post, like milestone (10, 50, 100)
-- [ ] 355. Send FishCast alert push notification ("Great fishing at 6 AM — Score: 92!")
-- [ ] 356. Implement in-app notification center (list of recent notifications)
-- [ ] 357. Implement notification preferences (toggle per type)
+- [x] 353. Integrate Firebase Cloud Messaging (FCM) for push notifications
+- [x] 354. Send notification on: new follower, comment on your post, like milestone (10, 50, 100)
+- [x] 355. Send FishCast alert push notification ("Great fishing at 6 AM — Score: 92!")
+- [x] 356. Implement in-app notification center (list of recent notifications)
+- [x] 357. Implement notification preferences (toggle per type)
 
 ### Leaderboards
 
@@ -609,11 +609,11 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 387. Build conditions correlation (weight vs. pressure, temperature, tide)
 - [x] 388. Build catch rate trend (catches per trip over time)
 - [ ] 389. Export analytics as PDF report (Guide tier — branded with logo)
-- [ ] 390. Implement catch comparison (compare two catches side-by-side)
-- [ ] 391. Build seasonal species calendar (when to target each species in user's region)
+- [x] 390. Implement catch comparison (compare two catches side-by-side)
+- [x] 391. Build seasonal species calendar (when to target each species in user's region)
 - [ ] 392. Build "Your Best Conditions" profile (ML-derived ideal fishing parameters)
-- [ ] 393. Implement trip logging (group catches by fishing session with duration + location)
-- [ ] 394. Build trip summary card (shareable graphic: species, total weight, conditions)
+- [x] 393. Implement trip logging (group catches by fishing session with duration + location)
+- [x] 394. Build trip summary card (shareable graphic: species, total weight, conditions)
 
 ---
 
@@ -776,25 +776,25 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | ----------------------------------- | ------- | ------- | --------- | ------- |
 | 1. Project Setup & Infrastructure   | 32      | 27      | 5         | 84%     |
 | 2. Core Architecture                | 25      | 25      | 0         | 100%    |
-| 3. FishCast Engine                  | 38      | 37      | 1         | 97%     |
+| 3. FishCast Engine                  | 38      | 38      | 0         | 100%    |
 | 4. Interactive Map                  | 51      | 45      | 6         | 88%     |
 | 5. Catch Logging                    | 35      | 35      | 0         | 100%    |
 | 6. Species Database                 | 23      | 18      | 5         | 78%     |
-| 7. Internationalization             | 40      | 38      | 2         | 95%     |
+| 7. Internationalization             | 40      | 40      | 0         | 100%    |
 | 8. Subscriptions & Monetization     | 25      | 16      | 9         | 64%     |
 | 9. Authentication & User Management | 20      | 20      | 0         | 100%    |
 | 10. Offline & Data Sync             | 20      | 20      | 0         | 100%    |
-| 11. UI/UX & Components              | 30      | 29      | 1         | 97%     |
-| 12. Community & Social              | 25      | 14      | 11        | 56%     |
+| 11. UI/UX & Components              | 30      | 30      | 0         | 100%    |
+| 12. Community & Social              | 25      | 19      | 6         | 76%     |
 | 13. Tournaments                     | 15      | 0       | 15        | 0%      |
-| 14. Advanced Analytics              | 15      | 9       | 6         | 60%     |
+| 14. Advanced Analytics              | 15      | 13      | 2         | 87%     |
 | 15. AI Features                     | 15      | 0       | 15        | 0%      |
 | 16. Marketplace                     | 10      | 0       | 10        | 0%      |
 | 17. Testing & Quality               | 22      | 0       | 22        | 0%      |
 | 18. App Store Preparation           | 27      | 1       | 26        | 4%      |
 | 19. Launch & Marketing              | 15      | 0       | 15        | 0%      |
 | 20. Post-Launch & Scale             | 15      | 0       | 15        | 0%      |
-| **TOTAL**                           | **498** | **334** | **164**   | **67%** |
+| **TOTAL**                           | **498** | **347** | **151**   | **70%** |
 
 ---
 

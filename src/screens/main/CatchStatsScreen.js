@@ -329,6 +329,24 @@ export default function CatchStatsScreen({ navigation }) {
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{t('stats.title', 'Catch Statistics')}</Text>
+        <View style={{ flexDirection: 'row', gap: 8, marginLeft: 'auto' }}>
+          <TouchableOpacity
+            style={styles.headerActionBtn}
+            onPress={() => navigation.navigate('CatchComparison')}
+            accessibilityLabel="Compare catches"
+            accessibilityRole="button"
+          >
+            <Text style={styles.headerActionText}>⚖️</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.headerActionBtn}
+            onPress={() => navigation.navigate('SeasonalCalendar')}
+            accessibilityLabel="Seasonal calendar"
+            accessibilityRole="button"
+          >
+            <Text style={styles.headerActionText}>📅</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
       {/* Period filter */}
@@ -979,6 +997,15 @@ const styles = StyleSheet.create({
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
   backText: { fontSize: 28, color: '#fff' },
   title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  headerActionBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#1a1a2e',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  headerActionText: { fontSize: 18 },
   periodRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,

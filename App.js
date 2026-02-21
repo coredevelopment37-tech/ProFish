@@ -18,6 +18,7 @@ import ErrorBoundary from './src/components/ErrorBoundary';
 import OfflineBanner from './src/components/OfflineBanner';
 import crashReporter from './src/services/crashReporter';
 import analyticsService from './src/services/analyticsService';
+import notificationService from './src/services/notificationService';
 import { setupDefaultTextProps } from './src/utils/fontScaling';
 
 // ── Enable dynamic font scaling with safety cap ────────
@@ -59,6 +60,7 @@ export default function App() {
   useEffect(() => {
     crashReporter.init();
     analyticsService.init();
+    notificationService.init();
   }, []);
 
   return (

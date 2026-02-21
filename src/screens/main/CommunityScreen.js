@@ -368,6 +368,14 @@ export default function CommunityScreen({ navigation }) {
         <View style={{ flexDirection: 'row', gap: 8 }}>
           <TouchableOpacity
             style={styles.composeBtn}
+            onPress={() => navigation.navigate('NotificationCenter')}
+            accessibilityLabel="Notifications"
+            accessibilityRole="button"
+          >
+            <Text style={styles.composeBtnText}>🔔</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.composeBtn}
             onPress={() => navigation.navigate('Leaderboard')}
             accessibilityLabel={t('leaderboard.title', 'Leaderboard')}
             accessibilityRole="button"
