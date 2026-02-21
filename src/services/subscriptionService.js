@@ -1,21 +1,17 @@
 /**
  * subscriptionService — manages ProFish subscription tiers and purchase state
  *
- * Phase 1 Tiers:
- *   FREE  — Map, catch log (10/mo), weather, solunar, 5 AI IDs/day, basic community
- *   PRO   ($59.99/yr) — Unlimited everything + bathymetry + SST + chlorophyll + offline + stats
+ * Launch Tiers (2 tiers):
+ *   FREE  — Map, catch log (5/mo), weather, solunar, 5 AI IDs/day, basic community
+ *   PRO   ($59.99/yr | $7.99/mo) — Unlimited everything + all layers + offline + stats
  *
- * Phase 2 Tiers:
- *   TEAM  ($149.99/yr) — Pro + team GPS, tournaments, leaderboards
- *   GUIDE ($249.99/yr) — Team + booking system, client management, charter tools
+ * Phase 2 Tiers (add ONLY when features are built):
+ *   TEAM  (TBD pricing) — Pro + team GPS, tournaments, leaderboards
+ *   GUIDE (TBD pricing) — Team + booking system, client management, charter tools
  *
  * Product SKUs (Google Play / Apple):
- *   profish_pro_yearly    — Pro tier annual
- *   profish_pro_monthly   — Pro tier monthly
- *   profish_team_yearly   — Team tier annual (Phase 2)
- *   profish_team_monthly  — Team tier monthly (Phase 2)
- *   profish_guide_yearly  — Guide tier annual (Phase 2)
- *   profish_guide_monthly — Guide tier monthly (Phase 2)
+ *   profish_pro_yearly    — Pro tier annual  ($59.99/yr)
+ *   profish_pro_monthly   — Pro tier monthly ($7.99/mo)
  *
  * Note: Prices are PPP-adjusted per region via RevenueCat
  */
@@ -51,52 +47,54 @@ export const TIER_META = {
     price: '$0',
     color: '#888',
     icon: '🎣',
-    description: 'Maps, catch log (10/mo), weather, solunar, 5 AI IDs/day',
+    description: 'Maps, catch log (5/mo), weather, solunar, 5 AI IDs/day',
   },
   [TIERS.PRO]: {
     label: 'Pro',
     price: '$59.99/yr',
-    priceMonthly: '$4.99/mo',
+    priceMonthly: '$7.99/mo',
     color: '#FF9800',
     icon: '⭐',
     description:
-      'Unlimited catches, all layers, offline maps, stats, AI species ID',
+      'Unlimited catches, all 18 layers, offline maps, 7-day FishCast, stats, AI species ID, no ads',
   },
-  [TIERS.TEAM]: {
-    label: 'Team',
-    price: '$149.99/yr',
-    priceMonthly: '$14.99/mo',
-    color: '#4CAF50',
-    icon: '👥',
-    description: 'Pro + team GPS, tournaments, leaderboards',
-    phase: 2,
-  },
-  [TIERS.GUIDE]: {
-    label: 'Guide',
-    price: '$249.99/yr',
-    priceMonthly: '$24.99/mo',
-    color: '#2196F3',
-    icon: '🚤',
-    description: 'Team + booking system, client management, charter tools',
-    phase: 2,
-  },
+  // Phase 2 — add ONLY when marketplace + tournament features are built
+  // [TIERS.TEAM]: {
+  //   label: 'Team',
+  //   price: 'TBD',
+  //   priceMonthly: 'TBD',
+  //   color: '#4CAF50',
+  //   icon: '👥',
+  //   description: 'Pro + team GPS, tournaments, leaderboards',
+  //   phase: 2,
+  // },
+  // [TIERS.GUIDE]: {
+  //   label: 'Guide',
+  //   price: 'TBD',
+  //   priceMonthly: 'TBD',
+  //   color: '#2196F3',
+  //   icon: '🚤',
+  //   description: 'Team + booking system, client management, charter tools',
+  //   phase: 2,
+  // },
 };
 
 export const PRODUCT_SKUS = {
   PRO_YEARLY: 'profish_pro_yearly',
   PRO_MONTHLY: 'profish_pro_monthly',
-  TEAM_YEARLY: 'profish_team_yearly',
-  TEAM_MONTHLY: 'profish_team_monthly',
-  GUIDE_YEARLY: 'profish_guide_yearly',
-  GUIDE_MONTHLY: 'profish_guide_monthly',
+  // Phase 2 — uncomment when tiers are ready
+  // TEAM_YEARLY: 'profish_team_yearly',
+  // TEAM_MONTHLY: 'profish_team_monthly',
+  // GUIDE_YEARLY: 'profish_guide_yearly',
+  // GUIDE_MONTHLY: 'profish_guide_monthly',
 };
 
 // ── Feature limits by tier ──────────────────────────────
 export const TIER_LIMITS = {
   [TIERS.FREE]: {
-    maxCatchesPerMonth: 10,
+    maxCatchesPerMonth: 5,
     maxFishingSpots: 5,
-    fishCastDays: 3,
+    fishCastDays: 1,
     aiSpeciesIdPerDay: 5,
     offlineMaps: false,
     catchPhotos: false,

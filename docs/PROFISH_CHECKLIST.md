@@ -390,13 +390,13 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 245. Install `react-native-purchases` and link native modules
 - [x] 246. Initialize RevenueCat with platform-specific API keys (Apple/Google)
 - [x] 247. Configure product SKUs: `profish_pro_yearly`, `profish_pro_monthly`
-- [ ] 248. Configure Phase 2 SKUs: `profish_team_yearly`, `profish_team_monthly`, `profish_guide_yearly`, `profish_guide_monthly`
+- [ ] 248. Configure Phase 2 SKUs: `profish_team_yearly`, `profish_team_monthly`, `profish_guide_yearly`, `profish_guide_monthly` (only when Team/Guide features are built)
 - [x] 249. Implement `subscriptionService.init()` — restore purchases on launch
 
 ### Tier System
 
-- [x] 250. Define 4 tiers: Free, Pro ($59.99/yr), Team ($149.99/yr), Guide ($249.99/yr)
-- [x] 251. Define tier limits: catches/month, layers, FishCast days, AI IDs/day, offline packs
+- [x] 250. Define 2 launch tiers: Free, Pro ($59.99/yr | $7.99/mo). Phase 2: Team (TBD), Guide (TBD)
+- [x] 251. Define tier limits: catches/month (5 free, unlimited pro), layers (6/18), FishCast (today/7-day), AI IDs/day (5/unlimited), offline maps (no/yes), ads (yes/no)
 - [x] 252. Implement `getCurrentTier()` — read from RevenueCat entitlements
 - [x] 253. Implement tier change listener (update AppContext on purchase/expiry)
 - [x] 254. Implement `checkFeatureAccess(feature, tier)` utility for gating
@@ -406,7 +406,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 255. Implement `purchaseProduct(sku)` — RevenueCat purchase
 - [x] 256. Implement `restorePurchases()` — for reinstalls/device switches
 - [x] 257. Build `PaywallModal.js` component wired to RevenueCat
-- [x] 258. Show feature comparison table in paywall (Free vs Pro vs Team vs Guide)
+- [x] 258. Show feature comparison table in paywall (Free vs Pro)
 - [ ] 259. Show PPP-adjusted prices per region (RevenueCat offerings)
 - [x] 260. Handle purchase success animation + confetti
 - [x] 261. Handle purchase failure (user cancel, network error, already subscribed)

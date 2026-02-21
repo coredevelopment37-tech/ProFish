@@ -92,9 +92,9 @@ export const CACHE_TTL = {
 
 // ── Free Tier Limits ────────────────────────────────────
 export const FREE_LIMITS = {
-  MAX_CATCHES_PER_MONTH: 10,
+  MAX_CATCHES_PER_MONTH: 5,
   MAX_FISHING_SPOTS: 5,
-  FISHCAST_DAYS: 3,
+  FISHCAST_DAYS: 1,
   AI_SPECIES_ID_PER_DAY: 5,
   MAX_OFFLINE_PACKS: 0,
 };
