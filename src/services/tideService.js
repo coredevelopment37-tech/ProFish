@@ -1,8 +1,12 @@
 /**
  * Tide Service — ProFish
  *
- * Fetches tide predictions globally using WorldTides API (~$100/mo)
+ * Fetches tide predictions globally using WorldTides API
  * Falls back to NOAA CO-OPS for US stations (free)
+ *
+ * WorldTides token budget: 20,000 dev tokens
+ * - Each extremes call ≈ 1 token per day requested
+ * - We cache aggressively (6hr TTL) and prefer NOAA for US
  */
 
 import { WORLDTIDES_API_KEY } from '../config/env';
@@ -10,13 +14,22 @@ import { WORLDTIDES_API_KEY } from '../config/env';
 const NOAA_BASE = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
 const WORLDTIDES_BASE = 'https://www.worldtides.info/api/v3';
 
+// In-memory cache to conserve WorldTides tokens
+const _cache = {};
+const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+
+function _cacheKey(lat, lng) {
+  // Round to ~1km grid to group nearby requests
+  return `${(lat * 10).toFixed(0)}_${(lng * 10).toFixed(0)}`;
+}
+
 const tideService = {
   /**
    * Get tide predictions for a location
    * Automatically uses NOAA for US, WorldTides for everywhere else
    */
-  async getTides(latitude, longitude, { days = 3 } = {}) {
-    // Try NOAA first for US locations (free)
+  async getTides(latitude, longitude, { days = 1 } = {}) {
+    // Try NOAA first for US locations (free — no token cost)
     if (this._isUSLocation(latitude, longitude)) {
       try {
         return await this._getNoaaTides(latitude, longitude, days);
@@ -25,9 +38,17 @@ const tideService = {
       }
     }
 
-    // WorldTides for global coverage
+    // WorldTides for global coverage (costs tokens — check cache first)
     if (WORLDTIDES_API_KEY) {
-      return await this._getWorldTides(latitude, longitude, days);
+      const key = _cacheKey(latitude, longitude);
+      const cached = _cache[key];
+      if (cached && Date.now() - cached.ts < CACHE_TTL) {
+        return cached.data;
+      }
+
+      const result = await this._getWorldTides(latitude, longitude, days);
+      _cache[key] = { data: result, ts: Date.now() };
+      return result;
     }
 
     return null;
@@ -93,13 +114,13 @@ const tideService = {
     return this._normalizeNoaaData(data);
   },
 
-  // ── WorldTides (global) ────────────────────────────
+  // ── WorldTides (global) — costs ~1 token/day requested ──
   async _getWorldTides(latitude, longitude, days) {
     const params = new URLSearchParams({
       key: WORLDTIDES_API_KEY,
       lat: latitude.toString(),
       lon: longitude.toString(),
-      days: days.toString(),
+      days: Math.min(days, 2).toString(), // Cap at 2 days to save tokens
       datum: 'LAT',
     });
 

@@ -71,6 +71,10 @@ yarn-error.log
 .env.local
 .env.production
 
+# Firebase secrets
+android/app/google-services.json
+ios/ProFish/GoogleService-Info.plist
+
 # Sentry
 sentry.properties
 
