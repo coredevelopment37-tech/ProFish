@@ -167,6 +167,34 @@ const LAYERS = {
   },
 
   // ── Phase 2 layers (not yet active) ────────────────
+  MARINE_PROTECTED_AREAS: {
+    id: 'marine_protected_areas',
+    label: 'layer.marineProtectedAreas',
+    cost: 2,
+    tier: 'pro',
+    source: 'wdpa',
+    default: false,
+    tileUrl:
+      'https://data-gis.unep-wcmc.org/server/rest/services/ProtectedSites/The_World_Database_of_Protected_Areas/MapServer/tile/{z}/{y}/{x}',
+    type: 'raster',
+    opacity: 0.4,
+  },
+  BOAT_RAMPS: {
+    id: 'boat_ramps',
+    label: 'layer.boatRamps',
+    cost: 1,
+    tier: 'free',
+    source: 'osm',
+    default: false,
+  },
+  FISHING_REGULATIONS: {
+    id: 'fishing_regulations',
+    label: 'layer.fishingRegulations',
+    cost: 2,
+    tier: 'pro',
+    source: 'custom',
+    default: false,
+  },
   CMAP_CHARTS: {
     id: 'cmap_charts',
     label: 'layer.cmapCharts',

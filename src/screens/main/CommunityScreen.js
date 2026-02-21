@@ -24,7 +24,7 @@ import { useTranslation } from 'react-i18next';
 import communityService, { POST_TYPES } from '../../services/communityService';
 
 // ── Post Card Component ──────────────────────────────────
-function PostCard({ post, onLike, onComment, t }) {
+function PostCard({ post, onLike, onComment, onReport, onProfile, t }) {
   const isLiked = post._isLiked || false;
   const typeIcon =
     post.type === POST_TYPES.CATCH_SHARE
@@ -37,24 +37,35 @@ function PostCard({ post, onLike, onComment, t }) {
     <View style={styles.postCard}>
       {/* Author row */}
       <View style={styles.authorRow}>
-        {post.author?.photoURL ? (
-          <Image
-            source={{ uri: post.author.photoURL }}
-            style={styles.authorAvatar}
-          />
-        ) : (
-          <View style={styles.authorAvatarPlaceholder}>
-            <Text style={styles.authorAvatarText}>🎣</Text>
+        <TouchableOpacity
+          onPress={() => onProfile && onProfile(post.author?.uid)}
+          style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}
+        >
+          {post.author?.photoURL ? (
+            <Image
+              source={{ uri: post.author.photoURL }}
+              style={styles.authorAvatar}
+            />
+          ) : (
+            <View style={styles.authorAvatarPlaceholder}>
+              <Text style={styles.authorAvatarText}>🎣</Text>
+            </View>
+          )}
+          <View style={styles.authorInfo}>
+            <Text style={styles.authorName}>
+              {post.author?.displayName || 'Angler'}
+            </Text>
+            <Text style={styles.postTime}>
+              {typeIcon} {formatTimeAgo(post.createdAt)}
+            </Text>
           </View>
-        )}
-        <View style={styles.authorInfo}>
-          <Text style={styles.authorName}>
-            {post.author?.displayName || 'Angler'}
-          </Text>
-          <Text style={styles.postTime}>
-            {typeIcon} {formatTimeAgo(post.createdAt)}
-          </Text>
-        </View>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={() => onReport && onReport(post.id)}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={{ color: '#666', fontSize: 20 }}>⋯</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Content */}
@@ -257,16 +268,58 @@ export default function CommunityScreen({ navigation }) {
     }
   }, [composeText, composeType, loadFeed, t]);
 
+  const handleReport = useCallback(
+    postId => {
+      Alert.alert(
+        t('community.reportPost', 'Report Post'),
+        t('community.reportPostConfirm', 'Report this post as inappropriate?'),
+        [
+          { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+          {
+            text: t('community.report', 'Report'),
+            style: 'destructive',
+            onPress: async () => {
+              const ok = await communityService.reportPost(postId, {
+                reason: 'inappropriate',
+              });
+              if (ok) {
+                Alert.alert(
+                  t('community.reported', 'Reported'),
+                  t(
+                    'community.reportedDesc',
+                    'Thank you. We will review this report.',
+                  ),
+                );
+              }
+            },
+          },
+        ],
+      );
+    },
+    [t],
+  );
+
+  const handleProfile = useCallback(
+    uid => {
+      if (uid) {
+        navigation.navigate('UserProfile', { uid });
+      }
+    },
+    [navigation],
+  );
+
   const renderPost = useCallback(
     ({ item }) => (
       <PostCard
         post={item}
         onLike={handleLike}
         onComment={handleComment}
+        onReport={handleReport}
+        onProfile={handleProfile}
         t={t}
       />
     ),
-    [handleLike, handleComment, t],
+    [handleLike, handleComment, handleReport, handleProfile, t],
   );
 
   const renderFooter = useCallback(() => {

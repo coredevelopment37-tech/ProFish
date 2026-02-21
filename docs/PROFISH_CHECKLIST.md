@@ -148,8 +148,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 91. Build hourly forecast timeline (swipeable, color-coded by score)
 - [x] 92. Build 7-day outlook grid (Pro only, gated by tier)
 - [x] 93. Add "Best Times Today" summary card (top 3 windows)
-- [ ] 94. Add species-specific adjustments (e.g., bass prefer low pressure; trout prefer cold water)
-- [ ] 95. Add location-aware FishCast (auto-detect GPS, show nearest water body)
+- [x] 94. Add species-specific adjustments (e.g., bass prefer low pressure; trout prefer cold water)
+- [x] 95. Add location-aware FishCast (auto-detect GPS, show nearest water body)
 
 ---
 
@@ -191,10 +191,10 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 118. Layer: `current-overlay` — Ocean current arrows from Copernicus (cost: 2)
 - [x] 119. Layer: `water-temp-gradient` — Temperature contour lines (cost: 2)
 - [x] 120. Layer: `depth-contours` — GEBCO bathymetric contour lines (cost: 2)
-- [ ] 121. Layer: `solunar-overlay` — Color-coded feeding time zones on map
-- [ ] 122. Layer: `marine-protected-areas` — MPA boundaries (WDPA dataset)
-- [ ] 123. Layer: `boat-ramps` — Public boat ramp locations (OSM data)
-- [ ] 124. Layer: `fishing-regulations` — Regional regulation zone boundaries
+- [x] 121. Layer: `solunar-overlay` — Color-coded feeding time zones on map
+- [x] 122. Layer: `marine-protected-areas` — MPA boundaries (WDPA dataset)
+- [x] 123. Layer: `boat-ramps` — Public boat ramp locations (OSM data)
+- [x] 124. Layer: `fishing-regulations` — Regional regulation zone boundaries
 
 #### Tile Source Integration
 
@@ -203,8 +203,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 127. Wire Copernicus SST via ERDDAP WMS (coastwatch.pfeg.noaa.gov)
 - [x] 128. Wire Copernicus chlorophyll via ERDDAP WMS
 - [ ] 129. Build self-hosted tile proxy for Copernicus data (CloudFront CDN cache)
-- [ ] 130. Implement tile loading indicators (spinner per layer)
-- [ ] 131. Implement tile error fallback (show placeholder on 404/timeout)
+- [x] 130. Implement tile loading indicators (spinner per layer)
+- [x] 131. Implement tile error fallback (show placeholder on 404/timeout)
 
 ### Map Interactions
 
@@ -216,7 +216,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 137. De-cluster on zoom-in with animation
 - [x] 138. Implement fishing spot bookmarks (pin + label, saved to AsyncStorage)
 - [ ] 139. Add distance measurement tool (two-point line)
-- [ ] 140. Show FishCast score badge on current location marker
+- [x] 140. Show FishCast score badge on current location marker
 
 ### Offline Maps
 
@@ -474,8 +474,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 297. Create Firestore collection: `users/{uid}/preferences`
 - [x] 298. Create Firestore collection: `users/{uid}/spots`
 - [x] 299. Implement batch sync (upload up to 50 pending catches at once)
-- [ ] 300. Implement Firestore snapshot listener for real-time updates on shared catches
-- [ ] 301. Implement data pagination for Firestore reads (cursor-based)
+- [x] 300. Implement Firestore snapshot listener for real-time updates on shared catches
+- [x] 301. Implement data pagination for Firestore reads (cursor-based)
 
 ### Offline Capabilities
 
@@ -519,7 +519,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 - [x] 327. Define color palette: primary (#0080FF), background (#0f0f23), surface (#1a1a2e), success (#4CAF50), warning (#FF9800), error (#F44336)
 - [x] 328. Define typography scale: H1 (28px bold), H2 (22px semibold), Body (16px), Caption (12px)
-- [ ] 329. Implement dark mode as default; add optional light mode toggle
+- [x] 329. Implement dark mode as default; add optional light mode toggle
 - [x] 330. Apply consistent spacing system (4px base grid: 4, 8, 12, 16, 24, 32, 48)
 - [x] 331. Add haptic feedback on key interactions (catch save, purchase, score reveal)
 - [x] 332. Add skeleton loading placeholders for all list views
@@ -552,9 +552,9 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 - [x] 347. Implement like/unlike on posts (optimistic UI)
 - [x] 348. Implement comments thread on posts
-- [ ] 349. Implement follow/unfollow users
-- [ ] 350. Implement user profile view (their catches, posts, stats)
-- [ ] 351. Implement content reporting (spam, inappropriate)
+- [x] 349. Implement follow/unfollow users
+- [x] 350. Implement user profile view (their catches, posts, stats)
+- [x] 351. Implement content reporting (spam, inappropriate)
 - [ ] 352. Implement content moderation queue (Firebase Functions)
 
 ### Notifications
@@ -603,9 +603,9 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 381. Build catch trends chart (catches per week/month over time)
 - [x] 382. Build personal best records (heaviest/longest per species)
 - [x] 383. Build species collection progress (X of 56 caught — "Pokédex" style)
-- [ ] 384. Build heatmap of personal catch locations
-- [ ] 385. Build time analysis (best hour, best day of week, best moon phase)
-- [ ] 386. Build bait effectiveness analysis (success rate by bait type per species)
+- [x] 384. Build heatmap of personal catch locations
+- [x] 385. Build time analysis (best hour, best day of week, best moon phase)
+- [x] 386. Build bait effectiveness analysis (success rate by bait type per species)
 - [ ] 387. Build conditions correlation (weight vs. pressure, temperature, tide)
 - [ ] 388. Build catch rate trend (catches per trip over time)
 - [ ] 389. Export analytics as PDF report (Guide tier — branded with logo)
@@ -776,25 +776,25 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | ----------------------------------- | ------- | ------- | --------- | ------- |
 | 1. Project Setup & Infrastructure   | 32      | 27      | 5         | 84%     |
 | 2. Core Architecture                | 25      | 24      | 1         | 96%     |
-| 3. FishCast Engine                  | 30      | 29      | 1         | 97%     |
-| 4. Interactive Map                  | 46      | 33      | 13        | 72%     |
+| 3. FishCast Engine                  | 30      | 31      | -1        | 100%    |
+| 4. Interactive Map                  | 46      | 40      | 6         | 87%     |
 | 5. Catch Logging                    | 35      | 34      | 1         | 97%     |
 | 6. Species Database                 | 23      | 16      | 7         | 70%     |
 | 7. Internationalization             | 40      | 36      | 4         | 90%     |
 | 8. Subscriptions & Monetization     | 25      | 16      | 9         | 64%     |
-| 9. Authentication & User Management | 20      | 15      | 5         | 75%     |
-| 10. Offline & Data Sync             | 20      | 13      | 7         | 65%     |
-| 11. UI/UX & Components              | 30      | 25      | 5         | 83%     |
-| 12. Community & Social              | 25      | 1       | 24        | 4%      |
+| 9. Authentication & User Management | 20      | 20      | 0         | 100%    |
+| 10. Offline & Data Sync             | 20      | 20      | 0         | 100%    |
+| 11. UI/UX & Components              | 30      | 26      | 4         | 87%     |
+| 12. Community & Social              | 25      | 12      | 13        | 48%     |
 | 13. Tournaments                     | 15      | 0       | 15        | 0%      |
-| 14. Advanced Analytics              | 15      | 2       | 13        | 13%     |
+| 14. Advanced Analytics              | 15      | 7       | 8         | 47%     |
 | 15. AI Features                     | 15      | 0       | 15        | 0%      |
 | 16. Marketplace                     | 10      | 0       | 10        | 0%      |
 | 17. Testing & Quality               | 22      | 0       | 22        | 0%      |
 | 18. App Store Preparation           | 27      | 1       | 26        | 4%      |
 | 19. Launch & Marketing              | 15      | 0       | 15        | 0%      |
 | 20. Post-Launch & Scale             | 15      | 0       | 15        | 0%      |
-| **TOTAL**                           | **505** | **274** | **231**   | **54%** |
+| **TOTAL**                           | **505** | **320** | **185**   | **63%** |
 
 ---
 

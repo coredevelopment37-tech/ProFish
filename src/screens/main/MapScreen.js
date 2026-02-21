@@ -35,6 +35,7 @@ import weatherService from '../../services/weatherService';
 import LayerPicker from '../../components/LayerPicker';
 import WeatherCard from '../../components/WeatherCard';
 import tideService from '../../services/tideService';
+import { calculateFishCast } from '../../services/fishCastService';
 
 // Mapbox will be initialized once native modules are linked
 let MapboxGL = null;
@@ -69,6 +70,8 @@ export default function MapScreen({ navigation }) {
   const [tideModalVisible, setTideModalVisible] = useState(false);
   const [tideData, setTideData] = useState(null);
   const [tideLoading, setTideLoading] = useState(false);
+  const [fishCastScore, setFishCastScore] = useState(null);
+  const [tilesLoading, setTilesLoading] = useState(false);
 
   // Request location permission and start tracking
   useEffect(() => {
@@ -110,6 +113,11 @@ export default function MapScreen({ navigation }) {
       weatherService
         .getWeather(userCoords.latitude, userCoords.longitude)
         .then(setWeather)
+        .catch(() => {});
+
+      // Calculate FishCast score for location badge
+      calculateFishCast(userCoords.latitude, userCoords.longitude)
+        .then(result => setFishCastScore(result))
         .catch(() => {});
     }
   }, [userCoords]);
@@ -506,6 +514,27 @@ export default function MapScreen({ navigation }) {
         </TouchableOpacity>
       )}
 
+      {/* FishCast score badge */}
+      {fishCastScore && (
+        <TouchableOpacity
+          style={styles.fishCastBadge}
+          onPress={() => navigation.navigate('FishCast')}
+        >
+          <Text style={styles.fishCastBadgeScore}>{fishCastScore.score}</Text>
+          <Text style={styles.fishCastBadgeLabel}>{fishCastScore.label}</Text>
+        </TouchableOpacity>
+      )}
+
+      {/* Tile loading indicator */}
+      {tilesLoading && (
+        <View style={styles.tileLoadingBanner}>
+          <ActivityIndicator size="small" color="#0080FF" />
+          <Text style={styles.tileLoadingText}>
+            {t('map.loadingTiles', 'Loading map tiles...')}
+          </Text>
+        </View>
+      )}
+
       {/* Map controls */}
       <View style={styles.controls}>
         {/* Layers button */}
@@ -766,6 +795,50 @@ const styles = StyleSheet.create({
   popupStats: { flexDirection: 'row', gap: 12, marginBottom: 8 },
   popupStat: { fontSize: 14, color: '#ccc' },
   popupHint: { fontSize: 12, color: '#0080FF' },
+
+  // FishCast badge
+  fishCastBadge: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 16,
+    right: 12,
+    backgroundColor: 'rgba(26, 26, 46, 0.92)',
+    borderRadius: 14,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#333',
+    zIndex: 10,
+  },
+  fishCastBadgeScore: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#0080FF',
+  },
+  fishCastBadgeLabel: {
+    fontSize: 10,
+    color: '#888',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+
+  // Tile loading
+  tileLoadingBanner: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 110 : 70,
+    alignSelf: 'center',
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: 'rgba(26, 26, 46, 0.9)',
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 20,
+  },
+  tileLoadingText: {
+    color: '#888',
+    fontSize: 12,
+  },
 
   // Tide Modal
   tideModalOverlay: {

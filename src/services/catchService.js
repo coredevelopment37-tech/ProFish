@@ -94,7 +94,13 @@ const catchService = {
     return newCatch;
   },
 
-  async getCatches({ limit = 50, offset = 0, species = null } = {}) {
+  async getCatches({
+    limit = 500,
+    offset = 0,
+    species = null,
+    cursor = null,
+    paginated = false,
+  } = {}) {
     await this.init();
     let filtered = this._catches;
     if (species) {
@@ -102,7 +108,27 @@ const catchService = {
         c => c.species.toLowerCase() === species.toLowerCase(),
       );
     }
-    return filtered.slice(offset, offset + limit);
+    // Cursor-based pagination: if cursor is a createdAt ISO string, skip items before it
+    if (cursor) {
+      const cursorIdx = filtered.findIndex(c => c.createdAt === cursor);
+      if (cursorIdx >= 0) {
+        filtered = filtered.slice(cursorIdx + 1);
+      }
+    } else if (offset) {
+      filtered = filtered.slice(offset);
+    }
+    const page = filtered.slice(0, limit);
+
+    // Return paginated result or plain array for backward compatibility
+    if (paginated) {
+      return {
+        data: page,
+        nextCursor:
+          page.length === limit ? page[page.length - 1].createdAt : null,
+        hasMore: page.length === limit,
+      };
+    }
+    return page;
   },
 
   async getCatchById(id) {

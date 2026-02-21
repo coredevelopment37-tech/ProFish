@@ -218,6 +218,11 @@ export default function ProfileScreen({ navigation }) {
     dispatch({ type: 'SET_UNITS', payload: next });
   }, [units, dispatch]);
 
+  const handleThemeToggle = useCallback(() => {
+    const next = (state.theme || 'dark') === 'dark' ? 'light' : 'dark';
+    dispatch({ type: 'SET_THEME', payload: next });
+  }, [state.theme, dispatch]);
+
   const handleLinkGoogle = useCallback(async () => {
     setLinkLoading(true);
     try {
@@ -406,6 +411,15 @@ export default function ProfileScreen({ navigation }) {
             {units === 'metric'
               ? t('profile.metric', 'Metric')
               : t('profile.imperial', 'Imperial')}
+          </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.row} onPress={handleThemeToggle}>
+          <Text style={styles.rowLabel}>{t('profile.theme', 'Theme')}</Text>
+          <Text style={styles.rowValue}>
+            {(state.theme || 'dark') === 'dark'
+              ? t('profile.darkMode', '🌙 Dark')
+              : t('profile.lightMode', '☀️ Light')}
           </Text>
         </TouchableOpacity>
 

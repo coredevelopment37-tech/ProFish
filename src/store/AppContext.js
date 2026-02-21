@@ -18,6 +18,7 @@ const initialState = {
   country: null,
   language: 'en',
   units: 'metric', // metric | imperial
+  theme: 'dark', // dark | light
   catches: [],
   isLoading: true,
 };
@@ -44,6 +45,9 @@ function appReducer(state, action) {
     case 'SET_UNITS':
       AsyncStorage.setItem('@profish_units', action.payload).catch(() => {});
       return { ...state, units: action.payload };
+    case 'SET_THEME':
+      AsyncStorage.setItem('@profish_theme', action.payload).catch(() => {});
+      return { ...state, theme: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'ADD_CATCH':
@@ -66,6 +70,11 @@ export function AppProvider({ children }) {
     AsyncStorage.getItem('@profish_language')
       .then(val => {
         if (val) dispatch({ type: 'SET_LANGUAGE', payload: val });
+      })
+      .catch(() => {});
+    AsyncStorage.getItem('@profish_theme')
+      .then(val => {
+        if (val) dispatch({ type: 'SET_THEME', payload: val });
       })
       .catch(() => {});
 

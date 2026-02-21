@@ -66,6 +66,55 @@ const communityService = {
   _feedCache: null,
   _lastFetch: 0,
   _lastDoc: null, // Cursor for pagination
+  _feedListener: null, // Firestore snapshot listener
+
+  /**
+   * Subscribe to real-time feed updates via Firestore onSnapshot.
+   * Returns an unsubscribe function.
+   */
+  subscribeFeed({ limit = 20, onUpdate, onError } = {}) {
+    if (!firestore) return () => {};
+
+    this._feedListener?.(); // unsubscribe previous
+
+    const unsubscribe = firestore()
+      .collection('posts')
+      .orderBy('createdAt', 'desc')
+      .limit(limit)
+      .onSnapshot(
+        snapshot => {
+          const posts = snapshot.docs.map(doc => ({
+            ...doc.data(),
+            id: doc.id,
+          }));
+          this._feedCache = posts;
+          this._lastFetch = Date.now();
+          if (snapshot.docs.length > 0) {
+            this._lastDoc = snapshot.docs[snapshot.docs.length - 1];
+          }
+          // Save locally for offline
+          this._saveLocalFeed(posts.slice(0, 50)).catch(() => {});
+          onUpdate?.(posts);
+        },
+        error => {
+          console.warn('[Community] Snapshot error:', error);
+          onError?.(error);
+        },
+      );
+
+    this._feedListener = unsubscribe;
+    return unsubscribe;
+  },
+
+  /**
+   * Unsubscribe active feed listener
+   */
+  unsubscribeFeed() {
+    if (this._feedListener) {
+      this._feedListener();
+      this._feedListener = null;
+    }
+  },
 
   /**
    * Get feed posts with cursor-based pagination
@@ -412,6 +461,343 @@ const communityService = {
       }
     } catch (e) {
       console.warn('[Community] Delete error:', e);
+    }
+  },
+
+  // ── Follow / Unfollow ───────────────────────────────────
+
+  /**
+   * Follow a user
+   */
+  async followUser(targetUid) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore || user.uid === targetUid) return false;
+
+    try {
+      const batch = firestore().batch();
+
+      // Add to current user's following
+      batch.set(
+        firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('following')
+          .doc(targetUid),
+        { followedAt: new Date().toISOString() },
+      );
+
+      // Add to target user's followers
+      batch.set(
+        firestore()
+          .collection('users')
+          .doc(targetUid)
+          .collection('followers')
+          .doc(user.uid),
+        {
+          displayName: user.displayName || 'Angler',
+          photoURL: user.photoURL || null,
+          followedAt: new Date().toISOString(),
+        },
+      );
+
+      // Update counts
+      batch.set(
+        firestore().collection('users').doc(user.uid),
+        { followingCount: firestore.FieldValue.increment(1) },
+        { merge: true },
+      );
+      batch.set(
+        firestore().collection('users').doc(targetUid),
+        { followersCount: firestore.FieldValue.increment(1) },
+        { merge: true },
+      );
+
+      await batch.commit();
+      return true;
+    } catch (e) {
+      console.warn('[Community] Follow error:', e);
+      return false;
+    }
+  },
+
+  /**
+   * Unfollow a user
+   */
+  async unfollowUser(targetUid) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore || user.uid === targetUid) return false;
+
+    try {
+      const batch = firestore().batch();
+
+      batch.delete(
+        firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('following')
+          .doc(targetUid),
+      );
+
+      batch.delete(
+        firestore()
+          .collection('users')
+          .doc(targetUid)
+          .collection('followers')
+          .doc(user.uid),
+      );
+
+      batch.set(
+        firestore().collection('users').doc(user.uid),
+        { followingCount: firestore.FieldValue.increment(-1) },
+        { merge: true },
+      );
+      batch.set(
+        firestore().collection('users').doc(targetUid),
+        { followersCount: firestore.FieldValue.increment(-1) },
+        { merge: true },
+      );
+
+      await batch.commit();
+      return true;
+    } catch (e) {
+      console.warn('[Community] Unfollow error:', e);
+      return false;
+    }
+  },
+
+  /**
+   * Check if current user follows target
+   */
+  async isFollowing(targetUid) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore) return false;
+
+    try {
+      const doc = await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('following')
+        .doc(targetUid)
+        .get();
+      return doc.exists;
+    } catch {
+      return false;
+    }
+  },
+
+  /**
+   * Get followers / following lists
+   */
+  async getFollowers(uid, { limit = 50 } = {}) {
+    if (!firestore) return [];
+    try {
+      const snapshot = await firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('followers')
+        .orderBy('followedAt', 'desc')
+        .limit(limit)
+        .get();
+      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+    } catch {
+      return [];
+    }
+  },
+
+  async getFollowing(uid, { limit = 50 } = {}) {
+    if (!firestore) return [];
+    try {
+      const snapshot = await firestore()
+        .collection('users')
+        .doc(uid)
+        .collection('following')
+        .orderBy('followedAt', 'desc')
+        .limit(limit)
+        .get();
+      return snapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() }));
+    } catch {
+      return [];
+    }
+  },
+
+  // ── User Profile ──────────────────────────────────────
+
+  /**
+   * Get public user profile by uid
+   */
+  async getUserProfile(uid) {
+    if (!firestore) return null;
+
+    try {
+      const userDoc = await firestore().collection('users').doc(uid).get();
+      const userData = userDoc.exists ? userDoc.data() : {};
+
+      // Get their posts
+      const postsSnapshot = await firestore()
+        .collection('posts')
+        .where('author.uid', '==', uid)
+        .orderBy('createdAt', 'desc')
+        .limit(20)
+        .get();
+
+      const posts = postsSnapshot.docs.map(doc => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      return {
+        uid,
+        displayName: userData.displayName || 'Angler',
+        photoURL: userData.photoURL || null,
+        bio: userData.bio || '',
+        joinedAt: userData.createdAt || null,
+        followersCount: userData.followersCount || 0,
+        followingCount: userData.followingCount || 0,
+        postCount: posts.length,
+        posts,
+        stats: userData.publicStats || null,
+      };
+    } catch (e) {
+      console.warn('[Community] Profile fetch error:', e);
+      return null;
+    }
+  },
+
+  /**
+   * Update own profile fields
+   */
+  async updateProfile({ displayName, bio, photoURL } = {}) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore) return;
+
+    const updates = {};
+    if (displayName !== undefined) updates.displayName = displayName;
+    if (bio !== undefined) updates.bio = bio;
+    if (photoURL !== undefined) updates.photoURL = photoURL;
+    updates.updatedAt = new Date().toISOString();
+
+    try {
+      await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .set(updates, { merge: true });
+    } catch (e) {
+      console.warn('[Community] Profile update error:', e);
+    }
+  },
+
+  // ── Content Reporting ─────────────────────────────────
+
+  /**
+   * Report a post for moderation
+   */
+  async reportPost(postId, { reason = 'inappropriate', details = '' } = {}) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore) return false;
+
+    try {
+      await firestore()
+        .collection('reports')
+        .add({
+          type: 'post',
+          targetId: postId,
+          reporterUid: user.uid,
+          reporterName: user.displayName || 'Angler',
+          reason,
+          details,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+        });
+
+      // Also flag the post
+      await firestore()
+        .collection('posts')
+        .doc(postId)
+        .update({
+          reportCount: firestore.FieldValue.increment(1),
+          lastReportedAt: new Date().toISOString(),
+        });
+
+      return true;
+    } catch (e) {
+      console.warn('[Community] Report error:', e);
+      return false;
+    }
+  },
+
+  /**
+   * Report a user
+   */
+  async reportUser(targetUid, { reason = 'harassment', details = '' } = {}) {
+    const user = auth?.().currentUser;
+    if (!user || !firestore) return false;
+
+    try {
+      await firestore()
+        .collection('reports')
+        .add({
+          type: 'user',
+          targetId: targetUid,
+          reporterUid: user.uid,
+          reporterName: user.displayName || 'Angler',
+          reason,
+          details,
+          status: 'pending',
+          createdAt: new Date().toISOString(),
+        });
+      return true;
+    } catch (e) {
+      console.warn('[Community] Report user error:', e);
+      return false;
+    }
+  },
+
+  /**
+   * Block a user (local + Firestore)
+   */
+  async blockUser(targetUid) {
+    const user = auth?.().currentUser;
+    if (!user) return false;
+
+    try {
+      // Store locally
+      const key = '@profish_blocked_users';
+      const stored = await AsyncStorage.getItem(key);
+      const blocked = stored ? JSON.parse(stored) : [];
+      if (!blocked.includes(targetUid)) {
+        blocked.push(targetUid);
+        await AsyncStorage.setItem(key, JSON.stringify(blocked));
+      }
+
+      // Store in Firestore
+      if (firestore) {
+        await firestore()
+          .collection('users')
+          .doc(user.uid)
+          .collection('blocked')
+          .doc(targetUid)
+          .set({ blockedAt: new Date().toISOString() });
+      }
+
+      // Auto-unfollow
+      await this.unfollowUser(targetUid);
+      return true;
+    } catch (e) {
+      console.warn('[Community] Block error:', e);
+      return false;
+    }
+  },
+
+  /**
+   * Get list of blocked user UIDs
+   */
+  async getBlockedUsers() {
+    try {
+      const key = '@profish_blocked_users';
+      const stored = await AsyncStorage.getItem(key);
+      return stored ? JSON.parse(stored) : [];
+    } catch {
+      return [];
     }
   },
 

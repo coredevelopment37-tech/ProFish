@@ -69,6 +69,16 @@ export default function CatchStatsScreen({ navigation }) {
     let longest = null;
     const monthlyCount = {};
 
+    // Time analysis
+    const hourlyCount = new Array(24).fill(0);
+    const dayOfWeekCount = new Array(7).fill(0);
+
+    // Bait effectiveness
+    const baitStats = {};
+
+    // Location heatmap clusters (~1.1km grid)
+    const locationClusters = {};
+
     filtered.forEach(c => {
       // Species breakdown
       const sp = c.species || 'Unknown';
@@ -90,6 +100,46 @@ export default function CatchStatsScreen({ navigation }) {
         '0',
       )}`;
       monthlyCount[key] = (monthlyCount[key] || 0) + 1;
+
+      // Hourly + day-of-week distribution
+      hourlyCount[d.getHours()]++;
+      dayOfWeekCount[d.getDay()]++;
+
+      // Bait tracking
+      if (c.bait) {
+        if (!baitStats[c.bait]) {
+          baitStats[c.bait] = { count: 0, totalWeight: 0, species: {} };
+        }
+        baitStats[c.bait].count++;
+        if (c.weight) baitStats[c.bait].totalWeight += c.weight;
+        if (c.species) {
+          baitStats[c.bait].species[c.species] =
+            (baitStats[c.bait].species[c.species] || 0) + 1;
+        }
+      }
+
+      // Location clusters (round to ~1.1km precision)
+      const lat = c.latitude || (c.location && c.location.latitude);
+      const lng = c.longitude || (c.location && c.location.longitude);
+      if (lat && lng) {
+        const latKey = Math.round(lat * 100) / 100;
+        const lngKey = Math.round(lng * 100) / 100;
+        const locKey = `${latKey},${lngKey}`;
+        if (!locationClusters[locKey]) {
+          locationClusters[locKey] = {
+            lat,
+            lng,
+            count: 0,
+            species: {},
+            name: c.locationName || c.spot || null,
+          };
+        }
+        locationClusters[locKey].count++;
+        if (c.species) {
+          locationClusters[locKey].species[c.species] =
+            (locationClusters[locKey].species[c.species] || 0) + 1;
+        }
+      }
     });
 
     // Top species sorted
@@ -98,6 +148,20 @@ export default function CatchStatsScreen({ navigation }) {
       .slice(0, 10);
 
     const maxSpeciesCount = topSpecies.length ? topSpecies[0][1] : 1;
+
+    // Top locations
+    const topLocations = Object.values(locationClusters)
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+
+    // Top baits
+    const topBaits = Object.entries(baitStats)
+      .sort((a, b) => b[1].count - a[1].count)
+      .slice(0, 8);
+
+    // Best hour / day
+    const bestHour = hourlyCount.indexOf(Math.max(...hourlyCount));
+    const bestDay = dayOfWeekCount.indexOf(Math.max(...dayOfWeekCount));
 
     return {
       totalCatches: filtered.length,
@@ -111,6 +175,12 @@ export default function CatchStatsScreen({ navigation }) {
       avgWeightPerCatch: filtered.filter(c => c.weight).length
         ? totalWeight / filtered.filter(c => c.weight).length
         : 0,
+      hourlyCount,
+      dayOfWeekCount,
+      bestHour,
+      bestDay,
+      topBaits,
+      topLocations,
     };
   }, [filtered]);
 
@@ -388,6 +458,234 @@ export default function CatchStatsScreen({ navigation }) {
               </View>
             </View>
           </View>
+
+          {/* Catch Hot Spots — location heatmap */}
+          {stats.topLocations.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                📍 {t('stats.hotSpots', 'Catch Hot Spots')}
+              </Text>
+              <View style={styles.heatmapCard}>
+                {stats.topLocations.map((loc, idx) => {
+                  const topSp = Object.entries(loc.species)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 2)
+                    .map(([s]) => s)
+                    .join(', ');
+                  const maxLoc = stats.topLocations[0].count;
+                  const intensity = loc.count / maxLoc;
+                  return (
+                    <View
+                      key={`${loc.lat}-${loc.lng}`}
+                      style={styles.hotSpotRow}
+                    >
+                      <View
+                        style={[
+                          styles.hotSpotDot,
+                          {
+                            backgroundColor:
+                              intensity > 0.7
+                                ? '#FF4444'
+                                : intensity > 0.4
+                                ? '#FF9800'
+                                : '#0080FF',
+                            width: 12 + intensity * 16,
+                            height: 12 + intensity * 16,
+                            borderRadius: (12 + intensity * 16) / 2,
+                          },
+                        ]}
+                      />
+                      <View style={styles.hotSpotInfo}>
+                        <Text style={styles.hotSpotName} numberOfLines={1}>
+                          {loc.name ||
+                            `${loc.lat.toFixed(3)}°, ${loc.lng.toFixed(3)}°`}
+                        </Text>
+                        {topSp ? (
+                          <Text style={styles.hotSpotSpecies} numberOfLines={1}>
+                            {topSp}
+                          </Text>
+                        ) : null}
+                      </View>
+                      <View style={styles.hotSpotCount}>
+                        <Text style={styles.hotSpotCountText}>{loc.count}</Text>
+                        <Text style={styles.hotSpotCountLabel}>
+                          {t('stats.catches', 'catches')}
+                        </Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          )}
+
+          {/* Time Analysis */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              ⏰ {t('stats.timeAnalysis', 'Time Analysis')}
+            </Text>
+            <View style={styles.timeCard}>
+              {/* Best hour + day summary */}
+              <View style={styles.timeSummaryRow}>
+                <View style={styles.timeSummaryItem}>
+                  <Text style={styles.timeSummaryValue}>
+                    {stats.bestHour > 12
+                      ? `${stats.bestHour - 12}PM`
+                      : stats.bestHour === 0
+                      ? '12AM'
+                      : `${stats.bestHour}AM`}
+                  </Text>
+                  <Text style={styles.timeSummaryLabel}>
+                    {t('stats.bestHour', 'Best Hour')}
+                  </Text>
+                </View>
+                <View style={styles.timeSummaryDivider} />
+                <View style={styles.timeSummaryItem}>
+                  <Text style={styles.timeSummaryValue}>
+                    {
+                      ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][
+                        stats.bestDay
+                      ]
+                    }
+                  </Text>
+                  <Text style={styles.timeSummaryLabel}>
+                    {t('stats.bestDay', 'Best Day')}
+                  </Text>
+                </View>
+              </View>
+
+              {/* Hourly heatmap strip */}
+              <Text style={styles.timeSubTitle}>
+                {t('stats.hourlyActivity', 'Hourly Activity')}
+              </Text>
+              <View style={styles.hourlyStrip}>
+                {stats.hourlyCount.map((count, hour) => {
+                  const maxH = Math.max(...stats.hourlyCount, 1);
+                  const opacity = count / maxH;
+                  return (
+                    <View key={hour} style={styles.hourCell}>
+                      <View
+                        style={[
+                          styles.hourBar,
+                          {
+                            backgroundColor: `rgba(0, 128, 255, ${Math.max(
+                              0.1,
+                              opacity,
+                            )})`,
+                          },
+                        ]}
+                      />
+                      {hour % 6 === 0 && (
+                        <Text style={styles.hourLabel}>
+                          {hour === 0
+                            ? '12A'
+                            : hour === 6
+                            ? '6A'
+                            : hour === 12
+                            ? '12P'
+                            : '6P'}
+                        </Text>
+                      )}
+                    </View>
+                  );
+                })}
+              </View>
+
+              {/* Day of week bars */}
+              <Text style={[styles.timeSubTitle, { marginTop: 16 }]}>
+                {t('stats.weeklyPattern', 'Weekly Pattern')}
+              </Text>
+              <View style={styles.weekBars}>
+                {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(
+                  (day, idx) => {
+                    const maxD = Math.max(...stats.dayOfWeekCount, 1);
+                    const pct = stats.dayOfWeekCount[idx] / maxD;
+                    return (
+                      <View key={day} style={styles.weekBarCol}>
+                        <Text style={styles.weekBarValue}>
+                          {stats.dayOfWeekCount[idx]}
+                        </Text>
+                        <View
+                          style={[
+                            styles.weekBar,
+                            {
+                              height: Math.max(4, pct * 60),
+                              backgroundColor:
+                                idx === stats.bestDay ? '#FF9800' : '#0080FF',
+                            },
+                          ]}
+                        />
+                        <Text style={styles.weekBarLabel}>{day}</Text>
+                      </View>
+                    );
+                  },
+                )}
+              </View>
+            </View>
+          </View>
+
+          {/* Bait Effectiveness */}
+          {stats.topBaits.length > 0 && (
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>
+                🎣 {t('stats.baitEffectiveness', 'Bait Effectiveness')}
+              </Text>
+              <View style={styles.baitCard}>
+                {stats.topBaits.map(([bait, data], idx) => {
+                  const maxBait = stats.topBaits[0][1].count;
+                  const pct = data.count / maxBait;
+                  const topSp = Object.entries(data.species)
+                    .sort((a, b) => b[1] - a[1])
+                    .slice(0, 2)
+                    .map(([s]) => s)
+                    .join(', ');
+                  const avgW =
+                    data.totalWeight && data.count
+                      ? data.totalWeight / data.count
+                      : 0;
+                  return (
+                    <View key={bait} style={styles.baitRow}>
+                      <View style={styles.baitRank}>
+                        <Text style={styles.baitRankText}>{idx + 1}</Text>
+                      </View>
+                      <View style={styles.baitInfo}>
+                        <Text style={styles.baitName}>{bait}</Text>
+                        <View style={styles.baitBarTrack}>
+                          <View
+                            style={[
+                              styles.baitBarFill,
+                              {
+                                width: `${Math.max(8, pct * 100)}%`,
+                                backgroundColor:
+                                  idx === 0 ? '#FF9800' : '#0080FF',
+                              },
+                            ]}
+                          />
+                        </View>
+                        <View style={styles.baitMeta}>
+                          <Text style={styles.baitMetaText}>
+                            {data.count} {t('stats.catches', 'catches')}
+                          </Text>
+                          {avgW > 0 && (
+                            <Text style={styles.baitMetaText}>
+                              {' · '}
+                              {t('stats.avgWeight', 'Avg')}{' '}
+                              {formatWeight(avgW, units)}
+                            </Text>
+                          )}
+                        </View>
+                        {topSp ? (
+                          <Text style={styles.baitSpecies} numberOfLines={1}>
+                            {t('stats.bestFor', 'Best for')}: {topSp}
+                          </Text>
+                        ) : null}
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            </View>
+          )}
         </>
       )}
 
@@ -605,5 +903,188 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'capitalize',
+  },
+  // Hot spots heatmap
+  heatmapCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 12,
+  },
+  hotSpotRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0a0a1a',
+  },
+  hotSpotDot: {
+    marginRight: 12,
+  },
+  hotSpotInfo: {
+    flex: 1,
+  },
+  hotSpotName: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  hotSpotSpecies: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 2,
+  },
+  hotSpotCount: {
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  hotSpotCountText: {
+    color: '#FF9800',
+    fontSize: 18,
+    fontWeight: '800',
+  },
+  hotSpotCountLabel: {
+    color: '#666',
+    fontSize: 10,
+  },
+  // Time analysis
+  timeCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 16,
+  },
+  timeSummaryRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  timeSummaryItem: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  timeSummaryValue: {
+    color: '#FF9800',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  timeSummaryLabel: {
+    color: '#888',
+    fontSize: 12,
+    marginTop: 4,
+  },
+  timeSummaryDivider: {
+    width: 1,
+    height: 40,
+    backgroundColor: '#333',
+  },
+  timeSubTitle: {
+    color: '#aaa',
+    fontSize: 13,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  hourlyStrip: {
+    flexDirection: 'row',
+    height: 32,
+    gap: 1,
+  },
+  hourCell: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  hourBar: {
+    flex: 1,
+    width: '100%',
+    borderRadius: 3,
+  },
+  hourLabel: {
+    color: '#666',
+    fontSize: 9,
+    marginTop: 2,
+  },
+  weekBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    height: 100,
+  },
+  weekBarCol: {
+    alignItems: 'center',
+    flex: 1,
+  },
+  weekBarValue: {
+    color: '#888',
+    fontSize: 10,
+    marginBottom: 4,
+  },
+  weekBar: {
+    width: 20,
+    borderRadius: 10,
+    minHeight: 4,
+  },
+  weekBarLabel: {
+    color: '#666',
+    fontSize: 10,
+    marginTop: 6,
+  },
+  // Bait effectiveness
+  baitCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 12,
+  },
+  baitRow: {
+    flexDirection: 'row',
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#0a0a1a',
+  },
+  baitRank: {
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    backgroundColor: '#0a0a1a',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+    marginTop: 2,
+  },
+  baitRankText: {
+    color: '#888',
+    fontSize: 13,
+    fontWeight: '700',
+  },
+  baitInfo: {
+    flex: 1,
+  },
+  baitName: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '600',
+    marginBottom: 6,
+    textTransform: 'capitalize',
+  },
+  baitBarTrack: {
+    height: 6,
+    backgroundColor: '#0a0a1a',
+    borderRadius: 3,
+    overflow: 'hidden',
+    marginBottom: 4,
+  },
+  baitBarFill: {
+    height: 6,
+    borderRadius: 3,
+  },
+  baitMeta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  baitMetaText: {
+    color: '#888',
+    fontSize: 12,
+  },
+  baitSpecies: {
+    color: '#0080FF',
+    fontSize: 11,
+    marginTop: 2,
   },
 });

@@ -187,3 +187,29 @@ export function getScoreLabel(score) {
   if (score >= 40) return 'Fair';
   return 'Poor';
 }
+
+// ── Light Mode Colors ──────────────────────────────
+export const COLORS_LIGHT = {
+  ...COLORS,
+  background: '#F5F5F8',
+  surface: '#FFFFFF',
+  surfaceLight: '#EEEEF2',
+  card: '#FFFFFF',
+  text: '#1a1a2e',
+  textSecondary: '#555555',
+  textTertiary: '#888888',
+  textDisabled: '#BBBBBB',
+  border: '#DDDDE0',
+  borderLight: '#EEEEF2',
+  divider: '#E8E8EC',
+  overlay: 'rgba(0, 0, 0, 0.3)',
+  ripple: 'rgba(0, 128, 255, 0.08)',
+};
+
+/**
+ * Get colors for the given theme mode
+ * @param {'dark'|'light'} mode
+ */
+export function getThemeColors(mode = 'dark') {
+  return mode === 'light' ? COLORS_LIGHT : COLORS;
+}

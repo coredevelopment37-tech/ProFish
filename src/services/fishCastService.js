@@ -307,4 +307,231 @@ function getWeatherEmoji(code) {
   return '⛈️';
 }
 
-export default { calculateFishCast, calculate7DayOutlook };
+// ── Species-Specific Adjustments ─────────────────────
+// Each species has preferred conditions that modify the base score
+const SPECIES_ADJUSTMENTS = {
+  // Bass prefer low pressure, warm water, overcast
+  'largemouth bass': {
+    pressure: p => (p < 1010 ? 1.2 : p > 1020 ? 0.8 : 1.0),
+    wind: w => (w <= 10 ? 1.1 : w > 25 ? 0.7 : 1.0),
+    timeOfDay: h => ((h >= 5 && h <= 9) || (h >= 17 && h <= 21) ? 1.2 : 0.9),
+    cloudCover: c => (c >= 60 ? 1.15 : c < 20 ? 0.8 : 1.0),
+    idealWaterTemp: [18, 27], // °C
+  },
+  'smallmouth bass': {
+    pressure: p => (p < 1010 ? 1.15 : 1.0),
+    wind: w => (w >= 5 && w <= 15 ? 1.1 : 1.0),
+    timeOfDay: h => ((h >= 5 && h <= 10) || (h >= 16 && h <= 20) ? 1.15 : 0.9),
+    idealWaterTemp: [15, 22],
+  },
+  trout: {
+    pressure: p => (p >= 1010 && p <= 1020 ? 1.1 : 1.0),
+    wind: w => (w <= 8 ? 1.15 : w > 20 ? 0.7 : 1.0),
+    timeOfDay: h => ((h >= 5 && h <= 9) || (h >= 16 && h <= 19) ? 1.2 : 0.85),
+    cloudCover: c => (c >= 50 ? 1.15 : 1.0),
+    idealWaterTemp: [7, 16], // Prefer cold water
+  },
+  'rainbow trout': {
+    pressure: p => (p >= 1010 && p <= 1020 ? 1.1 : 1.0),
+    wind: w => (w <= 8 ? 1.15 : 1.0),
+    timeOfDay: h => (h >= 5 && h <= 9 ? 1.2 : 0.9),
+    idealWaterTemp: [7, 16],
+  },
+  salmon: {
+    pressure: p => (p >= 1005 && p <= 1015 ? 1.15 : 1.0),
+    tideState: t =>
+      t?.state === 'rising' ? 1.2 : t?.state === 'falling' ? 0.9 : 1.0,
+    timeOfDay: h => ((h >= 4 && h <= 8) || (h >= 16 && h <= 20) ? 1.15 : 0.85),
+    idealWaterTemp: [8, 15],
+  },
+  pike: {
+    pressure: p => (p < 1010 ? 1.2 : 1.0),
+    wind: w => (w >= 5 && w <= 18 ? 1.1 : 1.0),
+    cloudCover: c => (c >= 60 ? 1.15 : c < 20 ? 0.75 : 1.0),
+    timeOfDay: h => ((h >= 6 && h <= 10) || (h >= 15 && h <= 19) ? 1.15 : 0.9),
+    idealWaterTemp: [10, 21],
+  },
+  walleye: {
+    timeOfDay: h => ((h >= 17 && h <= 23) || (h >= 0 && h <= 6) ? 1.25 : 0.85),
+    cloudCover: c => (c >= 70 ? 1.2 : c < 30 ? 0.7 : 1.0),
+    wind: w => (w >= 5 && w <= 15 ? 1.15 : 1.0),
+    idealWaterTemp: [10, 18],
+  },
+  catfish: {
+    timeOfDay: h => (h >= 19 || h <= 5 ? 1.3 : 0.8), // Nocturnal feeders
+    pressure: p => (p < 1010 ? 1.15 : 1.0),
+    precipitation: r => (r > 0 && r <= 5 ? 1.2 : 1.0), // Love rain
+    idealWaterTemp: [21, 29],
+  },
+  redfish: {
+    tideState: t =>
+      t?.state === 'falling' ? 1.2 : t?.state === 'rising' ? 1.1 : 0.9,
+    timeOfDay: h => ((h >= 5 && h <= 9) || (h >= 16 && h <= 20) ? 1.15 : 0.9),
+    cloudCover: c => (c >= 40 ? 1.1 : 1.0),
+    idealWaterTemp: [18, 28],
+  },
+  tarpon: {
+    tideState: t => (t?.state === 'rising' ? 1.25 : 0.9),
+    timeOfDay: h => (h >= 5 && h <= 9 ? 1.2 : 0.9),
+    pressure: p => (p >= 1010 && p <= 1020 ? 1.1 : 1.0),
+    idealWaterTemp: [24, 32],
+  },
+  snook: {
+    tideState: t => (t?.progress >= 30 && t?.progress <= 70 ? 1.2 : 0.9),
+    timeOfDay: h => ((h >= 17 && h <= 22) || (h >= 4 && h <= 7) ? 1.2 : 0.85),
+    idealWaterTemp: [22, 30],
+  },
+  tuna: {
+    tideState: t => (t?.state === 'rising' ? 1.15 : 1.0),
+    wind: w => (w >= 5 && w <= 20 ? 1.1 : w > 30 ? 0.6 : 1.0),
+    timeOfDay: h => (h >= 5 && h <= 10 ? 1.15 : 0.9),
+    idealWaterTemp: [18, 28],
+  },
+  'mahi-mahi': {
+    cloudCover: c => (c < 40 ? 1.15 : 1.0), // Prefer clear skies
+    wind: w => (w >= 8 && w <= 20 ? 1.1 : 1.0),
+    idealWaterTemp: [21, 30],
+  },
+};
+
+/**
+ * Apply species-specific adjustments to a base FishCast score.
+ * Returns adjusted score + species insight text.
+ */
+export function adjustScoreForSpecies(baseResult, species, waterTemp = null) {
+  if (!species) return baseResult;
+  const key = species.toLowerCase();
+  const adj =
+    SPECIES_ADJUSTMENTS[key] ||
+    // Try partial match
+    Object.entries(SPECIES_ADJUSTMENTS).find(
+      ([k]) => key.includes(k) || k.includes(key),
+    )?.[1];
+
+  if (!adj) return baseResult;
+
+  let multiplier = 1.0;
+  const insights = [];
+
+  // Apply condition modifiers
+  if (adj.pressure && baseResult.weather?.pressure) {
+    const m = adj.pressure(baseResult.weather.pressure);
+    multiplier *= m;
+    if (m > 1.05) insights.push('Pressure favors this species');
+  }
+  if (adj.wind && baseResult.weather?.wind != null) {
+    const m = adj.wind(baseResult.weather.wind);
+    multiplier *= m;
+  }
+  if (adj.timeOfDay) {
+    const hour = new Date().getHours();
+    const m = adj.timeOfDay(hour);
+    multiplier *= m;
+    if (m > 1.1) insights.push('Prime time for this species');
+  }
+  if (adj.cloudCover && baseResult.factors?.cloudCover != null) {
+    // Reverse-engineer cloud cover from factor score (rough)
+    const c = baseResult.factors.cloudCover > 70 ? 65 : 30;
+    const m = adj.cloudCover(c);
+    multiplier *= m;
+  }
+  if (adj.tideState && baseResult.tide) {
+    const m = adj.tideState(baseResult.tide);
+    multiplier *= m;
+    if (m > 1.1) insights.push('Tide is ideal for this species');
+  }
+  if (adj.precipitation && baseResult.weather) {
+    // Rough check
+    const m = adj.precipitation(baseResult.factors?.precipitation > 70 ? 2 : 0);
+    multiplier *= m;
+  }
+
+  // Water temperature bonus/penalty
+  if (adj.idealWaterTemp && waterTemp != null) {
+    const [min, max] = adj.idealWaterTemp;
+    if (waterTemp >= min && waterTemp <= max) {
+      multiplier *= 1.1;
+      insights.push(`Water temp ${waterTemp}°C is in the ideal range`);
+    } else if (waterTemp < min - 5 || waterTemp > max + 5) {
+      multiplier *= 0.8;
+      insights.push(`Water temp ${waterTemp}°C is outside preferred range`);
+    }
+  }
+
+  const adjustedScore = Math.round(
+    Math.max(0, Math.min(100, baseResult.score * multiplier)),
+  );
+
+  return {
+    ...baseResult,
+    score: adjustedScore,
+    label: getScoreLabel(adjustedScore),
+    speciesAdjusted: true,
+    speciesName: species,
+    speciesInsights: insights,
+    originalScore: baseResult.score,
+  };
+}
+
+/**
+ * Location-aware FishCast — auto-detect GPS and calculate for current position.
+ * Returns the base result enriched with location metadata.
+ */
+export async function calculateFishCastForCurrentLocation(getCurrentPosition) {
+  return new Promise((resolve, reject) => {
+    const fallback = async () => {
+      // Default to a general location if GPS fails
+      const result = await calculateFishCast(59.33, 18.07);
+      resolve({
+        ...result,
+        locationSource: 'default',
+        locationName: 'Stockholm',
+      });
+    };
+
+    if (!getCurrentPosition) return fallback();
+
+    getCurrentPosition(
+      async pos => {
+        try {
+          const { latitude, longitude } = pos.coords;
+          const result = await calculateFishCast(latitude, longitude);
+
+          // Reverse geocode for location name (optional, best-effort)
+          let locationName = `${latitude.toFixed(2)}, ${longitude.toFixed(2)}`;
+          try {
+            const resp = await fetch(
+              `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&timezone=auto`,
+            );
+            const data = await resp.json();
+            if (data.timezone) {
+              locationName =
+                data.timezone.split('/').pop().replace(/_/g, ' ') ||
+                locationName;
+            }
+          } catch {}
+
+          resolve({
+            ...result,
+            locationSource: 'gps',
+            latitude,
+            longitude,
+            locationName,
+          });
+        } catch (e) {
+          reject(e);
+        }
+      },
+      () => fallback(),
+      { enableHighAccuracy: true, timeout: 10000 },
+    );
+  });
+}
+
+export default {
+  calculateFishCast,
+  calculate7DayOutlook,
+  adjustScoreForSpecies,
+  calculateFishCastForCurrentLocation,
+  SPECIES_ADJUSTMENTS,
+};
