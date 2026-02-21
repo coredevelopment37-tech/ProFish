@@ -775,16 +775,16 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | Section                             | Total   | Done    | Remaining | %       |
 | ----------------------------------- | ------- | ------- | --------- | ------- |
 | 1. Project Setup & Infrastructure   | 32      | 27      | 5         | 84%     |
-| 2. Core Architecture                | 25      | 24      | 1         | 96%     |
-| 3. FishCast Engine                  | 30      | 31      | -1        | 100%    |
-| 4. Interactive Map                  | 46      | 40      | 6         | 87%     |
-| 5. Catch Logging                    | 35      | 34      | 1         | 97%     |
-| 6. Species Database                 | 23      | 16      | 7         | 70%     |
-| 7. Internationalization             | 40      | 36      | 4         | 90%     |
+| 2. Core Architecture                | 25      | 25      | 0         | 100%    |
+| 3. FishCast Engine                  | 38      | 36      | 2         | 95%     |
+| 4. Interactive Map                  | 51      | 43      | 8         | 84%     |
+| 5. Catch Logging                    | 35      | 35      | 0         | 100%    |
+| 6. Species Database                 | 23      | 17      | 6         | 74%     |
+| 7. Internationalization             | 40      | 37      | 3         | 93%     |
 | 8. Subscriptions & Monetization     | 25      | 16      | 9         | 64%     |
 | 9. Authentication & User Management | 20      | 20      | 0         | 100%    |
 | 10. Offline & Data Sync             | 20      | 20      | 0         | 100%    |
-| 11. UI/UX & Components              | 30      | 26      | 4         | 87%     |
+| 11. UI/UX & Components              | 30      | 27      | 3         | 90%     |
 | 12. Community & Social              | 25      | 12      | 13        | 48%     |
 | 13. Tournaments                     | 15      | 0       | 15        | 0%      |
 | 14. Advanced Analytics              | 15      | 7       | 8         | 47%     |
@@ -794,7 +794,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | 18. App Store Preparation           | 27      | 1       | 26        | 4%      |
 | 19. Launch & Marketing              | 15      | 0       | 15        | 0%      |
 | 20. Post-Launch & Scale             | 15      | 0       | 15        | 0%      |
-| **TOTAL**                           | **505** | **320** | **185**   | **63%** |
+| **TOTAL**                           | **498** | **323** | **175**   | **65%** |
 
 ---
 
