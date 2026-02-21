@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Nejlepší rybářská aplikace na světě"},
+  "map": {"title": "Mapa"}, "catches": {"title": "Moje úlovky", "empty": "Zatím žádné úlovky"},
+  "catch": {"logCatch": "Zaznamenat úlovek", "species": "Druh", "weight": "Váha (kg)", "bait": "Návnada", "released": "Chyť a pusť"},
+  "fishcast": {"title": "FishCast", "weather": "Počasí", "wind": "Vítr", "pressure": "Tlak"},
+  "community": {"title": "Komunita"}, "profile": {"settings": "Nastavení", "language": "Jazyk", "suggestTranslation": "Navrhnout lepší překlad"},
+  "common": {"cancel": "Zrušit", "save": "Uložit", "ok": "OK"}
+}

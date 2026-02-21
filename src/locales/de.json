@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Die beste Angel-App der Welt"},
+  "map": {"title": "Karte"}, "catches": {"title": "Meine Fänge", "empty": "Noch keine Fänge"},
+  "catch": {"logCatch": "Fang loggen", "species": "Art", "weight": "Gewicht (kg)", "bait": "Köder", "released": "Fangen & Freilassen"},
+  "fishcast": {"title": "FishCast", "weather": "Wetter", "wind": "Wind", "pressure": "Druck"},
+  "community": {"title": "Gemeinschaft"}, "profile": {"settings": "Einstellungen", "language": "Sprache", "suggestTranslation": "Bessere Übersetzung vorschlagen"},
+  "common": {"cancel": "Abbrechen", "save": "Speichern", "ok": "OK"}
+}

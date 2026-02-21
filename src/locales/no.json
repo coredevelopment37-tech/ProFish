@@ -1,0 +1,10 @@
+{
+  "app": {"name": "ProFish", "tagline": "Verdens beste fiskeapp"},
+  "map": {"title": "Kart", "layers": "Lag", "myLocation": "Min posisjon"},
+  "catches": {"title": "Mine fangster", "empty": "Ingen fangster ennå", "logFirst": "Logg første fangst"},
+  "catch": {"logCatch": "Logg fangst", "species": "Art", "weight": "Vekt (kg)", "length": "Lengde (cm)", "bait": "Agn", "released": "Fang & Slipp", "addPhoto": "Legg til bilde"},
+  "fishcast": {"title": "FishCast", "weather": "Vær", "wind": "Vind", "pressure": "Trykk", "solunar": "Solunar"},
+  "community": {"title": "Fellesskap", "comingSoon": "Fellesskapsfeed kommer snart!"},
+  "profile": {"settings": "Innstillinger", "language": "Språk", "subscription": "Abonnement", "suggestTranslation": "Foreslå bedre oversettelse"},
+  "common": {"cancel": "Avbryt", "save": "Lagre", "ok": "OK", "loading": "Laster..."}
+}

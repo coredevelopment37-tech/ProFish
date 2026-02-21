@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "세계 최고의 낚시 앱"},
+  "map": {"title": "지도"}, "catches": {"title": "내 어획", "empty": "아직 어획이 없습니다"},
+  "catch": {"logCatch": "어획 기록", "species": "어종", "weight": "무게 (kg)", "bait": "미끼", "released": "캐치 앤 릴리스"},
+  "fishcast": {"title": "FishCast", "weather": "날씨", "wind": "바람", "pressure": "기압"},
+  "community": {"title": "커뮤니티"}, "profile": {"settings": "설정", "language": "언어", "suggestTranslation": "더 나은 번역 제안"},
+  "common": {"cancel": "취소", "save": "저장", "ok": "확인"}
+}

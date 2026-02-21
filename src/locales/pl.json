@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Najlepsza aplikacja wędkarska na świecie"},
+  "map": {"title": "Mapa"}, "catches": {"title": "Moje połowy", "empty": "Brak połowów"},
+  "catch": {"logCatch": "Zapisz połów", "species": "Gatunek", "weight": "Waga (kg)", "bait": "Przynęta", "released": "Złap i wypuść"},
+  "fishcast": {"title": "FishCast", "weather": "Pogoda", "wind": "Wiatr", "pressure": "Ciśnienie"},
+  "community": {"title": "Społeczność"}, "profile": {"settings": "Ustawienia", "language": "Język", "suggestTranslation": "Zaproponuj lepsze tłumaczenie"},
+  "common": {"cancel": "Anuluj", "save": "Zapisz", "ok": "OK"}
+}

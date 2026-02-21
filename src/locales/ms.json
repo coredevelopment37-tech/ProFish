@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Aplikasi memancing terbaik di dunia"},
+  "map": {"title": "Peta"}, "catches": {"title": "Tangkapan saya", "empty": "Tiada tangkapan lagi"},
+  "catch": {"logCatch": "Log tangkapan", "species": "Spesies", "weight": "Berat (kg)", "bait": "Umpan", "released": "Tangkap dan lepas"},
+  "fishcast": {"title": "FishCast", "weather": "Cuaca", "wind": "Angin", "pressure": "Tekanan"},
+  "community": {"title": "Komuniti"}, "profile": {"settings": "Tetapan", "language": "Bahasa", "suggestTranslation": "Cadangkan terjemahan lebih baik"},
+  "common": {"cancel": "Batal", "save": "Simpan", "ok": "OK"}
+}

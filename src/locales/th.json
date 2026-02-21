@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "แอปตกปลาที่ดีที่สุดในโลก"},
+  "map": {"title": "แผนที่"}, "catches": {"title": "ปลาที่จับได้", "empty": "ยังไม่มีปลาที่จับได้"},
+  "catch": {"logCatch": "บันทึกการจับ", "species": "ชนิด", "weight": "น้ำหนัก (กก.)", "bait": "เหยื่อ", "released": "จับแล้วปล่อย"},
+  "fishcast": {"title": "FishCast", "weather": "สภาพอากาศ", "wind": "ลม", "pressure": "ความกดอากาศ"},
+  "community": {"title": "ชุมชน"}, "profile": {"settings": "ตั้งค่า", "language": "ภาษา", "suggestTranslation": "แนะนำคำแปลที่ดีกว่า"},
+  "common": {"cancel": "ยกเลิก", "save": "บันทึก", "ok": "ตกลง"}
+}

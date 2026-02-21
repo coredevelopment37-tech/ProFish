@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Ang pinakamahusay na fishing app sa mundo"},
+  "map": {"title": "Mapa"}, "catches": {"title": "Mga nahuli ko", "empty": "Wala pang nahuli"},
+  "catch": {"logCatch": "I-log ang huli", "species": "Uri", "weight": "Timbang (kg)", "bait": "Pain", "released": "Hulihin at pakawalan"},
+  "fishcast": {"title": "FishCast", "weather": "Panahon", "wind": "Hangin", "pressure": "Presyon"},
+  "community": {"title": "Komunidad"}, "profile": {"settings": "Mga setting", "language": "Wika", "suggestTranslation": "Magmungkahi ng mas magandang salin"},
+  "common": {"cancel": "Kanselahin", "save": "I-save", "ok": "OK"}
+}

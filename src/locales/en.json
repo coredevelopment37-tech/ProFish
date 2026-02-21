@@ -1,0 +1,107 @@
+{
+  "app": {
+    "name": "ProFish",
+    "tagline": "The world's best fishing app"
+  },
+  "map": {
+    "title": "Map",
+    "setupRequired": "Mapbox not configured yet. Run npm install and link native modules.",
+    "layers": "Layers",
+    "myLocation": "My Location"
+  },
+  "catches": {
+    "title": "My Catches",
+    "empty": "No catches yet",
+    "emptyHint": "Tap the fish button on the map to log your first catch!",
+    "logFirst": "Log First Catch",
+    "unknownSpecies": "Unknown species"
+  },
+  "catch": {
+    "logCatch": "Log Catch",
+    "species": "Species",
+    "speciesPlaceholder": "e.g. Largemouth Bass",
+    "speciesRequired": "Please enter a species",
+    "weight": "Weight (kg)",
+    "length": "Length (cm)",
+    "bait": "Bait / Lure",
+    "baitPlaceholder": "e.g. Worm, Spinner, Fly",
+    "notes": "Notes",
+    "notesPlaceholder": "Any details about the catch...",
+    "released": "Catch & Release",
+    "addPhoto": "Add Photo",
+    "error": "Error"
+  },
+  "fishcast": {
+    "title": "FishCast",
+    "loading": "Calculating FishCast...",
+    "error": "Could not load forecast",
+    "weather": "Weather",
+    "wind": "Wind",
+    "pressure": "Pressure",
+    "solunar": "Solunar",
+    "excellent": "Excellent",
+    "veryGood": "Very Good",
+    "good": "Good",
+    "fair": "Fair",
+    "poor": "Poor"
+  },
+  "community": {
+    "title": "Community",
+    "comingSoon": "Community feed coming soon! Share your catches with anglers worldwide."
+  },
+  "profile": {
+    "angler": "Angler",
+    "settings": "Settings",
+    "language": "Language",
+    "region": "Region",
+    "units": "Units",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "subscription": "Subscription",
+    "help": "Help",
+    "suggestTranslation": "Suggest Better Translation",
+    "reportBug": "Report a Bug",
+    "about": "About ProFish"
+  },
+  "species": {
+    "notFound": "Species not found",
+    "family": "Family",
+    "habitat": "Habitat",
+    "regions": "Regions"
+  },
+  "subscription": {
+    "free": "Free",
+    "pro": "Pro",
+    "team": "Team",
+    "guide": "Guide",
+    "upgrade": "Upgrade",
+    "restore": "Restore Purchase"
+  },
+  "layer": {
+    "satellite": "Satellite",
+    "terrain": "Terrain",
+    "weather": "Weather",
+    "windArrows": "Wind Arrows",
+    "solunar": "Solunar Overlay",
+    "catchMarkers": "Catch Markers",
+    "tideStations": "Tide Stations",
+    "bathymetry": "Bathymetry",
+    "sst": "Sea Surface Temp",
+    "chlorophyll": "Chlorophyll",
+    "nauticalCharts": "Nautical Charts",
+    "fishHotspots": "Fish Hotspots",
+    "currentArrows": "Current Arrows",
+    "waterTempContours": "Water Temp Contours",
+    "depthContours": "Depth Contours",
+    "cmapCharts": "C-MAP Charts"
+  },
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "ok": "OK",
+    "error": "Error",
+    "loading": "Loading...",
+    "retry": "Retry",
+    "back": "Back"
+  }
+}

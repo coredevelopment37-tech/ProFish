@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Dünyanın en iyi balıkçılık uygulaması"},
+  "map": {"title": "Harita"}, "catches": {"title": "Avlarım", "empty": "Henüz av yok"},
+  "catch": {"logCatch": "Av kaydet", "species": "Tür", "weight": "Ağırlık (kg)", "bait": "Yem", "released": "Yakala bırak"},
+  "fishcast": {"title": "FishCast", "weather": "Hava", "wind": "Rüzgâr", "pressure": "Basınç"},
+  "community": {"title": "Topluluk"}, "profile": {"settings": "Ayarlar", "language": "Dil", "suggestTranslation": "Daha iyi çeviri öner"},
+  "common": {"cancel": "İptal", "save": "Kaydet", "ok": "Tamam"}
+}

@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Ứng dụng câu cá tốt nhất thế giới"},
+  "map": {"title": "Bản đồ"}, "catches": {"title": "Cá đã câu", "empty": "Chưa có cá nào"},
+  "catch": {"logCatch": "Ghi nhận cá câu", "species": "Loài", "weight": "Cân nặng (kg)", "bait": "Mồi", "released": "Bắt và thả"},
+  "fishcast": {"title": "FishCast", "weather": "Thời tiết", "wind": "Gió", "pressure": "Áp suất"},
+  "community": {"title": "Cộng đồng"}, "profile": {"settings": "Cài đặt", "language": "Ngôn ngữ", "suggestTranslation": "Đề xuất bản dịch tốt hơn"},
+  "common": {"cancel": "Hủy", "save": "Lưu", "ok": "OK"}
+}

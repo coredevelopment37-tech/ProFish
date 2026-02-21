@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "O melhor aplicativo de pesca do mundo"},
+  "map": {"title": "Mapa"}, "catches": {"title": "Minhas capturas", "empty": "Nenhuma captura ainda"},
+  "catch": {"logCatch": "Registrar captura", "species": "Espécie", "weight": "Peso (kg)", "bait": "Isca", "released": "Pegar e soltar"},
+  "fishcast": {"title": "FishCast", "weather": "Clima", "wind": "Vento", "pressure": "Pressão"},
+  "community": {"title": "Comunidade"}, "profile": {"settings": "Configurações", "language": "Idioma", "suggestTranslation": "Sugerir melhor tradução"},
+  "common": {"cancel": "Cancelar", "save": "Salvar", "ok": "OK"}
+}

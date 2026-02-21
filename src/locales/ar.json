@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "أفضل تطبيق صيد في العالم"},
+  "map": {"title": "الخريطة"}, "catches": {"title": "صيداتي", "empty": "لا يوجد صيد بعد"},
+  "catch": {"logCatch": "تسجيل صيدة", "species": "النوع", "weight": "الوزن (كجم)", "bait": "الطعم", "released": "صيد وإطلاق"},
+  "fishcast": {"title": "FishCast", "weather": "الطقس", "wind": "الرياح", "pressure": "الضغط"},
+  "community": {"title": "المجتمع"}, "profile": {"settings": "الإعدادات", "language": "اللغة", "suggestTranslation": "اقترح ترجمة أفضل"},
+  "common": {"cancel": "إلغاء", "save": "حفظ", "ok": "موافق"}
+}

@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Verdens bedste fiskeapp"},
+  "map": {"title": "Kort"}, "catches": {"title": "Mine fangster", "empty": "Ingen fangster endnu"},
+  "catch": {"logCatch": "Log fangst", "species": "Art", "weight": "Vægt (kg)", "bait": "Agn", "released": "Fang og slip"},
+  "fishcast": {"title": "FishCast", "weather": "Vejr", "wind": "Vind", "pressure": "Tryk"},
+  "community": {"title": "Fællesskab"}, "profile": {"settings": "Indstillinger", "language": "Sprog", "suggestTranslation": "Foreslå bedre oversættelse"},
+  "common": {"cancel": "Annuller", "save": "Gem", "ok": "OK"}
+}

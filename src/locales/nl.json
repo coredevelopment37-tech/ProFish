@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "De beste vis-app ter wereld"},
+  "map": {"title": "Kaart"}, "catches": {"title": "Mijn vangsten", "empty": "Nog geen vangsten"},
+  "catch": {"logCatch": "Vangst loggen", "species": "Soort", "weight": "Gewicht (kg)", "bait": "Aas", "released": "Vangen en loslaten"},
+  "fishcast": {"title": "FishCast", "weather": "Weer", "wind": "Wind", "pressure": "Druk"},
+  "community": {"title": "Gemeenschap"}, "profile": {"settings": "Instellingen", "language": "Taal", "suggestTranslation": "Betere vertaling voorstellen"},
+  "common": {"cancel": "Annuleren", "save": "Opslaan", "ok": "OK"}
+}

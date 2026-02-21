@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "La meilleure application de pêche au monde"},
+  "map": {"title": "Carte"}, "catches": {"title": "Mes prises", "empty": "Pas encore de prises"},
+  "catch": {"logCatch": "Enregistrer prise", "species": "Espèce", "weight": "Poids (kg)", "bait": "Appât", "released": "Pêcher & Relâcher"},
+  "fishcast": {"title": "FishCast", "weather": "Météo", "wind": "Vent", "pressure": "Pression"},
+  "community": {"title": "Communauté"}, "profile": {"settings": "Paramètres", "language": "Langue", "suggestTranslation": "Suggérer une meilleure traduction"},
+  "common": {"cancel": "Annuler", "save": "Sauvegarder", "ok": "OK"}
+}

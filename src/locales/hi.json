@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "दुनिया का सबसे अच्छा मछली पकड़ने का ऐप"},
+  "map": {"title": "मानचित्र"}, "catches": {"title": "मेरी पकड़", "empty": "अभी तक कोई पकड़ नहीं"},
+  "catch": {"logCatch": "पकड़ दर्ज करें", "species": "प्रजाति", "weight": "वजन (किग्रा)", "bait": "चारा", "released": "पकड़ो और छोड़ो"},
+  "fishcast": {"title": "FishCast", "weather": "मौसम", "wind": "हवा", "pressure": "दबाव"},
+  "community": {"title": "समुदाय"}, "profile": {"settings": "सेटिंग्स", "language": "भाषा", "suggestTranslation": "बेहतर अनुवाद सुझाएं"},
+  "common": {"cancel": "रद्द करें", "save": "सहेजें", "ok": "ठीक है"}
+}

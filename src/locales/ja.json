@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "世界最高の釣りアプリ"},
+  "map": {"title": "マップ"}, "catches": {"title": "釣果", "empty": "まだ釣果がありません"},
+  "catch": {"logCatch": "釣果を記録", "species": "魚種", "weight": "重さ (kg)", "bait": "エサ・ルアー", "released": "キャッチ＆リリース"},
+  "fishcast": {"title": "FishCast", "weather": "天気", "wind": "風", "pressure": "気圧"},
+  "community": {"title": "コミュニティ"}, "profile": {"settings": "設定", "language": "言語", "suggestTranslation": "より良い翻訳を提案"},
+  "common": {"cancel": "キャンセル", "save": "保存", "ok": "OK"}
+}

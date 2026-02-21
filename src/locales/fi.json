@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Maailman paras kalastussovellus"},
+  "map": {"title": "Kartta"}, "catches": {"title": "Saaliini", "empty": "Ei vielä saaliita"},
+  "catch": {"logCatch": "Kirjaa saalis", "species": "Laji", "weight": "Paino (kg)", "bait": "Syötti", "released": "Pyydä ja päästä"},
+  "fishcast": {"title": "FishCast", "weather": "Sää", "wind": "Tuuli", "pressure": "Paine"},
+  "community": {"title": "Yhteisö"}, "profile": {"settings": "Asetukset", "language": "Kieli", "suggestTranslation": "Ehdota parempaa käännöstä"},
+  "common": {"cancel": "Peruuta", "save": "Tallenna", "ok": "OK"}
+}

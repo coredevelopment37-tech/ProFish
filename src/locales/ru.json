@@ -1,0 +1,8 @@
+{
+  "app": {"name": "ProFish", "tagline": "Лучшее рыболовное приложение в мире"},
+  "map": {"title": "Карта"}, "catches": {"title": "Мои уловы", "empty": "Пока нет уловов"},
+  "catch": {"logCatch": "Записать улов", "species": "Вид", "weight": "Вес (кг)", "bait": "Наживка", "released": "Поймал — отпусти"},
+  "fishcast": {"title": "FishCast", "weather": "Погода", "wind": "Ветер", "pressure": "Давление"},
+  "community": {"title": "Сообщество"}, "profile": {"settings": "Настройки", "language": "Язык", "suggestTranslation": "Предложить лучший перевод"},
+  "common": {"cancel": "Отмена", "save": "Сохранить", "ok": "ОК"}
+}

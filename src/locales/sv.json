@@ -1,0 +1,13 @@
+{
+  "app": {
+    "name": "ProFish",
+    "tagline": "Världens bästa fiskeapp"
+  },
+  "map": {"title": "Karta", "layers": "Lager", "myLocation": "Min plats"},
+  "catches": {"title": "Mina fångster", "empty": "Inga fångster ännu", "logFirst": "Logga första fångsten"},
+  "catch": {"logCatch": "Logga fångst", "species": "Art", "weight": "Vikt (kg)", "length": "Längd (cm)", "bait": "Bete", "released": "Fånga & Släpp", "addPhoto": "Lägg till foto"},
+  "fishcast": {"title": "FishCast", "weather": "Väder", "wind": "Vind", "pressure": "Tryck", "solunar": "Solunar"},
+  "community": {"title": "Gemenskap", "comingSoon": "Gemenskapsflöde kommer snart!"},
+  "profile": {"settings": "Inställningar", "language": "Språk", "subscription": "Prenumeration", "suggestTranslation": "Föreslå bättre översättning"},
+  "common": {"cancel": "Avbryt", "save": "Spara", "ok": "OK", "loading": "Laddar..."}
+}
