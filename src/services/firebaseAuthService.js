@@ -36,6 +36,28 @@ try {
 }
 
 const firebaseAuthService = {
+  // ── Rate Limiting ────────────────────────────────────
+  _authAttempts: [],
+  _RATE_LIMIT: 5,
+  _RATE_WINDOW: 60 * 1000, // 1 minute
+
+  _checkRateLimit() {
+    const now = Date.now();
+    // Clean old attempts outside the window
+    this._authAttempts = this._authAttempts.filter(
+      ts => now - ts < this._RATE_WINDOW,
+    );
+    if (this._authAttempts.length >= this._RATE_LIMIT) {
+      const wait = Math.ceil(
+        (this._RATE_WINDOW - (now - this._authAttempts[0])) / 1000,
+      );
+      throw new Error(
+        `Too many auth attempts. Please wait ${wait}s before trying again.`,
+      );
+    }
+    this._authAttempts.push(now);
+  },
+
   /**
    * Get current user
    */
@@ -49,6 +71,7 @@ const firebaseAuthService = {
   async signInWithGoogle() {
     if (!auth) throw new Error('Firebase Auth not available');
     if (!GoogleSignin) throw new Error('Google Sign-In not available');
+    this._checkRateLimit();
 
     // Check play services
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
@@ -82,6 +105,7 @@ const firebaseAuthService = {
     if (!auth) throw new Error('Firebase Auth not available');
     if (!appleAuth)
       throw new Error('Apple Sign-In not available on this device');
+    this._checkRateLimit();
 
     // Perform Apple sign-in request
     const appleAuthResponse = await appleAuth.performRequest({
@@ -130,6 +154,7 @@ const firebaseAuthService = {
    */
   async signInAnonymously() {
     if (!auth) throw new Error('Firebase Auth not available');
+    this._checkRateLimit();
     return await auth().signInAnonymously();
   },
 
@@ -138,6 +163,7 @@ const firebaseAuthService = {
    */
   async signInWithEmail(email, password) {
     if (!auth) throw new Error('Firebase Auth not available');
+    this._checkRateLimit();
     const userCredential = await auth().signInWithEmailAndPassword(
       email,
       password,

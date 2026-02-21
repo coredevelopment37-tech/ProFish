@@ -334,6 +334,118 @@ const catchService = {
   async retrySync() {
     await this._syncToFirestore();
   },
+
+  // ── Background Sync ────────────────────────────────
+  _bgTimer: null,
+  _BG_INTERVAL: 5 * 60 * 1000, // 5 minutes
+
+  /**
+   * Start periodic background sync on a timer
+   */
+  startBackgroundSync() {
+    if (this._bgTimer) return;
+    this._bgTimer = setInterval(async () => {
+      try {
+        await this._syncToFirestore();
+        await this.pullFromFirestore();
+      } catch (e) {
+        console.warn('[CatchService] Background sync cycle error:', e);
+      }
+    }, this._BG_INTERVAL);
+    console.log('[CatchService] Background sync started (5m interval)');
+  },
+
+  stopBackgroundSync() {
+    if (this._bgTimer) {
+      clearInterval(this._bgTimer);
+      this._bgTimer = null;
+      console.log('[CatchService] Background sync stopped');
+    }
+  },
+
+  // ── Conflict Resolution (last-write-wins by updatedAt) ──
+
+  /**
+   * Merge remote doc with local doc using last-write-wins strategy.
+   * Returns the winning version.
+   */
+  _resolveConflict(local, remote) {
+    const localTime = new Date(local.updatedAt || local.createdAt).getTime();
+    const remoteTime = new Date(remote.updatedAt || remote.createdAt).getTime();
+    // Last-write-wins: the newer timestamp takes precedence
+    if (remoteTime > localTime) {
+      return { ...remote, synced: true };
+    }
+    return { ...local, synced: false }; // local wins, needs re-sync
+  },
+
+  /**
+   * Full bidirectional sync with conflict resolution
+   */
+  async fullSync() {
+    if (!firestore || !auth) return { pulled: 0, pushed: 0, conflicts: 0 };
+    const user = auth().currentUser;
+    if (!user) return { pulled: 0, pushed: 0, conflicts: 0 };
+
+    await this.init();
+    let conflicts = 0;
+
+    try {
+      // 1. Pull remote
+      const snapshot = await firestore()
+        .collection('users')
+        .doc(user.uid)
+        .collection('catches')
+        .orderBy('createdAt', 'desc')
+        .limit(1000)
+        .get();
+
+      const remoteMap = {};
+      snapshot.docs.forEach(doc => {
+        const data = doc.data();
+        remoteMap[data.id] = { ...data, synced: true };
+      });
+
+      // 2. Merge with conflict resolution
+      const localMap = {};
+      this._catches.forEach(c => {
+        localMap[c.id] = c;
+      });
+
+      // Resolve conflicts for items that exist both locally and remotely
+      for (const id of Object.keys(localMap)) {
+        if (remoteMap[id]) {
+          const resolved = this._resolveConflict(localMap[id], remoteMap[id]);
+          localMap[id] = resolved;
+          if (resolved !== localMap[id]) conflicts++;
+          delete remoteMap[id]; // handled
+        }
+      }
+
+      // Add remote-only items
+      const pulled = Object.keys(remoteMap).length;
+      for (const id of Object.keys(remoteMap)) {
+        localMap[id] = remoteMap[id];
+      }
+
+      // Rebuild sorted list
+      this._catches = Object.values(localMap).sort(
+        (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
+      );
+      await this._persist();
+
+      // 3. Push unsynced local catches
+      await this._syncToFirestore();
+      const stored = await AsyncStorage.getItem(SYNC_QUEUE_KEY);
+      const remaining = stored ? JSON.parse(stored) : [];
+      const pushed = this._catches.filter(c => c.synced).length;
+
+      return { pulled, pushed, conflicts };
+    } catch (e) {
+      console.warn('[CatchService] Full sync error:', e);
+      return { pulled: 0, pushed: 0, conflicts: 0 };
+    }
+  },
 };
 
 function generateId() {

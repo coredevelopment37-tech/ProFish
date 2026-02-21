@@ -209,7 +209,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 ### Map Interactions
 
 - [x] 132. Tap on catch marker → show catch detail popup
-- [ ] 133. Tap on tide station → show tide chart modal
+- [x] 133. Tap on tide station → show tide chart modal
 - [ ] 134. Tap on fish hotspot → show species breakdown + best times
 - [x] 135. Long-press → context menu (Log Catch Here, Get FishCast, Save Spot)
 - [x] 136. Cluster catch markers at low zoom levels (Supercluster)
@@ -372,7 +372,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 234. Implement RTL layout mirroring for Arabic
 - [x] 235. Apply `I18nManager.forceRTL()` when Arabic is selected
 - [ ] 236. Test all screens in RTL mode (layouts, icons, swipe directions)
-- [ ] 237. Implement pluralization rules (i18next plural keys: `_one`, `_other`, `_zero`)
+- [x] 237. Implement pluralization rules (i18next plural keys: `_one`, `_other`, `_zero`)
 - [x] 238. Implement number formatting per locale (decimal separators: 1,000.50 vs 1.000,50)
 - [x] 239. Implement date formatting per locale (MM/DD vs DD/MM)
 - [x] 240. Implement unit conversion labels (kg/lb, cm/in, °C/°F, km/mi)
@@ -441,9 +441,9 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 277. Build ProfileScreen with language picker, units toggle, sign-out, delete account
 - [x] 278. Implement user display name + avatar (from Google/Apple or custom upload)
 - [x] 279. Implement preferred units setting (metric/imperial, persisted to AsyncStorage)
-- [ ] 280. Implement preferred species list (favorites for quick catch logging)
+- [x] 280. Implement preferred species list (favorites for quick catch logging)
 - [x] 281. Implement notification preferences (FishCast alerts, community mentions)
-- [ ] 282. Implement "Export My Data" (GDPR compliance — JSON download of all catches)
+- [x] 282. Implement "Export My Data" (GDPR compliance — JSON download of all catches)
 - [x] 283. Implement account deletion (Firebase Auth delete + Firestore user doc purge)
 - [x] 284. Show subscription status + manage subscription link
 
@@ -453,7 +453,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 286. Implement auth state listener (update AppContext on sign-in/sign-out)
 - [x] 287. Handle token refresh automatically (Firebase SDK handles this)
 - [x] 288. Show sign-in prompt for gated features (catches, community posts)
-- [ ] 289. Implement rate limiting for auth attempts (5 per minute)
+- [x] 289. Implement rate limiting for auth attempts (5 per minute)
 
 ---
 
@@ -464,15 +464,15 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 290. Implement AsyncStorage as primary local cache for catches
 - [x] 291. Implement sync queue (`@profish_sync_queue`) for pending Firestore writes
 - [x] 292. Implement fire-and-forget Firestore sync on catch save
-- [ ] 293. Implement periodic background sync (every 15 min when online)
-- [ ] 294. Implement conflict resolution: last-write-wins with timestamp comparison
+- [x] 293. Implement periodic background sync (every 15 min when online)
+- [x] 294. Implement conflict resolution: last-write-wins with timestamp comparison)
 - [x] 295. Implement sync status indicator (synced ✓, pending ↻, error ✗)
 
 ### Firestore Sync
 
 - [x] 296. Create Firestore collection structure: `users/{uid}/catches/{catchId}`
-- [ ] 297. Create Firestore collection: `users/{uid}/preferences`
-- [ ] 298. Create Firestore collection: `users/{uid}/spots`
+- [x] 297. Create Firestore collection: `users/{uid}/preferences`
+- [x] 298. Create Firestore collection: `users/{uid}/spots`
 - [x] 299. Implement batch sync (upload up to 50 pending catches at once)
 - [ ] 300. Implement Firestore snapshot listener for real-time updates on shared catches
 - [ ] 301. Implement data pagination for Firestore reads (cursor-based)
@@ -541,17 +541,17 @@ Legend: `[x]` = Done · `[ ]` = To Do
 ### Feed System
 
 - [x] 340. Build `CommunityScreen.js` with preview card layout
-- [ ] 341. Implement feed data model: posts (catch shares, tips, questions)
-- [ ] 342. Create Firestore collection: `posts/{postId}` with author, content, media, location, species, likes, comments
-- [ ] 343. Implement infinite scroll feed with cursor-based pagination
-- [ ] 344. Implement "Share Catch" — auto-generate post from catch data
-- [ ] 345. Implement "Post Tip" — free-text with optional photo
-- [ ] 346. Implement "Ask Question" — tagged by species/technique
+- [x] 341. Implement feed data model: posts (catch shares, tips, questions)
+- [x] 342. Create Firestore collection: `posts/{postId}` with author, content, media, location, species, likes, comments
+- [x] 343. Implement infinite scroll feed with cursor-based pagination
+- [x] 344. Implement "Share Catch" — auto-generate post from catch data
+- [x] 345. Implement "Post Tip" — free-text with optional photo
+- [x] 346. Implement "Ask Question" — tagged by species/technique
 
 ### Social Interactions
 
-- [ ] 347. Implement like/unlike on posts (optimistic UI)
-- [ ] 348. Implement comments thread on posts
+- [x] 347. Implement like/unlike on posts (optimistic UI)
+- [x] 348. Implement comments thread on posts
 - [ ] 349. Implement follow/unfollow users
 - [ ] 350. Implement user profile view (their catches, posts, stats)
 - [ ] 351. Implement content reporting (spam, inappropriate)
@@ -600,9 +600,9 @@ Legend: `[x]` = Done · `[ ]` = To Do
 ## 14. Advanced Analytics — Phase 2 (~15 items)
 
 - [x] 380. Build personal stats dashboard (total catches, species count, average weight)
-- [ ] 381. Build catch trends chart (catches per week/month over time)
+- [x] 381. Build catch trends chart (catches per week/month over time)
 - [x] 382. Build personal best records (heaviest/longest per species)
-- [ ] 383. Build species collection progress (X of 56 caught — "Pokédex" style)
+- [x] 383. Build species collection progress (X of 56 caught — "Pokédex" style)
 - [ ] 384. Build heatmap of personal catch locations
 - [ ] 385. Build time analysis (best hour, best day of week, best moon phase)
 - [ ] 386. Build bait effectiveness analysis (success rate by bait type per species)

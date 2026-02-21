@@ -173,5 +173,31 @@
     "previous": "Previous",
     "search": "Search",
     "close": "Close"
+  },
+  "plural": {
+    "catch_one": "{{count}} catch",
+    "catch_other": "{{count}} catches",
+    "species_one": "{{count}} species",
+    "species_other": "{{count}} species",
+    "day_one": "{{count}} day",
+    "day_other": "{{count}} days",
+    "hour_one": "{{count}} hour",
+    "hour_other": "{{count}} hours",
+    "minute_one": "{{count}} minute",
+    "minute_other": "{{count}} minutes",
+    "post_one": "{{count}} post",
+    "post_other": "{{count}} posts",
+    "like_one": "{{count}} like",
+    "like_other": "{{count}} likes",
+    "comment_one": "{{count}} comment",
+    "comment_other": "{{count}} comments",
+    "angler_one": "{{count}} angler",
+    "angler_other": "{{count}} anglers",
+    "spot_one": "{{count}} spot",
+    "spot_other": "{{count}} spots",
+    "fish_one": "{{count}} fish",
+    "fish_other": "{{count}} fish",
+    "photo_one": "{{count}} photo",
+    "photo_other": "{{count}} photos"
   }
 }

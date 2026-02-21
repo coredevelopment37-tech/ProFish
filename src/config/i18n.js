@@ -135,6 +135,16 @@ i18n.use(initReactI18next).init({
     escapeValue: false, // React already escapes
   },
 
+  // Pluralization: i18next uses CLDR plural categories automatically.
+  // Keys: _zero, _one, _two, _few, _many, _other
+  // English: _one + _other    (1 fish, 5 fish)
+  // Polish:  _one + _few + _many + _other
+  // Arabic:  _zero + _one + _two + _few + _many + _other
+  // Russian: _one + _few + _many + _other
+  // Japanese/Korean/Thai/Vietnamese/Chinese: _other only (no plural forms)
+  pluralSeparator: '_',
+  compatibilityJSON: 'v4', // Use CLDR plural rules (v4 format)
+
   ns: ['translation'],
   defaultNS: 'translation',
 

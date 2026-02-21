@@ -16,6 +16,9 @@ import {
   PermissionsAndroid,
   Alert,
   Keyboard,
+  Modal,
+  ScrollView,
+  ActivityIndicator,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Geolocation from '@react-native-community/geolocation';
@@ -31,6 +34,7 @@ import spotService from '../../services/spotService';
 import weatherService from '../../services/weatherService';
 import LayerPicker from '../../components/LayerPicker';
 import WeatherCard from '../../components/WeatherCard';
+import tideService from '../../services/tideService';
 
 // Mapbox will be initialized once native modules are linked
 let MapboxGL = null;
@@ -62,6 +66,9 @@ export default function MapScreen({ navigation }) {
   const [layerPickerVisible, setLayerPickerVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCatch, setSelectedCatch] = useState(null);
+  const [tideModalVisible, setTideModalVisible] = useState(false);
+  const [tideData, setTideData] = useState(null);
+  const [tideLoading, setTideLoading] = useState(false);
 
   // Request location permission and start tracking
   useEffect(() => {
@@ -219,6 +226,22 @@ export default function MapScreen({ navigation }) {
     },
     [catches],
   );
+
+  // Handle tide station tap → open tide chart modal
+  const handleTideStationTap = useCallback(async (lat, lng, stationName) => {
+    setTideModalVisible(true);
+    setTideLoading(true);
+    setTideData(null);
+    try {
+      const data = await tideService.getTides(lat, lng);
+      setTideData({ ...data, stationName: stationName || 'Tide Station' });
+    } catch (e) {
+      console.warn('[Map] Tide fetch error:', e);
+      setTideData({ error: true, stationName: stationName || 'Tide Station' });
+    } finally {
+      setTideLoading(false);
+    }
+  }, []);
 
   // Build catch GeoJSON
   const catchGeoJSON = {
@@ -523,6 +546,106 @@ export default function MapScreen({ navigation }) {
         onToggleLayer={toggleLayer}
         tier={state.subscriptionTier}
       />
+
+      {/* Tide Station Modal */}
+      <Modal
+        visible={tideModalVisible}
+        animationType="slide"
+        transparent
+        onRequestClose={() => setTideModalVisible(false)}
+      >
+        <View style={styles.tideModalOverlay}>
+          <View style={styles.tideModalSheet}>
+            <View style={styles.tideModalHeader}>
+              <Text style={styles.tideModalTitle}>
+                🌊{' '}
+                {tideData?.stationName || t('map.tideStation', 'Tide Station')}
+              </Text>
+              <TouchableOpacity onPress={() => setTideModalVisible(false)}>
+                <Text style={styles.tideModalClose}>✕</Text>
+              </TouchableOpacity>
+            </View>
+            {tideLoading ? (
+              <View style={styles.tideModalLoading}>
+                <ActivityIndicator size="large" color="#0080FF" />
+                <Text style={styles.tideModalLoadText}>
+                  {t('common.loading', 'Loading...')}
+                </Text>
+              </View>
+            ) : tideData?.error ? (
+              <Text style={styles.tideModalError}>
+                {t(
+                  'map.tideError',
+                  'Unable to load tide data for this station.',
+                )}
+              </Text>
+            ) : tideData?.predictions ? (
+              <ScrollView style={styles.tideModalContent}>
+                {/* Current state */}
+                {tideData.current && (
+                  <View style={styles.tideCurrentRow}>
+                    <Text style={styles.tideCurrentLabel}>
+                      {t('map.currentTide', 'Current')}
+                    </Text>
+                    <Text style={styles.tideCurrentValue}>
+                      {tideData.current.height?.toFixed(1) || '--'} m
+                    </Text>
+                    <Text style={styles.tideCurrentState}>
+                      {tideData.current.state === 'rising'
+                        ? '↑ Rising'
+                        : '↓ Falling'}
+                    </Text>
+                  </View>
+                )}
+
+                {/* Tide chart — simple bar visualization */}
+                <Text style={styles.tideSectionTitle}>
+                  {t('map.todaysTides', "Today's Tides")}
+                </Text>
+                {tideData.predictions.slice(0, 8).map((pred, idx) => {
+                  const time = new Date(pred.t || pred.time);
+                  const h = parseFloat(pred.v || pred.height || 0);
+                  const maxH = Math.max(
+                    ...tideData.predictions
+                      .slice(0, 8)
+                      .map(p => Math.abs(parseFloat(p.v || p.height || 0))),
+                    1,
+                  );
+                  return (
+                    <View key={idx} style={styles.tideBarRow}>
+                      <Text style={styles.tideBarTime}>
+                        {time.toLocaleTimeString([], {
+                          hour: '2-digit',
+                          minute: '2-digit',
+                        })}
+                      </Text>
+                      <View style={styles.tideBarTrack}>
+                        <View
+                          style={[
+                            styles.tideBarFill,
+                            {
+                              width: `${Math.max(
+                                5,
+                                (Math.abs(h) / maxH) * 100,
+                              )}%`,
+                              backgroundColor: h >= 0 ? '#0080FF' : '#FF6B00',
+                            },
+                          ]}
+                        />
+                      </View>
+                      <Text style={styles.tideBarValue}>{h.toFixed(2)} m</Text>
+                    </View>
+                  );
+                })}
+              </ScrollView>
+            ) : (
+              <Text style={styles.tideModalError}>
+                {t('map.noTideData', 'No tide data available.')}
+              </Text>
+            )}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -643,4 +766,73 @@ const styles = StyleSheet.create({
   popupStats: { flexDirection: 'row', gap: 12, marginBottom: 8 },
   popupStat: { fontSize: 14, color: '#ccc' },
   popupHint: { fontSize: 12, color: '#0080FF' },
+
+  // Tide Modal
+  tideModalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.6)',
+  },
+  tideModalSheet: {
+    backgroundColor: '#1a1a2e',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    padding: 20,
+    maxHeight: '70%',
+  },
+  tideModalHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  tideModalTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  tideModalClose: { color: '#888', fontSize: 22, padding: 4 },
+  tideModalLoading: { alignItems: 'center', padding: 40 },
+  tideModalLoadText: { color: '#888', marginTop: 12, fontSize: 14 },
+  tideModalError: {
+    color: '#888',
+    fontSize: 14,
+    textAlign: 'center',
+    padding: 30,
+  },
+  tideModalContent: { maxHeight: 400 },
+  tideCurrentRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+    backgroundColor: '#0a0a1a',
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 16,
+  },
+  tideCurrentLabel: { color: '#888', fontSize: 13 },
+  tideCurrentValue: {
+    color: '#0080FF',
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  tideCurrentState: { color: '#ccc', fontSize: 14 },
+  tideSectionTitle: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+    marginBottom: 12,
+  },
+  tideBarRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  tideBarTime: { width: 55, color: '#888', fontSize: 12 },
+  tideBarTrack: {
+    flex: 1,
+    height: 16,
+    backgroundColor: '#0a0a1a',
+    borderRadius: 8,
+    overflow: 'hidden',
+    marginHorizontal: 8,
+  },
+  tideBarFill: { height: 16, borderRadius: 8, minWidth: 4 },
+  tideBarValue: { width: 55, color: '#ccc', fontSize: 12, textAlign: 'right' },
 });
