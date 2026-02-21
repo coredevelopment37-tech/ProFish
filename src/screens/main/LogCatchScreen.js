@@ -266,12 +266,41 @@ export default function LogCatchScreen({ navigation, route }) {
       if (isEditing) {
         const updated = await catchService.updateCatch(editCatch.id, catchData);
         dispatch({ type: 'UPDATE_CATCH', payload: updated });
+        notificationSuccess();
+        navigation.goBack();
       } else {
         const saved = await catchService.logCatch(catchData);
         dispatch({ type: 'ADD_CATCH', payload: saved });
+        notificationSuccess();
+
+        // Offer "Log Another" quick action
+        Alert.alert(
+          t('catch.saved', '🎉 Catch Saved!'),
+          t('catch.savedMessage', 'Your catch has been logged successfully.'),
+          [
+            {
+              text: t('catch.logAnother', 'Log Another'),
+              onPress: () => {
+                // Reset all form fields
+                setSpecies('');
+                setWeight('');
+                setLength('');
+                setBait('');
+                setMethod('');
+                setWaterType('saltwater');
+                setNotes('');
+                setReleased(false);
+                setPhotoUri(null);
+              },
+            },
+            {
+              text: t('common.done', 'Done'),
+              style: 'cancel',
+              onPress: () => navigation.goBack(),
+            },
+          ],
+        );
       }
-      notificationSuccess();
-      navigation.goBack();
     } catch (e) {
       notificationWarning();
       Alert.alert(t('catch.error', 'Error'), e.message);

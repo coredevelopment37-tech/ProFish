@@ -219,4 +219,92 @@ function getScoreLabel(score) {
   return 'Poor';
 }
 
-export default { calculateFishCast };
+/**
+ * Calculate 7-day FishCast outlook using Open-Meteo daily forecast data.
+ * Returns an array of { date, dayName, score, label, highTemp, lowTemp, icon }.
+ */
+export async function calculate7DayOutlook(latitude, longitude) {
+  const cacheKey = cacheService.coordKey('fishcast_7day', latitude, longitude);
+  const cached = await cacheService.get(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,pressure_msl_max,pressure_msl_min,cloud_cover_mean,weather_code&forecast_days=7&timezone=auto`;
+
+    const response = await fetch(url);
+    if (!response.ok) throw new Error('7-day forecast API error');
+
+    const data = await response.json();
+    const daily = data.daily;
+    if (!daily || !daily.time) return [];
+
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const solunar = await import('./solunarService').then(m => m.default);
+
+    const outlook = daily.time.map((dateStr, i) => {
+      const date = new Date(dateStr);
+      const dayName = dayNames[date.getDay()];
+
+      // Simplified scoring for daily overview
+      const pressureAvg =
+        ((daily.pressure_msl_max?.[i] || 1013) +
+          (daily.pressure_msl_min?.[i] || 1013)) /
+        2;
+      const pScore = scorePressure(pressureAvg);
+      const wScore = scoreWind(daily.wind_speed_10m_max?.[i] || 10);
+      const cScore = scoreCloudCover(daily.cloud_cover_mean?.[i] || 50);
+      const rScore = scorePrecipitation(daily.precipitation_sum?.[i] || 0);
+
+      // Get moon phase for each day
+      let moonScore = 50;
+      try {
+        const sol = solunar.getSolunarPeriods(latitude, longitude, date);
+        moonScore = (sol.moonPhase?.fishingRating || 3) * 20;
+      } catch {}
+
+      // Dawn/dusk bonus averaged across day
+      const todScore = 60;
+
+      const score = Math.round(
+        pScore * WEIGHTS.pressure +
+          moonScore * WEIGHTS.moonPhase +
+          60 * WEIGHTS.solunarPeriod + // average solunar for day
+          wScore * WEIGHTS.wind +
+          todScore * WEIGHTS.timeOfDay +
+          cScore * WEIGHTS.cloudCover +
+          rScore * WEIGHTS.precipitation +
+          50 * WEIGHTS.tideState, // neutral tide for daily
+      );
+
+      return {
+        date: dateStr,
+        dayName,
+        score: Math.max(0, Math.min(100, score)),
+        label: getScoreLabel(Math.max(0, Math.min(100, score))),
+        highTemp: Math.round(daily.temperature_2m_max?.[i] || 0),
+        lowTemp: Math.round(daily.temperature_2m_min?.[i] || 0),
+        weatherCode: daily.weather_code?.[i] || 0,
+        icon: getWeatherEmoji(daily.weather_code?.[i] || 0),
+      };
+    });
+
+    await cacheService.set(cacheKey, outlook, 4 * 60 * 60 * 1000); // 4hr cache
+    return outlook;
+  } catch (error) {
+    console.warn('[FishCast] 7-day outlook error:', error);
+    return [];
+  }
+}
+
+function getWeatherEmoji(code) {
+  if (code === 0) return '☀️';
+  if (code <= 3) return '⛅';
+  if (code <= 48) return '🌫️';
+  if (code <= 55) return '🌦️';
+  if (code <= 65) return '🌧️';
+  if (code <= 77) return '🌨️';
+  if (code <= 82) return '🌧️';
+  return '⛈️';
+}
+
+export default { calculateFishCast, calculate7DayOutlook };

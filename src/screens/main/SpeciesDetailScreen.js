@@ -3,7 +3,7 @@
  * Shows taxonomy, habitat, techniques, records, seasonality
  */
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import speciesDatabase from '../../services/speciesDatabase';
+import catchService from '../../services/catchService';
 import { useApp } from '../../store/AppContext';
 import { formatWeight, formatLength } from '../../utils/units';
 
@@ -23,6 +24,16 @@ export default function SpeciesDetailScreen({ route, navigation }) {
   const units = state.units || 'metric';
   const { speciesId } = route.params || {};
   const species = speciesDatabase.getById(speciesId);
+  const [myCatches, setMyCatches] = useState([]);
+
+  useEffect(() => {
+    if (speciesId) {
+      catchService
+        .getCatches({ species: speciesId.replace(/_/g, ' '), limit: 10 })
+        .then(setMyCatches)
+        .catch(() => {});
+    }
+  }, [speciesId]);
 
   if (!species) {
     return (
@@ -160,6 +171,39 @@ export default function SpeciesDetailScreen({ route, navigation }) {
           </View>
         )}
 
+        {/* My Catches of this Species */}
+        {myCatches.length > 0 && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>
+              {t('species.myCatches', 'My Catches')} ({myCatches.length})
+            </Text>
+            {myCatches.map(c => (
+              <TouchableOpacity
+                key={c.id}
+                style={styles.catchRow}
+                onPress={() =>
+                  navigation.navigate('CatchDetail', { catchId: c.id })
+                }
+              >
+                <Text style={styles.catchSpecies}>🐟</Text>
+                <View style={styles.catchInfo}>
+                  <Text style={styles.catchWeight}>
+                    {c.weight
+                      ? formatWeight(c.weight, units)
+                      : c.length
+                      ? formatLength(c.length, units)
+                      : '—'}
+                  </Text>
+                  <Text style={styles.catchDate}>
+                    {new Date(c.createdAt).toLocaleDateString()}
+                  </Text>
+                </View>
+                <Text style={styles.catchArrow}>→</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        )}
+
         <View style={{ height: 60 }} />
       </ScrollView>
     </View>
@@ -290,6 +334,34 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#ccc',
     lineHeight: 22,
+  },
+  catchRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#1a1a2e',
+  },
+  catchSpecies: {
+    fontSize: 20,
+    marginRight: 12,
+  },
+  catchInfo: {
+    flex: 1,
+  },
+  catchWeight: {
+    fontSize: 15,
+    color: '#fff',
+    fontWeight: '600',
+  },
+  catchDate: {
+    fontSize: 12,
+    color: '#666',
+    marginTop: 2,
+  },
+  catchArrow: {
+    fontSize: 16,
+    color: '#555',
   },
   errorContainer: {
     flex: 1,

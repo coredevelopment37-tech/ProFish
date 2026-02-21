@@ -83,7 +83,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 48. Create `layerRegistry.js` with CPU budget system (MAX_BUDGET = 10)
 - [x] 49. Create `i18n.js` with 24-language initialization
 - [x] 50. Create `regionGatingService.js` for 12-region detection
-- [ ] 51. Create `featureFlags.js` for remote feature toggling (Firebase Remote Config)
+- [x] 51. Create `featureFlags.js` for remote feature toggling (Firebase Remote Config)
 - [x] 52. Create `constants.js` (colors, dimensions, tier limits, API endpoints)
 
 ### Error Handling
@@ -146,7 +146,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 89. Build FishCast score circle with animated fill (0-100, color-coded)
 - [x] 90. Build factor breakdown component (8 bars showing individual factor scores)
 - [x] 91. Build hourly forecast timeline (swipeable, color-coded by score)
-- [ ] 92. Build 7-day outlook grid (Pro only, gated by tier)
+- [x] 92. Build 7-day outlook grid (Pro only, gated by tier)
 - [x] 93. Add "Best Times Today" summary card (top 3 windows)
 - [ ] 94. Add species-specific adjustments (e.g., bass prefer low pressure; trout prefer cold water)
 - [ ] 95. Add location-aware FishCast (auto-detect GPS, show nearest water body)
@@ -263,7 +263,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 168. Notes free-text field
 - [x] 169. Validation: require species + GPS minimum
 - [x] 170. Success haptic feedback + animation on save
-- [ ] 171. "Log Another" quick action after save
+- [x] 171. "Log Another" quick action after save
 
 ### Catches List Screen
 
@@ -307,7 +307,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 196. Show best season/month by region
 - [x] 197. Show preferred bait/lure recommendations
 - [x] 198. Show preferred time of day + conditions (pressure, wind, temp)
-- [ ] 199. Link to user's catches of this species
+- [x] 199. Link to user's catches of this species
 - [ ] 200. Add "FishCast for this species" (species-adjusted algorithm)
 
 ### Database Expansion
@@ -444,8 +444,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [ ] 280. Implement preferred species list (favorites for quick catch logging)
 - [x] 281. Implement notification preferences (FishCast alerts, community mentions)
 - [ ] 282. Implement "Export My Data" (GDPR compliance — JSON download of all catches)
-- [ ] 283. Implement account deletion (Firebase Auth delete + Firestore user doc purge)
-- [ ] 284. Show subscription status + manage subscription link
+- [x] 283. Implement account deletion (Firebase Auth delete + Firestore user doc purge)
+- [x] 284. Show subscription status + manage subscription link
 
 ### Auth State
 
@@ -466,14 +466,14 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 292. Implement fire-and-forget Firestore sync on catch save
 - [ ] 293. Implement periodic background sync (every 15 min when online)
 - [ ] 294. Implement conflict resolution: last-write-wins with timestamp comparison
-- [ ] 295. Implement sync status indicator (synced ✓, pending ↻, error ✗)
+- [x] 295. Implement sync status indicator (synced ✓, pending ↻, error ✗)
 
 ### Firestore Sync
 
 - [x] 296. Create Firestore collection structure: `users/{uid}/catches/{catchId}`
 - [ ] 297. Create Firestore collection: `users/{uid}/preferences`
 - [ ] 298. Create Firestore collection: `users/{uid}/spots`
-- [ ] 299. Implement batch sync (upload up to 50 pending catches at once)
+- [x] 299. Implement batch sync (upload up to 50 pending catches at once)
 - [ ] 300. Implement Firestore snapshot listener for real-time updates on shared catches
 - [ ] 301. Implement data pagination for Firestore reads (cursor-based)
 
@@ -522,7 +522,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [ ] 329. Implement dark mode as default; add optional light mode toggle
 - [x] 330. Apply consistent spacing system (4px base grid: 4, 8, 12, 16, 24, 32, 48)
 - [x] 331. Add haptic feedback on key interactions (catch save, purchase, score reveal)
-- [ ] 332. Add skeleton loading placeholders for all list views
+- [x] 332. Add skeleton loading placeholders for all list views
 - [x] 333. Implement pull-to-refresh on all data screens
 
 ### Platform Polish

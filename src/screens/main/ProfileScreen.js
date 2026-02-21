@@ -3,7 +3,7 @@
  * Fully interactive: language picker, units toggle, sign out, paywall
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
   View,
   Text,
@@ -17,7 +17,9 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../store/AppContext';
-import { TIER_META } from '../../services/subscriptionService';
+import subscriptionService, {
+  TIER_META,
+} from '../../services/subscriptionService';
 import firebaseAuthService from '../../services/firebaseAuthService';
 import PaywallModal from '../../components/PaywallModal';
 
@@ -54,9 +56,26 @@ export default function ProfileScreen({ navigation }) {
   const tierMeta = TIER_META[state.subscriptionTier];
   const [showPaywall, setShowPaywall] = useState(false);
   const [linkLoading, setLinkLoading] = useState(false);
+  const [subInfo, setSubInfo] = useState({
+    tier: 'free',
+    days: null,
+    expiring: false,
+  });
   const units = state.units || 'metric';
   const isAnonymous = state.user?.isAnonymous;
   const photoURL = state.user?.photoURL;
+
+  useEffect(() => {
+    async function loadSubInfo() {
+      try {
+        const tier = subscriptionService.getCurrentTier();
+        const days = subscriptionService.getDaysRemaining();
+        const expiring = subscriptionService.isExpiringSoon();
+        setSubInfo({ tier, days, expiring });
+      } catch {}
+    }
+    loadSubInfo();
+  }, [state.subscriptionTier]);
 
   const currentLang =
     LANGUAGES.find(l => l.code === i18n.language)?.label ||
@@ -311,6 +330,68 @@ export default function ProfileScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+      {/* Subscription Status */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>
+          {t('profile.subscriptionStatus', 'Subscription')}
+        </Text>
+        <View style={styles.subCard}>
+          <View style={styles.subCardHeader}>
+            <View
+              style={[
+                styles.subTierBadge,
+                { backgroundColor: tierMeta?.color || '#888' },
+              ]}
+            >
+              <Text style={styles.subTierText}>
+                {tierMeta?.icon} {tierMeta?.label || 'Free'}
+              </Text>
+            </View>
+            {subInfo.tier !== 'free' && subInfo.days != null && (
+              <Text
+                style={[
+                  styles.subDays,
+                  subInfo.expiring && { color: '#FF9800' },
+                ]}
+              >
+                {subInfo.expiring
+                  ? t('profile.expiringSoon', '⚠️ Expires in {{days}} days', {
+                      days: subInfo.days,
+                    })
+                  : t('profile.daysRemaining', '{{days}} days remaining', {
+                      days: subInfo.days,
+                    })}
+              </Text>
+            )}
+          </View>
+          {subInfo.tier === 'free' ? (
+            <TouchableOpacity
+              style={styles.subUpgradeBtn}
+              onPress={() => setShowPaywall(true)}
+            >
+              <Text style={styles.subUpgradeText}>
+                {t('profile.upgradePro', 'Upgrade to Pro')}
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.subManageBtn}
+              onPress={() => {
+                const url =
+                  Platform.OS === 'ios'
+                    ? 'https://apps.apple.com/account/subscriptions'
+                    : 'https://play.google.com/store/account/subscriptions';
+                Linking.openURL(url).catch(() => {});
+              }}
+            >
+              <Text style={styles.subManageText}>
+                {t('profile.manageSubscription', 'Manage Subscription')}
+              </Text>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
       {/* Help */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>{t('profile.help', 'Help')}</Text>
@@ -490,5 +571,52 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 14,
     color: '#333',
+  },
+  subCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 14,
+    padding: 16,
+  },
+  subCardHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 12,
+  },
+  subTierBadge: {
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  subTierText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '700',
+  },
+  subDays: {
+    fontSize: 13,
+    color: '#888',
+  },
+  subUpgradeBtn: {
+    backgroundColor: '#0080FF',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  subUpgradeText: {
+    color: '#fff',
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  subManageBtn: {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 10,
+    paddingVertical: 12,
+    alignItems: 'center',
+  },
+  subManageText: {
+    color: '#0080FF',
+    fontSize: 15,
+    fontWeight: '600',
   },
 });

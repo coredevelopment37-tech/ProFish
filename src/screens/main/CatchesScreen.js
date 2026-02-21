@@ -128,6 +128,60 @@ export default function CatchesScreen({ navigation }) {
     );
   }
 
+  const swipeableRefs = useRef({});
+
+  const renderRightActions = useCallback(
+    (progress, dragX, id) => {
+      const scale = dragX.interpolate({
+        inputRange: [-100, 0],
+        outputRange: [1, 0.5],
+        extrapolate: 'clamp',
+      });
+      return (
+        <View style={styles.swipeActions}>
+          <TouchableOpacity
+            style={styles.editAction}
+            onPress={() => {
+              swipeableRefs.current[id]?.close();
+              const item = catches.find(c => c.id === id);
+              if (item) navigation.navigate('LogCatch', { editCatch: item });
+            }}
+          >
+            <Animated.Text
+              style={[styles.actionText, { transform: [{ scale }] }]}
+            >
+              ✏️
+            </Animated.Text>
+            <Animated.Text
+              style={[styles.actionLabel, { transform: [{ scale }] }]}
+            >
+              {t('common.edit', 'Edit')}
+            </Animated.Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.deleteAction}
+            onPress={() => {
+              swipeableRefs.current[id]?.close();
+              handleDelete(id);
+            }}
+          >
+            <Animated.Text
+              style={[styles.actionText, { transform: [{ scale }] }]}
+            >
+              🗑️
+            </Animated.Text>
+            <Animated.Text
+              style={[styles.actionLabel, { transform: [{ scale }] }]}
+            >
+              {t('common.delete', 'Delete')}
+            </Animated.Text>
+          </TouchableOpacity>
+        </View>
+      );
+    },
+    [catches, t, handleDelete, navigation],
+  );
+
   if (catches.length === 0 && !loading) {
     return (
       <View style={styles.empty}>
@@ -191,57 +245,13 @@ export default function CatchesScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
-  const swipeableRefs = useRef({});
-
-  const renderRightActions = useCallback(
-    (progress, dragX, id) => {
-      const scale = dragX.interpolate({
-        inputRange: [-100, 0],
-        outputRange: [1, 0.5],
-        extrapolate: 'clamp',
-      });
-      return (
-        <View style={styles.swipeActions}>
-          <TouchableOpacity
-            style={styles.editAction}
-            onPress={() => {
-              swipeableRefs.current[id]?.close();
-              const item = catches.find(c => c.id === id);
-              if (item) navigation.navigate('LogCatch', { editCatch: item });
-            }}
-          >
-            <Animated.Text style={[styles.actionText, { transform: [{ scale }] }]}>
-              ✏️
-            </Animated.Text>
-            <Animated.Text style={[styles.actionLabel, { transform: [{ scale }] }]}>
-              {t('common.edit', 'Edit')}
-            </Animated.Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.deleteAction}
-            onPress={() => {
-              swipeableRefs.current[id]?.close();
-              handleDelete(id);
-            }}
-          >
-            <Animated.Text style={[styles.actionText, { transform: [{ scale }] }]}>
-              🗑️
-            </Animated.Text>
-            <Animated.Text style={[styles.actionLabel, { transform: [{ scale }] }]}>
-              {t('common.delete', 'Delete')}
-            </Animated.Text>
-          </TouchableOpacity>
-        </View>
-      );
-    },
-    [catches, t, handleDelete, navigation],
-  );
-
       <FlatList
         data={displayed}
         renderItem={({ item }) => (
           <Swipeable
-            ref={ref => { swipeableRefs.current[item.id] = ref; }}
+            ref={ref => {
+              swipeableRefs.current[item.id] = ref;
+            }}
             renderRightActions={(progress, dragX) =>
               renderRightActions(progress, dragX, item.id)
             }

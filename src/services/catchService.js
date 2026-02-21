@@ -203,7 +203,7 @@ const catchService = {
   },
 
   /**
-   * Process the sync queue — upload pending catches to Firestore
+   * Process the sync queue — upload pending catches to Firestore using batched writes
    */
   async _syncToFirestore() {
     if (this._syncing || !firestore || !auth) return;
@@ -222,32 +222,65 @@ const catchService = {
         .collection('catches');
 
       const failed = [];
+      const BATCH_SIZE = 50;
 
-      for (const item of queue) {
+      // Process in batches of 50 (Firestore batch limit is 500, but 50 is safer)
+      for (let i = 0; i < queue.length; i += BATCH_SIZE) {
+        const chunk = queue.slice(i, i + BATCH_SIZE);
+        const batch = firestore().batch();
+        const chunkFailed = [];
+
+        for (const item of chunk) {
+          try {
+            const docRef = catchesRef.doc(item.data.id);
+            if (item.action === 'add' || item.action === 'update') {
+              batch.set(docRef, {
+                ...item.data,
+                synced: true,
+                userId: user.uid,
+              });
+            } else if (item.action === 'delete') {
+              batch.delete(docRef);
+            }
+          } catch (e) {
+            console.warn('[CatchService] Batch prep failed for item:', e);
+            chunkFailed.push(item);
+          }
+        }
+
         try {
-          if (item.action === 'add' || item.action === 'update') {
-            await catchesRef.doc(item.data.id).set({
-              ...item.data,
-              synced: true,
-              userId: user.uid,
-            });
-            // Mark local catch as synced
-            const localCatch = this._catches.find(c => c.id === item.data.id);
-            if (localCatch) localCatch.synced = true;
-          } else if (item.action === 'delete') {
-            await catchesRef.doc(item.data.id).delete();
+          await batch.commit();
+          // Mark local catches as synced for successful items
+          for (const item of chunk) {
+            if (chunkFailed.includes(item)) continue;
+            if (item.action === 'add' || item.action === 'update') {
+              const localCatch = this._catches.find(c => c.id === item.data.id);
+              if (localCatch) {
+                localCatch.synced = true;
+                delete localCatch._syncError;
+              }
+            }
           }
         } catch (e) {
-          console.warn('[CatchService] Sync failed for item:', e);
-          failed.push(item);
+          console.warn('[CatchService] Batch commit failed:', e);
+          // Mark catches with sync error
+          for (const item of chunk) {
+            if (item.action !== 'delete') {
+              const localCatch = this._catches.find(c => c.id === item.data.id);
+              if (localCatch) localCatch._syncError = true;
+            }
+          }
+          failed.push(...chunk);
+        }
+
+        if (chunkFailed.length > 0) {
+          failed.push(...chunkFailed);
         }
       }
 
       // Keep only failed items in queue
       await AsyncStorage.setItem(SYNC_QUEUE_KEY, JSON.stringify(failed));
-      if (queue.length > failed.length) {
-        await this._persist(); // Update synced flags
-      }
+      await this._persist(); // Update synced flags
     } catch (e) {
       console.warn('[CatchService] Sync error:', e);
     } finally {

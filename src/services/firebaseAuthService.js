@@ -325,22 +325,58 @@ const firebaseAuthService = {
   },
 
   /**
-   * Delete account and all user data
+   * Delete account and all user data (Firebase Auth + Firestore + local storage)
    */
   async deleteAccount() {
     const user = this.getCurrentUser();
     if (!user) return;
 
-    // Delete Firestore profile
+    const uid = user.uid;
+
+    // 1. Delete Firestore subcollections (catches, preferences, spots)
     if (firestore) {
+      const subcollections = ['catches', 'preferences', 'spots'];
+      for (const sub of subcollections) {
+        try {
+          const snapshot = await firestore()
+            .collection('users')
+            .doc(uid)
+            .collection(sub)
+            .limit(500)
+            .get();
+
+          if (!snapshot.empty) {
+            const batch = firestore().batch();
+            snapshot.docs.forEach(doc => batch.delete(doc.ref));
+            await batch.commit();
+          }
+        } catch (e) {
+          console.warn(`[Auth] Failed to delete ${sub}:`, e);
+        }
+      }
+
+      // Delete user document
       await firestore()
         .collection('users')
-        .doc(user.uid)
+        .doc(uid)
         .delete()
         .catch(() => {});
     }
 
-    // Delete Firebase auth account
+    // 2. Clear all local storage
+    try {
+      const AsyncStorage =
+        require('@react-native-async-storage/async-storage').default;
+      const allKeys = await AsyncStorage.getAllKeys();
+      const profishKeys = allKeys.filter(k => k.startsWith('@profish'));
+      if (profishKeys.length > 0) {
+        await AsyncStorage.multiRemove(profishKeys);
+      }
+    } catch (e) {
+      console.warn('[Auth] Failed to clear local storage:', e);
+    }
+
+    // 3. Delete Firebase Auth account
     await user.delete();
   },
 };

@@ -40,9 +40,16 @@ export default function CatchCard({
 
       {/* Info */}
       <View style={styles.info}>
-        <Text style={styles.species} numberOfLines={1}>
-          {item.species || 'Unknown species'}
-        </Text>
+        <View style={styles.speciesRow}>
+          <Text style={styles.species} numberOfLines={1}>
+            {item.species || 'Unknown species'}
+          </Text>
+          {item.synced === true && <Text style={styles.syncBadge}>✓</Text>}
+          {item.synced === false && !item._syncError && (
+            <Text style={styles.pendingBadge}>↻</Text>
+          )}
+          {item._syncError && <Text style={styles.errorBadge}>✗</Text>}
+        </View>
 
         <View style={styles.stats}>
           {item.weight != null && (
@@ -148,6 +155,27 @@ const styles = StyleSheet.create({
     color: '#fff',
     textTransform: 'capitalize',
     marginBottom: 4,
+    flex: 1,
+  },
+  speciesRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 4,
+  },
+  syncBadge: {
+    fontSize: 12,
+    color: '#4CAF50',
+    marginLeft: 6,
+  },
+  pendingBadge: {
+    fontSize: 12,
+    color: '#FF9800',
+    marginLeft: 6,
+  },
+  errorBadge: {
+    fontSize: 12,
+    color: '#F44336',
+    marginLeft: 6,
   },
   stats: {
     flexDirection: 'row',

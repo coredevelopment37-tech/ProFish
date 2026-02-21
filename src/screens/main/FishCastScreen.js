@@ -16,9 +16,13 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Geolocation from '@react-native-community/geolocation';
-import { calculateFishCast } from '../../services/fishCastService';
+import {
+  calculateFishCast,
+  calculate7DayOutlook,
+} from '../../services/fishCastService';
 import weatherService from '../../services/weatherService';
 import tideService from '../../services/tideService';
+import subscriptionService from '../../services/subscriptionService';
 import ScoreCircle from '../../components/ScoreCircle';
 import WeatherCard from '../../components/WeatherCard';
 import SolunarTimeline from '../../components/SolunarTimeline';
@@ -34,9 +38,15 @@ export default function FishCastScreen() {
   const [refreshing, setRefreshing] = useState(false);
   const [coords, setCoords] = useState(null);
   const [locationName, setLocationName] = useState('');
+  const [outlook, setOutlook] = useState([]);
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     getLocation();
+    try {
+      const tier = subscriptionService.getCurrentTier();
+      setIsPro(tier !== 'free');
+    } catch {}
   }, []);
 
   async function getLocation() {
@@ -75,6 +85,11 @@ export default function FishCastScreen() {
       setForecast(result);
       setMarine(marineData);
       setTide(tideData);
+
+      // Fetch 7-day outlook (Pro only, but pre-fetch for paywall tease)
+      calculate7DayOutlook(lat, lng)
+        .then(days => setOutlook(days))
+        .catch(() => {});
     } catch (e) {
       console.warn('[FishCast] Error:', e);
     } finally {
@@ -218,6 +233,75 @@ export default function FishCastScreen() {
               </View>
             ))}
           </ScrollView>
+        </View>
+      )}
+
+      {/* 7-Day Outlook (Pro) */}
+      {outlook.length > 0 && (
+        <View style={styles.outlookCard}>
+          <Text style={styles.outlookTitle}>
+            {t('fishcast.weekOutlook', '📅 7-Day Outlook')}
+          </Text>
+          {!isPro && (
+            <View style={styles.outlookProBadge}>
+              <Text style={styles.outlookProText}>PRO</Text>
+            </View>
+          )}
+          <View style={isPro ? null : styles.outlookBlurred}>
+            {outlook.map((day, i) => (
+              <View
+                key={day.date}
+                style={[styles.outlookRow, i === 0 && styles.outlookRowToday]}
+              >
+                <Text style={styles.outlookDay}>
+                  {i === 0 ? t('fishcast.today', 'Today') : day.dayName}
+                </Text>
+                <Text style={styles.outlookIcon}>{day.icon}</Text>
+                <View style={styles.outlookScoreBar}>
+                  <View
+                    style={[
+                      styles.outlookScoreFill,
+                      {
+                        width: `${day.score}%`,
+                        backgroundColor:
+                          day.score >= 70
+                            ? '#4CAF50'
+                            : day.score >= 50
+                            ? '#FF9800'
+                            : '#F44336',
+                      },
+                    ]}
+                  />
+                </View>
+                <Text
+                  style={[
+                    styles.outlookScore,
+                    {
+                      color:
+                        day.score >= 70
+                          ? '#4CAF50'
+                          : day.score >= 50
+                          ? '#FF9800'
+                          : '#F44336',
+                    },
+                  ]}
+                >
+                  {isPro ? day.score : '??'}
+                </Text>
+                <Text style={styles.outlookTemp}>
+                  {isPro ? `${day.highTemp}°/${day.lowTemp}°` : '--/--'}
+                </Text>
+              </View>
+            ))}
+          </View>
+          {!isPro && (
+            <Text style={styles.outlookUpgrade}>
+              {t(
+                'fishcast.upgradeOutlook',
+                'Upgrade to Pro to unlock the 7-day fishing forecast',
+              )}
+            </Text>
+          )}
         </View>
       )}
 
@@ -365,4 +449,88 @@ const styles = StyleSheet.create({
     minHeight: 8,
   },
   hourlyScore: { fontSize: 10, color: '#ccc', marginTop: 4 },
+  outlookCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+  },
+  outlookTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 12,
+  },
+  outlookProBadge: {
+    position: 'absolute',
+    top: 16,
+    right: 16,
+    backgroundColor: '#FF9800',
+    borderRadius: 6,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  outlookProText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: '800',
+  },
+  outlookBlurred: {
+    opacity: 0.35,
+  },
+  outlookRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255,255,255,0.05)',
+  },
+  outlookRowToday: {
+    backgroundColor: 'rgba(0,128,255,0.08)',
+    borderRadius: 8,
+    marginHorizontal: -8,
+    paddingHorizontal: 8,
+  },
+  outlookDay: {
+    width: 46,
+    fontSize: 13,
+    color: '#ccc',
+    fontWeight: '600',
+  },
+  outlookIcon: {
+    width: 28,
+    fontSize: 16,
+    textAlign: 'center',
+  },
+  outlookScoreBar: {
+    flex: 1,
+    height: 6,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    borderRadius: 3,
+    marginHorizontal: 8,
+    overflow: 'hidden',
+  },
+  outlookScoreFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  outlookScore: {
+    width: 28,
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'right',
+  },
+  outlookTemp: {
+    width: 58,
+    fontSize: 12,
+    color: '#666',
+    textAlign: 'right',
+  },
+  outlookUpgrade: {
+    color: '#FF9800',
+    fontSize: 12,
+    textAlign: 'center',
+    marginTop: 12,
+    fontStyle: 'italic',
+  },
 });
