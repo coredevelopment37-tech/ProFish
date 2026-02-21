@@ -195,9 +195,10 @@ const subscriptionService = {
 
     // Initialize RevenueCat (if available and configured)
     if (Purchases && !this._initialized) {
-      const apiKey = Platform.OS === 'ios'
-        ? REVENUECAT_API_KEY_APPLE
-        : REVENUECAT_API_KEY_GOOGLE;
+      const apiKey =
+        Platform.OS === 'ios'
+          ? REVENUECAT_API_KEY_APPLE
+          : REVENUECAT_API_KEY_GOOGLE;
 
       if (apiKey) {
         try {
@@ -274,7 +275,9 @@ const subscriptionService = {
   async purchase(packageToPurchase) {
     if (!Purchases) throw new Error('Purchases not available');
     try {
-      const { customerInfo } = await Purchases.purchasePackage(packageToPurchase);
+      const { customerInfo } = await Purchases.purchasePackage(
+        packageToPurchase,
+      );
       this._applyEntitlements(customerInfo);
       return true;
     } catch (e) {
