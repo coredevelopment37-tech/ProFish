@@ -5,14 +5,21 @@
 
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { formatWeight, formatLength } from '../utils/units';
 
-export default function CatchCard({ item, onPress }) {
+export default function CatchCard({
+  item,
+  onPress,
+  onLongPress,
+  units = 'metric',
+}) {
   const hasPhoto = !!item.photo;
 
   return (
     <TouchableOpacity
       style={styles.card}
       onPress={() => onPress?.(item)}
+      onLongPress={() => onLongPress?.(item)}
       activeOpacity={0.7}
     >
       {/* Photo thumbnail */}
@@ -41,13 +48,17 @@ export default function CatchCard({ item, onPress }) {
           {item.weight != null && (
             <View style={styles.stat}>
               <Text style={styles.statIcon}>⚖️</Text>
-              <Text style={styles.statValue}>{item.weight} kg</Text>
+              <Text style={styles.statValue}>
+                {formatWeight(item.weight, units)}
+              </Text>
             </View>
           )}
           {item.length != null && (
             <View style={styles.stat}>
               <Text style={styles.statIcon}>📏</Text>
-              <Text style={styles.statValue}>{item.length} cm</Text>
+              <Text style={styles.statValue}>
+                {formatLength(item.length, units)}
+              </Text>
             </View>
           )}
         </View>

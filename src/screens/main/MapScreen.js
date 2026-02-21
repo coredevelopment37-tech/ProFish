@@ -5,20 +5,17 @@
  * catch markers, LayerPicker, and weather overlay.
  */
 
-import React, {
-  useEffect,
-  useState,
-  useRef,
-  useCallback,
-  useContext,
-} from 'react';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
 import {
   View,
   StyleSheet,
   TouchableOpacity,
   Text,
+  TextInput,
   Platform,
   PermissionsAndroid,
+  Alert,
+  Keyboard,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Geolocation from '@react-native-community/geolocation';
@@ -28,8 +25,9 @@ import {
   getAvailableLayers,
   getActiveTileLayers,
 } from '../../config/layerRegistry';
-import { AppContext } from '../../store/AppContext';
+import { useApp } from '../../store/AppContext';
 import catchService from '../../services/catchService';
+import spotService from '../../services/spotService';
 import weatherService from '../../services/weatherService';
 import LayerPicker from '../../components/LayerPicker';
 import WeatherCard from '../../components/WeatherCard';
@@ -38,13 +36,17 @@ import WeatherCard from '../../components/WeatherCard';
 let MapboxGL = null;
 try {
   MapboxGL = require('@rnmapbox/maps').default;
+  // Set access token at module scope — MUST happen before any MapView renders
+  if (MapboxGL && MAPBOX_ACCESS_TOKEN) {
+    MapboxGL.setAccessToken(MAPBOX_ACCESS_TOKEN);
+  }
 } catch (e) {
   // Not linked yet
 }
 
 export default function MapScreen({ navigation }) {
   const { t } = useTranslation();
-  const { state } = useContext(AppContext);
+  const { state } = useApp();
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
 
@@ -52,18 +54,14 @@ export default function MapScreen({ navigation }) {
   const [userCoords, setUserCoords] = useState(null);
   const [followUser, setFollowUser] = useState(true);
   const [catches, setCatches] = useState([]);
+  const [spots, setSpots] = useState([]);
   const [weather, setWeather] = useState(null);
 
   // Layer management
   const [activeLayers, setActiveLayers] = useState(getDefaultLayers());
   const [layerPickerVisible, setLayerPickerVisible] = useState(false);
-
-  // Init Mapbox token
-  useEffect(() => {
-    if (MapboxGL && MAPBOX_ACCESS_TOKEN) {
-      MapboxGL.setAccessToken(MAPBOX_ACCESS_TOKEN);
-    }
-  }, []);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCatch, setSelectedCatch] = useState(null);
 
   // Request location permission and start tracking
   useEffect(() => {
@@ -111,8 +109,12 @@ export default function MapScreen({ navigation }) {
 
   async function loadCatches() {
     try {
-      const data = await catchService.getCatches();
-      setCatches(data.filter(c => c.latitude && c.longitude));
+      const [catchData, spotData] = await Promise.all([
+        catchService.getCatches(),
+        spotService.getSpots(),
+      ]);
+      setCatches(catchData.filter(c => c.latitude && c.longitude));
+      setSpots(spotData.filter(s => s.latitude && s.longitude));
     } catch {}
   }
 
@@ -134,6 +136,69 @@ export default function MapScreen({ navigation }) {
     }
   }, [userCoords]);
 
+  // Handle map long-press — drop pin, offer to log catch or save spot
+  const handleMapLongPress = useCallback(
+    event => {
+      const coords = event.geometry?.coordinates;
+      if (!coords || coords.length < 2) return;
+      const [lng, lat] = coords;
+      Alert.alert(
+        '📍 Location Selected',
+        `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: '📌 Save Spot',
+            onPress: () => {
+              Alert.prompt
+                ? Alert.prompt('Spot Name', 'Give this spot a name:', name => {
+                    if (name?.trim()) {
+                      spotService
+                        .addSpot({
+                          name: name.trim(),
+                          latitude: lat,
+                          longitude: lng,
+                        })
+                        .then(() => loadCatches());
+                    }
+                  })
+                : // Android fallback — prompt not available
+                  spotService
+                    .addSpot({
+                      name: `Spot ${lat.toFixed(2)}, ${lng.toFixed(2)}`,
+                      latitude: lat,
+                      longitude: lng,
+                    })
+                    .then(() => loadCatches());
+            },
+          },
+          {
+            text: '🎣 Log Catch Here',
+            onPress: () =>
+              navigation.navigate('LogCatch', {
+                latitude: lat,
+                longitude: lng,
+              }),
+          },
+        ],
+      );
+    },
+    [navigation],
+  );
+
+  // Handle catch marker tap
+  const handleCatchPress = useCallback(
+    event => {
+      const feature = event.features?.[0];
+      if (!feature?.properties?.id) return;
+      const catchItem = catches.find(c => c.id === feature.properties.id);
+      if (catchItem) {
+        setSelectedCatch(catchItem);
+      }
+    },
+    [catches],
+  );
+
   // Build catch GeoJSON
   const catchGeoJSON = {
     type: 'FeatureCollection',
@@ -148,6 +213,23 @@ export default function MapScreen({ navigation }) {
         species: c.species,
         weight: c.weight,
         released: c.released,
+      },
+    })),
+  };
+
+  // Build spots GeoJSON
+  const spotGeoJSON = {
+    type: 'FeatureCollection',
+    features: spots.map(s => ({
+      type: 'Feature',
+      geometry: {
+        type: 'Point',
+        coordinates: [s.longitude, s.latitude],
+      },
+      properties: {
+        id: s.id,
+        name: s.name,
+        icon: s.icon || '📌',
       },
     })),
   };
@@ -181,6 +263,7 @@ export default function MapScreen({ navigation }) {
             : MapboxGL.StyleURL.Dark
         }
         onDidFinishLoadingMap={() => setMapReady(true)}
+        onLongPress={handleMapLongPress}
         compassEnabled
         scaleBarEnabled={false}
         logoEnabled={false}
@@ -222,12 +305,7 @@ export default function MapScreen({ navigation }) {
           <MapboxGL.ShapeSource
             id="catches"
             shape={catchGeoJSON}
-            onPress={e => {
-              const feature = e.features?.[0];
-              if (feature) {
-                // Could navigate to catch detail
-              }
-            }}
+            onPress={handleCatchPress}
           >
             <MapboxGL.CircleLayer
               id="catch-circles"
@@ -241,13 +319,98 @@ export default function MapScreen({ navigation }) {
             />
           </MapboxGL.ShapeSource>
         )}
+
+        {/* Saved fishing spots */}
+        {spots.length > 0 && (
+          <MapboxGL.ShapeSource id="spots" shape={spotGeoJSON}>
+            <MapboxGL.CircleLayer
+              id="spot-circles"
+              style={{
+                circleRadius: 7,
+                circleColor: '#4CAF50',
+                circleStrokeWidth: 2,
+                circleStrokeColor: '#fff',
+                circleOpacity: 0.85,
+              }}
+            />
+          </MapboxGL.ShapeSource>
+        )}
       </MapboxGL.MapView>
+
+      {/* Search bar */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          style={styles.searchInput}
+          placeholder={t('map.search', 'Search location...')}
+          placeholderTextColor="#666"
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          onSubmitEditing={() => {
+            if (!searchQuery.trim()) return;
+            Keyboard.dismiss();
+            // Mapbox geocoding: search for the location
+            fetch(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+                searchQuery,
+              )}.json?access_token=${MAPBOX_ACCESS_TOKEN}&limit=1`,
+            )
+              .then(r => r.json())
+              .then(data => {
+                const feat = data.features?.[0];
+                if (feat && cameraRef.current) {
+                  const [lng, lat] = feat.center;
+                  cameraRef.current.setCamera({
+                    centerCoordinate: [lng, lat],
+                    zoomLevel: 12,
+                    animationDuration: 800,
+                  });
+                  setFollowUser(false);
+                }
+              })
+              .catch(() => {});
+          }}
+          returnKeyType="search"
+        />
+      </View>
 
       {/* Compact weather overlay */}
       {weather && (
         <View style={styles.weatherOverlay}>
           <WeatherCard weather={weather} compact />
         </View>
+      )}
+
+      {/* Catch detail popup */}
+      {selectedCatch && (
+        <TouchableOpacity
+          style={styles.catchPopup}
+          activeOpacity={0.9}
+          onPress={() => {
+            navigation.navigate('CatchDetail', { catchData: selectedCatch });
+            setSelectedCatch(null);
+          }}
+        >
+          <View style={styles.popupRow}>
+            <Text style={styles.popupSpecies}>
+              {selectedCatch.species || 'Unknown'}
+            </Text>
+            <TouchableOpacity onPress={() => setSelectedCatch(null)}>
+              <Text style={styles.popupClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.popupStats}>
+            {selectedCatch.weight && (
+              <Text style={styles.popupStat}>⚖️ {selectedCatch.weight} kg</Text>
+            )}
+            {selectedCatch.method && (
+              <Text style={styles.popupStat}>🎣 {selectedCatch.method}</Text>
+            )}
+            {selectedCatch.released && (
+              <Text style={styles.popupStat}>🔄 Released</Text>
+            )}
+          </View>
+          <Text style={styles.popupHint}>Tap for details →</Text>
+        </TouchableOpacity>
       )}
 
       {/* Map controls */}
@@ -328,7 +491,7 @@ const styles = StyleSheet.create({
   },
   weatherOverlay: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 16,
+    top: Platform.OS === 'ios' ? 116 : 72,
     left: 12,
     right: 80,
   },
@@ -371,4 +534,43 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   fabText: { fontSize: 28 },
+  searchContainer: {
+    position: 'absolute',
+    top: Platform.OS === 'ios' ? 60 : 16,
+    left: 12,
+    right: 64,
+    zIndex: 10,
+  },
+  searchInput: {
+    backgroundColor: 'rgba(26, 26, 46, 0.95)',
+    color: '#fff',
+    fontSize: 15,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  catchPopup: {
+    position: 'absolute',
+    bottom: 100,
+    left: 16,
+    right: 16,
+    backgroundColor: 'rgba(26, 26, 46, 0.95)',
+    borderRadius: 16,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  popupRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  popupSpecies: { fontSize: 18, fontWeight: 'bold', color: '#fff' },
+  popupClose: { fontSize: 18, color: '#888', padding: 4 },
+  popupStats: { flexDirection: 'row', gap: 12, marginBottom: 8 },
+  popupStat: { fontSize: 14, color: '#ccc' },
+  popupHint: { fontSize: 12, color: '#0080FF' },
 });

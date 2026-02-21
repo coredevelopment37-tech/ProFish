@@ -13,6 +13,9 @@
 import weatherService from './weatherService';
 import solunarService from './solunarService';
 import tideService from './tideService';
+import cacheService from './cacheService';
+
+const FISHCAST_CACHE_TTL = 60 * 60 * 1000; // 1 hour
 
 // ── Scoring weights ─────────────────────────────────────
 const WEIGHTS = {
@@ -35,6 +38,16 @@ export async function calculateFishCast(
   longitude,
   date = new Date(),
 ) {
+  // Cache by location + hour (score doesn't change minute by minute)
+  const hourKey = `${date.getFullYear()}${date.getMonth()}${date.getDate()}${date.getHours()}`;
+  const cacheKey = cacheService.coordKey(
+    'fishcast_' + hourKey,
+    latitude,
+    longitude,
+  );
+  const cached = await cacheService.get(cacheKey);
+  if (cached) return cached;
+
   try {
     const [weather, solunar, tide] = await Promise.all([
       weatherService.getWeather(latitude, longitude),
@@ -78,7 +91,7 @@ export async function calculateFishCast(
 
     score = Math.round(Math.max(0, Math.min(100, score)));
 
-    return {
+    const result = {
       score,
       label: getScoreLabel(score),
       factors,
@@ -97,6 +110,11 @@ export async function calculateFishCast(
       tide: tide || null,
       calculatedAt: new Date().toISOString(),
     };
+
+    // Cache for 1hr
+    await cacheService.set(cacheKey, result, FISHCAST_CACHE_TTL);
+
+    return result;
   } catch (error) {
     console.warn('[FishCast] Calculation failed:', error);
     return {

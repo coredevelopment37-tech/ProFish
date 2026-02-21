@@ -11,17 +11,26 @@ import {
   StyleSheet,
   RefreshControl,
   Platform,
+  Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import catchService from '../../services/catchService';
+import { useApp } from '../../store/AppContext';
 import CatchCard from '../../components/CatchCard';
+
+const SORT_OPTIONS = ['date', 'weight', 'species'];
+const FILTER_OPTIONS = ['all', 'freshwater', 'saltwater', 'brackish'];
 
 export default function CatchesScreen({ navigation }) {
   const { t } = useTranslation();
+  const { state } = useApp();
+  const units = state.units || 'metric';
   const [catches, setCatches] = useState([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [stats, setStats] = useState(null);
+  const [sortBy, setSortBy] = useState('date');
+  const [filterBy, setFilterBy] = useState('all');
 
   useEffect(() => {
     loadCatches();
@@ -49,12 +58,45 @@ export default function CatchesScreen({ navigation }) {
     loadCatches();
   }, []);
 
-  const handleDelete = useCallback(async id => {
-    try {
-      await catchService.deleteCatch(id);
-      setCatches(prev => prev.filter(c => c.id !== id));
-    } catch {}
-  }, []);
+  const handleDelete = useCallback(
+    async id => {
+      Alert.alert(
+        t('common.delete', 'Delete'),
+        t('catches.deleteConfirm', 'Delete this catch permanently?'),
+        [
+          { text: t('common.cancel', 'Cancel'), style: 'cancel' },
+          {
+            text: t('common.delete', 'Delete'),
+            style: 'destructive',
+            onPress: async () => {
+              try {
+                await catchService.deleteCatch(id);
+                setCatches(prev => prev.filter(c => c.id !== id));
+              } catch {}
+            },
+          },
+        ],
+      );
+    },
+    [t],
+  );
+
+  // Filter + Sort
+  const displayed = React.useMemo(() => {
+    let data = [...catches];
+    // Filter
+    if (filterBy !== 'all') {
+      data = data.filter(c => c.waterType === filterBy);
+    }
+    // Sort
+    if (sortBy === 'weight') {
+      data.sort((a, b) => (b.weight || 0) - (a.weight || 0));
+    } else if (sortBy === 'species') {
+      data.sort((a, b) => (a.species || '').localeCompare(b.species || ''));
+    }
+    // else date — already sorted
+    return data;
+  }, [catches, sortBy, filterBy]);
 
   function renderHeader() {
     if (!stats || stats.total === 0) return null;
@@ -111,15 +153,51 @@ export default function CatchesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>{t('catches.title', 'My Catches')}</Text>
+      <View style={styles.headerRow}>
+        <Text style={styles.header}>{t('catches.title', 'My Catches')}</Text>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('CatchStats')}
+          style={styles.statsBtn}
+        >
+          <Text style={styles.statsBtnText}>📊</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Filter + Sort bar */}
+      <View style={styles.filterBar}>
+        <ScrollableChips
+          options={FILTER_OPTIONS}
+          selected={filterBy}
+          onSelect={setFilterBy}
+          labelMap={{
+            all: t('common.all', 'All'),
+            freshwater: '🏞️',
+            saltwater: '🌊',
+            brackish: '🏝️',
+          }}
+        />
+        <TouchableOpacity
+          style={styles.sortBtn}
+          onPress={() => {
+            const idx = SORT_OPTIONS.indexOf(sortBy);
+            setSortBy(SORT_OPTIONS[(idx + 1) % SORT_OPTIONS.length]);
+          }}
+        >
+          <Text style={styles.sortText}>
+            {sortBy === 'date' ? '📅' : sortBy === 'weight' ? '⚖️' : '🐟'}
+          </Text>
+        </TouchableOpacity>
+      </View>
+
       <FlatList
-        data={catches}
+        data={displayed}
         renderItem={({ item }) => (
           <CatchCard
-            catchData={item}
-            onPress={() => {
-              // Could navigate to catch detail in the future
-            }}
+            item={item}
+            units={units}
+            onPress={() =>
+              navigation.navigate('CatchDetail', { catchData: item })
+            }
             onLongPress={() => handleDelete(item.id)}
           />
         )}
@@ -139,8 +217,34 @@ export default function CatchesScreen({ navigation }) {
   );
 }
 
+function ScrollableChips({ options, selected, onSelect, labelMap }) {
+  return (
+    <View style={styles.chips}>
+      {options.map(opt => (
+        <TouchableOpacity
+          key={opt}
+          style={[styles.chip, selected === opt && styles.chipActive]}
+          onPress={() => onSelect(opt)}
+        >
+          <Text
+            style={[styles.chipText, selected === opt && styles.chipTextActive]}
+          >
+            {labelMap[opt] || opt}
+          </Text>
+        </TouchableOpacity>
+      ))}
+    </View>
+  );
+}
+
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#0a0a1a' },
+  headerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingRight: 16,
+  },
   header: {
     fontSize: 28,
     fontWeight: 'bold',
@@ -149,6 +253,16 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
     paddingBottom: 4,
   },
+  statsBtn: {
+    width: 40,
+    height: 40,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    backgroundColor: '#1a1a2e',
+    marginTop: Platform.OS === 'ios' ? 40 : 0,
+  },
+  statsBtnText: { fontSize: 20 },
   list: { padding: 16, paddingBottom: 100 },
   statsBar: {
     flexDirection: 'row',
@@ -194,4 +308,39 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   logButtonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  filterBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 16,
+    paddingBottom: 8,
+  },
+  chips: {
+    flexDirection: 'row',
+    flex: 1,
+    gap: 6,
+  },
+  chip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#1a1a2e',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  chipActive: {
+    backgroundColor: 'rgba(0,128,255,0.2)',
+    borderColor: '#0080FF',
+  },
+  chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
+  chipTextActive: { color: '#0080FF' },
+  sortBtn: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#1a1a2e',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginLeft: 8,
+  },
+  sortText: { fontSize: 18 },
 });

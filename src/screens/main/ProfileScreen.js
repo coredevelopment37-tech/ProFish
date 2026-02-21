@@ -12,6 +12,8 @@ import {
   ScrollView,
   Alert,
   Linking,
+  Image,
+  Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../store/AppContext';
@@ -46,12 +48,15 @@ const LANGUAGES = [
   { code: 'fil', label: 'Filipino' },
 ];
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ navigation }) {
   const { t, i18n } = useTranslation();
   const { state, dispatch } = useApp();
   const tierMeta = TIER_META[state.subscriptionTier];
   const [showPaywall, setShowPaywall] = useState(false);
-  const [units, setUnits] = useState('metric');
+  const [linkLoading, setLinkLoading] = useState(false);
+  const units = state.units || 'metric';
+  const isAnonymous = state.user?.isAnonymous;
+  const photoURL = state.user?.photoURL;
 
   const currentLang =
     LANGUAGES.find(l => l.code === i18n.language)?.label ||
@@ -79,8 +84,68 @@ export default function ProfileScreen() {
 
   const handleUnitsToggle = useCallback(() => {
     const next = units === 'metric' ? 'imperial' : 'metric';
-    setUnits(next);
-  }, [units]);
+    dispatch({ type: 'SET_UNITS', payload: next });
+  }, [units, dispatch]);
+
+  const handleLinkGoogle = useCallback(async () => {
+    setLinkLoading(true);
+    try {
+      const result = await firebaseAuthService.linkWithGoogle();
+      const u = result.user;
+      dispatch({
+        type: 'SET_USER',
+        payload: {
+          uid: u.uid,
+          displayName: u.displayName,
+          email: u.email,
+          photoURL: u.photoURL,
+          isAnonymous: false,
+          provider: 'google',
+        },
+      });
+      Alert.alert(
+        t('profile.linked', 'Account Linked'),
+        t(
+          'profile.linkedMsg',
+          'Your data is now synced with your Google account.',
+        ),
+      );
+    } catch (e) {
+      Alert.alert(t('common.error', 'Error'), e.message);
+    } finally {
+      setLinkLoading(false);
+    }
+  }, [dispatch, t]);
+
+  const handleLinkApple = useCallback(async () => {
+    setLinkLoading(true);
+    try {
+      const result = await firebaseAuthService.linkWithApple();
+      const u = result.user;
+      dispatch({
+        type: 'SET_USER',
+        payload: {
+          uid: u.uid,
+          displayName: u.displayName,
+          email: u.email,
+          photoURL: u.photoURL,
+          isAnonymous: false,
+          provider: 'apple',
+        },
+      });
+      Alert.alert(
+        t('profile.linked', 'Account Linked'),
+        t(
+          'profile.linkedMsg',
+          'Your data is now synced with your Apple account.',
+        ),
+      );
+    } catch (e) {
+      Alert.alert(t('common.error', 'Error'), e.message);
+    } finally {
+      setLinkLoading(false);
+    }
+  }, [dispatch, t]);
 
   const handleSignOut = useCallback(() => {
     Alert.alert(
@@ -133,11 +198,18 @@ export default function ProfileScreen() {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <View style={styles.avatar}>
-          <Text style={styles.avatarText}>🎣</Text>
+          {photoURL ? (
+            <Image source={{ uri: photoURL }} style={styles.avatarImage} />
+          ) : (
+            <Text style={styles.avatarText}>🎣</Text>
+          )}
         </View>
         <Text style={styles.name}>
           {state.user?.displayName || t('profile.angler', 'Angler')}
         </Text>
+        {state.user?.email && (
+          <Text style={styles.email}>{state.user.email}</Text>
+        )}
         <View
           style={[styles.badge, { backgroundColor: tierMeta?.color || '#888' }]}
         >
@@ -146,6 +218,43 @@ export default function ProfileScreen() {
           </Text>
         </View>
       </View>
+
+      {/* Account linking banner for anonymous users */}
+      {isAnonymous && (
+        <View style={styles.linkBanner}>
+          <Text style={styles.linkBannerTitle}>
+            ⚠️ {t('profile.guestMode', 'Guest Mode')}
+          </Text>
+          <Text style={styles.linkBannerText}>
+            {t(
+              'profile.guestWarning',
+              'Your data is stored locally. Sign in to sync across devices and prevent data loss.',
+            )}
+          </Text>
+          <View style={styles.linkButtons}>
+            <TouchableOpacity
+              style={styles.linkBtn}
+              onPress={handleLinkGoogle}
+              disabled={linkLoading}
+            >
+              <Text style={styles.linkBtnText}>
+                G {t('auth.continueGoogle', 'Google')}
+              </Text>
+            </TouchableOpacity>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={[styles.linkBtn, styles.linkBtnApple]}
+                onPress={handleLinkApple}
+                disabled={linkLoading}
+              >
+                <Text style={styles.linkBtnText}>
+                  🍎 {t('auth.continueApple', 'Apple')}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
 
       {/* Settings */}
       <View style={styles.section}>
@@ -179,6 +288,26 @@ export default function ProfileScreen() {
           <Text style={[styles.rowValue, { color: tierMeta?.color }]}>
             {tierMeta?.label}
           </Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.row}
+          onPress={() => navigation.navigate('CatchStats')}
+        >
+          <Text style={styles.rowLabel}>
+            📊 {t('profile.catchStats', 'Catch Statistics')}
+          </Text>
+          <Text style={styles.rowArrow}>→</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.row}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <Text style={styles.rowLabel}>
+            ⚙️ {t('profile.advancedSettings', 'Advanced Settings')}
+          </Text>
+          <Text style={styles.rowArrow}>→</Text>
         </TouchableOpacity>
       </View>
 
@@ -276,7 +405,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   avatarText: { fontSize: 36 },
-  name: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
+  avatarImage: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+  },
+  name: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
+  email: { fontSize: 14, color: '#888', marginBottom: 8 },
   badge: {
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -315,4 +450,45 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
   },
   deleteText: { fontSize: 14, color: '#FF4444' },
+  linkBanner: {
+    margin: 16,
+    padding: 16,
+    backgroundColor: 'rgba(255,152,0,0.1)',
+    borderRadius: 14,
+    borderWidth: 1,
+    borderColor: 'rgba(255,152,0,0.3)',
+  },
+  linkBannerTitle: {
+    color: '#FF9800',
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 6,
+  },
+  linkBannerText: {
+    color: '#ccc',
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 14,
+  },
+  linkButtons: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  linkBtn: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    backgroundColor: '#fff',
+    alignItems: 'center',
+  },
+  linkBtnApple: {
+    backgroundColor: '#000',
+    borderWidth: 1,
+    borderColor: '#333',
+  },
+  linkBtnText: {
+    fontWeight: '600',
+    fontSize: 14,
+    color: '#333',
+  },
 });

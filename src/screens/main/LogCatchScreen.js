@@ -3,7 +3,7 @@
  * Features: SpeciesPicker, GPS auto-fill, photo picker, weather auto-capture
  */
 
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -22,7 +22,9 @@ import { useTranslation } from 'react-i18next';
 import Geolocation from '@react-native-community/geolocation';
 import catchService from '../../services/catchService';
 import weatherService from '../../services/weatherService';
-import { AppContext } from '../../store/AppContext';
+import { useApp } from '../../store/AppContext';
+import { checkLimit, requireFeature } from '../../services/featureGate';
+import { notificationSuccess, notificationWarning } from '../../utils/haptics';
 import SpeciesPicker from '../../components/SpeciesPicker';
 
 // Image picker - graceful import
@@ -56,9 +58,32 @@ const METHODS = [
   'Other',
 ];
 
-export default function LogCatchScreen({ navigation }) {
+// Common bait presets
+const BAIT_PRESETS = [
+  'Worm',
+  'Minnow',
+  'Shrimp',
+  'Crab',
+  'Squid',
+  'Spinner',
+  'Spoon',
+  'Jig',
+  'Crankbait',
+  'Soft Plastic',
+  'Fly',
+  'Popper',
+  'Swimbait',
+  'Drop Shot',
+  'Live Bait',
+];
+
+export default function LogCatchScreen({ navigation, route }) {
   const { t } = useTranslation();
-  const { dispatch } = useContext(AppContext);
+  const { state, dispatch } = useApp();
+  const units = state.units || 'metric';
+
+  // Accept pre-filled coordinates from map long-press
+  const routeCoords = route?.params;
 
   // Form state
   const [species, setSpecies] = useState('');
@@ -73,12 +98,22 @@ export default function LogCatchScreen({ navigation }) {
   const [saving, setSaving] = useState(false);
 
   // Auto-captured data
-  const [coords, setCoords] = useState(null);
+  const [coords, setCoords] = useState(
+    routeCoords?.latitude ? routeCoords : null,
+  );
   const [autoWeather, setAutoWeather] = useState(null);
-  const [gpsLoading, setGpsLoading] = useState(true);
+  const [gpsLoading, setGpsLoading] = useState(!routeCoords?.latitude);
 
-  // Get GPS on mount
+  // Get GPS on mount (skip if coords came from route)
   useEffect(() => {
+    if (routeCoords?.latitude) {
+      // Coords from map long-press — fetch weather for that location
+      weatherService
+        .getWeather(routeCoords.latitude, routeCoords.longitude)
+        .then(setAutoWeather)
+        .catch(() => {});
+      return;
+    }
     (async () => {
       try {
         if (Platform.OS === 'android') {
@@ -154,13 +189,35 @@ export default function LogCatchScreen({ navigation }) {
       return;
     }
 
+    // Enforce free tier catch limit
+    try {
+      await catchService.init();
+      const monthCount = await catchService.getMonthCatchCount();
+      const { allowed, max } = checkLimit('maxCatchesPerMonth', monthCount);
+      if (!allowed) {
+        const wantsUpgrade = await requireFeature('maxCatchesPerMonth');
+        if (wantsUpgrade) {
+          navigation.navigate('Profile'); // opens paywall
+        }
+        return;
+      }
+    } catch {}
+
     setSaving(true);
     try {
       await catchService.init();
       const catchData = {
         species: species.trim(),
-        weight: weight ? parseFloat(weight) : null,
-        length: length ? parseFloat(length) : null,
+        weight: weight
+          ? units === 'imperial'
+            ? parseFloat(weight) * 0.453592 // lb → kg
+            : parseFloat(weight)
+          : null,
+        length: length
+          ? units === 'imperial'
+            ? parseFloat(length) * 2.54 // in → cm
+            : parseFloat(length)
+          : null,
         bait: bait.trim(),
         method,
         waterType,
@@ -180,8 +237,10 @@ export default function LogCatchScreen({ navigation }) {
       };
       const saved = await catchService.logCatch(catchData);
       dispatch({ type: 'ADD_CATCH', payload: saved });
+      notificationSuccess();
       navigation.goBack();
     } catch (e) {
+      notificationWarning();
       Alert.alert(t('catch.error', 'Error'), e.message);
     } finally {
       setSaving(false);
@@ -234,7 +293,9 @@ export default function LogCatchScreen({ navigation }) {
           <View style={styles.row}>
             <View style={styles.halfField}>
               <Text style={styles.label}>
-                {t('catch.weight', 'Weight (kg)')}
+                {units === 'metric'
+                  ? t('catch.weightKg', 'Weight (kg)')
+                  : t('catch.weightLb', 'Weight (lb)')}
               </Text>
               <TextInput
                 style={styles.input}
@@ -247,7 +308,9 @@ export default function LogCatchScreen({ navigation }) {
             </View>
             <View style={styles.halfField}>
               <Text style={styles.label}>
-                {t('catch.length', 'Length (cm)')}
+                {units === 'metric'
+                  ? t('catch.lengthCm', 'Length (cm)')
+                  : t('catch.lengthIn', 'Length (in)')}
               </Text>
               <TextInput
                 style={styles.input}
@@ -327,6 +390,31 @@ export default function LogCatchScreen({ navigation }) {
             placeholder={t('catch.baitPlaceholder', 'e.g. Worm, Spinner, Fly')}
             placeholderTextColor="#555"
           />
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={styles.methodScroll}
+          >
+            {BAIT_PRESETS.map(b => (
+              <TouchableOpacity
+                key={b}
+                style={[
+                  styles.chip,
+                  bait === b && {
+                    borderColor: '#FF9800',
+                    backgroundColor: 'rgba(255,152,0,0.15)',
+                  },
+                ]}
+                onPress={() => setBait(bait === b ? '' : b)}
+              >
+                <Text
+                  style={[styles.chipText, bait === b && { color: '#FF9800' }]}
+                >
+                  {b}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
           {/* Release toggle */}
           <TouchableOpacity

@@ -20,6 +20,7 @@ import subscriptionService, {
   TIERS,
   TIER_META,
 } from '../services/subscriptionService';
+import PurchaseSuccessModal from './PurchaseSuccessModal';
 
 const PRO_FEATURES = [
   { icon: '🎣', key: 'unlimitedCatches' },
@@ -38,6 +39,7 @@ export default function PaywallModal({ visible, onClose, feature }) {
   const [offerings, setOfferings] = useState(null);
   const [purchasing, setPurchasing] = useState(false);
   const [restoring, setRestoring] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     if (visible) {
@@ -64,7 +66,9 @@ export default function PaywallModal({ visible, onClose, feature }) {
     setPurchasing(true);
     try {
       const success = await subscriptionService.purchase(pkg);
-      if (success) onClose();
+      if (success) {
+        setShowSuccess(true);
+      }
     } catch (e) {
       Alert.alert(t('common.error', 'Error'), e.message);
     } finally {
@@ -204,8 +208,22 @@ export default function PaywallModal({ visible, onClose, feature }) {
               'By subscribing you agree to our Terms of Service and Privacy Policy. Payment will be charged to your account. Subscription auto-renews unless cancelled at least 24 hours before the end of the current period.',
             )}
           </Text>
+
+          {/* Free trial notice */}
+          <Text style={styles.trialText}>
+            {t('paywall.trial', '7-day free trial included with yearly plan')}
+          </Text>
         </View>
       </View>
+
+      <PurchaseSuccessModal
+        visible={showSuccess}
+        tier="pro"
+        onClose={() => {
+          setShowSuccess(false);
+          onClose();
+        }}
+      />
     </Modal>
   );
 }
@@ -299,5 +317,12 @@ const styles = StyleSheet.create({
     color: '#444',
     textAlign: 'center',
     marginTop: 4,
+  },
+  trialText: {
+    fontSize: 13,
+    color: '#4CAF50',
+    textAlign: 'center',
+    marginTop: 10,
+    fontWeight: '600',
   },
 });

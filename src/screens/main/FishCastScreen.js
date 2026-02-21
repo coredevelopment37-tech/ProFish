@@ -157,6 +157,70 @@ export default function FishCastScreen() {
       {/* Quick summary */}
       <Text style={styles.summary}>{getSummaryText(forecast.score, t)}</Text>
 
+      {/* Best Times Today */}
+      {forecast.solunar && (
+        <View style={styles.bestTimesCard}>
+          <Text style={styles.bestTimesTitle}>
+            {t('fishcast.bestTimes', '🕐 Best Times Today')}
+          </Text>
+          <View style={styles.bestTimesRow}>
+            {(forecast.solunar.majorPeriods || []).map((period, i) => (
+              <View key={`major-${i}`} style={styles.timeSlot}>
+                <Text style={styles.timeSlotIcon}>🔥</Text>
+                <Text style={styles.timeSlotText}>
+                  {period.start} – {period.end}
+                </Text>
+                <Text style={styles.timeSlotLabel}>
+                  {t('fishcast.major', 'Major')}
+                </Text>
+              </View>
+            ))}
+            {(forecast.solunar.minorPeriods || []).map((period, i) => (
+              <View key={`minor-${i}`} style={styles.timeSlot}>
+                <Text style={styles.timeSlotIcon}>⭐</Text>
+                <Text style={styles.timeSlotText}>
+                  {period.start} – {period.end}
+                </Text>
+                <Text style={styles.timeSlotLabel}>
+                  {t('fishcast.minor', 'Minor')}
+                </Text>
+              </View>
+            ))}
+          </View>
+        </View>
+      )}
+
+      {/* Hourly Forecast Timeline */}
+      {forecast.hourly && forecast.hourly.length > 0 && (
+        <View style={styles.hourlyCard}>
+          <Text style={styles.hourlyTitle}>
+            {t('fishcast.hourlyForecast', '📊 Hourly Forecast')}
+          </Text>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            {forecast.hourly.map((h, i) => (
+              <View key={i} style={styles.hourlySlot}>
+                <Text style={styles.hourlyTime}>{h.hour}</Text>
+                <View
+                  style={[
+                    styles.hourlyBar,
+                    {
+                      height: Math.max(8, (h.score / 100) * 60),
+                      backgroundColor:
+                        h.score >= 70
+                          ? '#4CAF50'
+                          : h.score >= 40
+                          ? '#FF9800'
+                          : '#555',
+                    },
+                  ]}
+                />
+                <Text style={styles.hourlyScore}>{h.score}</Text>
+              </View>
+            ))}
+          </ScrollView>
+        </View>
+      )}
+
       {/* Solunar Timeline */}
       {forecast.solunar && (
         <SolunarTimeline
@@ -249,4 +313,56 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   errorHint: { color: '#666', fontSize: 14, textAlign: 'center' },
+  bestTimesCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+  },
+  bestTimesTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 12,
+  },
+  bestTimesRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 10,
+  },
+  timeSlot: {
+    backgroundColor: '#0a0a1a',
+    borderRadius: 12,
+    padding: 12,
+    alignItems: 'center',
+    minWidth: 90,
+    flex: 1,
+  },
+  timeSlotIcon: { fontSize: 20, marginBottom: 4 },
+  timeSlotText: { fontSize: 13, color: '#fff', fontWeight: '600' },
+  timeSlotLabel: { fontSize: 11, color: '#888', marginTop: 2 },
+  hourlyCard: {
+    backgroundColor: '#1a1a2e',
+    borderRadius: 16,
+    padding: 16,
+    marginBottom: 16,
+  },
+  hourlyTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+    marginBottom: 12,
+  },
+  hourlySlot: {
+    alignItems: 'center',
+    marginRight: 12,
+    width: 36,
+  },
+  hourlyTime: { fontSize: 10, color: '#888', marginBottom: 4 },
+  hourlyBar: {
+    width: 20,
+    borderRadius: 4,
+    minHeight: 8,
+  },
+  hourlyScore: { fontSize: 10, color: '#ccc', marginTop: 4 },
 });

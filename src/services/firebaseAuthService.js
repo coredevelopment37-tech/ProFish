@@ -134,7 +134,78 @@ const firebaseAuthService = {
   },
 
   /**
-   * Link anonymous account to Google/Apple (upgrade without losing data)
+   * Sign in with email/password
+   */
+  async signInWithEmail(email, password) {
+    if (!auth) throw new Error('Firebase Auth not available');
+    const userCredential = await auth().signInWithEmailAndPassword(
+      email,
+      password,
+    );
+    const user = userCredential.user;
+    await this.saveUserProfile({
+      displayName: user.displayName || email.split('@')[0],
+      email: user.email,
+      provider: 'email',
+      createdAt: user.metadata.creationTime,
+    });
+    return userCredential;
+  },
+
+  /**
+   * Create account with email/password
+   */
+  async createAccountWithEmail(email, password, displayName) {
+    if (!auth) throw new Error('Firebase Auth not available');
+    const userCredential = await auth().createUserWithEmailAndPassword(
+      email,
+      password,
+    );
+    const user = userCredential.user;
+    if (displayName) {
+      await user.updateProfile({ displayName });
+    }
+    await this.saveUserProfile({
+      displayName: displayName || email.split('@')[0],
+      email,
+      provider: 'email',
+      createdAt: user.metadata.creationTime,
+    });
+    return userCredential;
+  },
+
+  /**
+   * Send password reset email
+   */
+  async sendPasswordReset(email) {
+    if (!auth) throw new Error('Firebase Auth not available');
+    await auth().sendPasswordResetEmail(email);
+  },
+
+  /**
+   * Link anonymous account to email/password
+   */
+  async linkWithEmail(email, password, displayName) {
+    if (!auth) throw new Error('Not available');
+    const user = auth().currentUser;
+    if (!user || !user.isAnonymous) throw new Error('Not an anonymous user');
+
+    const credential = auth.EmailAuthProvider.credential(email, password);
+    const linked = await user.linkWithCredential(credential);
+    if (displayName) {
+      await linked.user.updateProfile({ displayName });
+    }
+    await this.saveUserProfile({
+      displayName: displayName || email.split('@')[0],
+      email,
+      provider: 'email',
+      createdAt: user.metadata.creationTime,
+    });
+    return linked;
+  },
+
+  /**
+   * Link anonymous account to Google (upgrade without losing data)
    */
   async linkWithGoogle() {
     if (!auth || !GoogleSignin) throw new Error('Not available');
@@ -147,9 +218,19 @@ const firebaseAuthService = {
     if (!idToken) throw new Error('No ID token');
 
     const credential = auth.GoogleAuthProvider.credential(idToken);
-    return await user.linkWithCredential(credential);
+    const linked = await user.linkWithCredential(credential);
+    await this.saveUserProfile({
+      displayName: linked.user.displayName,
+      email: linked.user.email,
+      photoURL: linked.user.photoURL,
+      provider: 'google',
+    });
+    return linked;
   },
 
+  /**
+   * Link anonymous account to Apple
+   */
   async linkWithApple() {
     if (!auth || !appleAuth) throw new Error('Not available');
     const user = auth().currentUser;
@@ -164,7 +245,23 @@ const firebaseAuthService = {
     if (!identityToken) throw new Error('No identity token');
 
     const credential = auth.AppleAuthProvider.credential(identityToken, nonce);
-    return await user.linkWithCredential(credential);
+    const linked = await user.linkWithCredential(credential);
+    await this.saveUserProfile({
+      displayName: linked.user.displayName,
+      email: linked.user.email,
+      provider: 'apple',
+    });
+    return linked;
+  },
+
+  /**
+   * Update user display name
+   */
+  async updateDisplayName(displayName) {
+    const user = this.getCurrentUser();
+    if (!user) throw new Error('Not signed in');
+    await user.updateProfile({ displayName });
+    await this.saveUserProfile({ displayName });
   },
 
   /**

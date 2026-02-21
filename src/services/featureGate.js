@@ -90,15 +90,40 @@ export function getFeatureLabel(featureKey) {
 
 /**
  * Show upgrade prompt for a locked feature.
- * Returns true if user chose to upgrade.
+ * Returns a Promise<boolean> — true if user chose to upgrade.
  */
-export async function requireFeature(featureKey) {
+import { Alert } from 'react-native';
+
+export function requireFeature(featureKey) {
   const label = getFeatureLabel(featureKey);
   const requiredTier = getRequiredTier(featureKey);
+  const tierLabel =
+    requiredTier.charAt(0).toUpperCase() + requiredTier.slice(1);
 
-  // TODO: Show ProFishDialog upgrade prompt
-  console.log(`[FeatureGate] ${label} requires ${requiredTier} subscription`);
-  return false;
+  return new Promise(resolve => {
+    Alert.alert(
+      `🔒 ${label}`,
+      `This feature requires a ${tierLabel} subscription. Upgrade to unlock unlimited access.`,
+      [
+        { text: 'Not Now', style: 'cancel', onPress: () => resolve(false) },
+        { text: `Upgrade to ${tierLabel}`, onPress: () => resolve(true) },
+      ],
+    );
+  });
+}
+
+/**
+ * Check if a numeric limit has been reached.
+ * Returns { allowed: boolean, current: number, max: number }
+ */
+export function checkLimit(featureKey, currentCount) {
+  const max = getLimit(featureKey);
+  return {
+    allowed: currentCount < max,
+    current: currentCount,
+    max,
+    isUnlimited: max === Infinity,
+  };
 }
 
 export { FEATURE_LABELS, FEATURE_REQUIRED_TIER, TIER_ORDER };

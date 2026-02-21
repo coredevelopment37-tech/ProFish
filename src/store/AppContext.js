@@ -3,8 +3,10 @@
  */
 
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import subscriptionService from '../services/subscriptionService';
 import regionGatingService from '../services/regionGatingService';
+import firebaseAuthService from '../services/firebaseAuthService';
 
 const AppContext = createContext(null);
 
@@ -15,6 +17,7 @@ const initialState = {
   region: null,
   country: null,
   language: 'en',
+  units: 'metric', // metric | imperial
   catches: [],
   isLoading: true,
 };
@@ -36,7 +39,11 @@ function appReducer(state, action) {
         country: action.payload.country,
       };
     case 'SET_LANGUAGE':
+      AsyncStorage.setItem('@profish_language', action.payload).catch(() => {});
       return { ...state, language: action.payload };
+    case 'SET_UNITS':
+      AsyncStorage.setItem('@profish_units', action.payload).catch(() => {});
+      return { ...state, units: action.payload };
     case 'SET_LOADING':
       return { ...state, isLoading: action.payload };
     case 'ADD_CATCH':
@@ -50,29 +57,61 @@ export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   useEffect(() => {
-    async function init() {
-      // Initialize subscription service
-      await subscriptionService.init();
+    // Restore persisted preferences
+    AsyncStorage.getItem('@profish_units')
+      .then(val => {
+        if (val) dispatch({ type: 'SET_UNITS', payload: val });
+      })
+      .catch(() => {});
+    AsyncStorage.getItem('@profish_language')
+      .then(val => {
+        if (val) dispatch({ type: 'SET_LANGUAGE', payload: val });
+      })
+      .catch(() => {});
+
+    // Initialize subscription service
+    subscriptionService.init().then(() => {
       dispatch({
         type: 'SET_TIER',
         payload: subscriptionService.getCurrentTier(),
       });
+    });
 
-      // Detect region
-      const { region, country } = regionGatingService.detect();
-      dispatch({ type: 'SET_REGION', payload: { region, country } });
+    // Detect region
+    const { region, country } = regionGatingService.detect();
+    dispatch({ type: 'SET_REGION', payload: { region, country } });
 
+    // Listen for Firebase auth state changes
+    const unsubAuth = firebaseAuthService.onAuthStateChanged(user => {
+      if (user) {
+        dispatch({
+          type: 'SET_USER',
+          payload: {
+            uid: user.uid,
+            displayName: user.displayName,
+            email: user.email,
+            photoURL: user.photoURL,
+            isAnonymous: user.isAnonymous,
+            provider: user.providerData?.[0]?.providerId || 'anonymous',
+          },
+        });
+        // Identify user for RevenueCat
+        subscriptionService.identify(user.uid).catch(() => {});
+      } else {
+        dispatch({ type: 'SET_USER', payload: null });
+      }
       dispatch({ type: 'SET_LOADING', payload: false });
-    }
-
-    init();
+    });
 
     // Listen for tier changes
-    const unsub = subscriptionService.addListener(tier => {
+    const unsubTier = subscriptionService.addListener(tier => {
       dispatch({ type: 'SET_TIER', payload: tier });
     });
 
-    return unsub;
+    return () => {
+      unsubAuth();
+      unsubTier();
+    };
   }, []);
 
   return (

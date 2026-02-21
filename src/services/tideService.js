@@ -10,18 +10,13 @@
  */
 
 import { WORLDTIDES_API_KEY } from '../config/env';
+import cacheService from './cacheService';
 
 const NOAA_BASE = 'https://api.tidesandcurrents.noaa.gov/api/prod/datagetter';
 const WORLDTIDES_BASE = 'https://www.worldtides.info/api/v3';
 
-// In-memory cache to conserve WorldTides tokens
-const _cache = {};
-const CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
-
-function _cacheKey(lat, lng) {
-  // Round to ~1km grid to group nearby requests
-  return `${(lat * 10).toFixed(0)}_${(lng * 10).toFixed(0)}`;
-}
+const TIDE_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+const TIDE_STALE_TTL = 24 * 60 * 60 * 1000; // 24 hours (offline fallback)
 
 const tideService = {
   /**
@@ -29,26 +24,34 @@ const tideService = {
    * Automatically uses NOAA for US, WorldTides for everywhere else
    */
   async getTides(latitude, longitude, { days = 1 } = {}) {
+    const cacheKey = cacheService.coordKey('tide', latitude, longitude);
+    const cached = await cacheService.get(cacheKey);
+    if (cached) return cached;
+
     // Try NOAA first for US locations (free — no token cost)
     if (this._isUSLocation(latitude, longitude)) {
       try {
-        return await this._getNoaaTides(latitude, longitude, days);
+        const result = await this._getNoaaTides(latitude, longitude, days);
+        await cacheService.set(cacheKey, result, TIDE_CACHE_TTL);
+        await cacheService.set(cacheKey + '_stale', result, TIDE_STALE_TTL);
+        return result;
       } catch {
         // Fall through to WorldTides
       }
     }
 
-    // WorldTides for global coverage (costs tokens — check cache first)
+    // WorldTides for global coverage
     if (WORLDTIDES_API_KEY) {
-      const key = _cacheKey(latitude, longitude);
-      const cached = _cache[key];
-      if (cached && Date.now() - cached.ts < CACHE_TTL) {
-        return cached.data;
+      try {
+        const result = await this._getWorldTides(latitude, longitude, days);
+        await cacheService.set(cacheKey, result, TIDE_CACHE_TTL);
+        await cacheService.set(cacheKey + '_stale', result, TIDE_STALE_TTL);
+        return result;
+      } catch {
+        // Try offline fallback
+        const stale = await cacheService.get(cacheKey + '_stale');
+        if (stale) return { ...stale, _stale: true };
       }
-
-      const result = await this._getWorldTides(latitude, longitude, days);
-      _cache[key] = { data: result, ts: Date.now() };
-      return result;
     }
 
     return null;

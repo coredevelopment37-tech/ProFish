@@ -15,7 +15,10 @@ const get = (key, fallback = '') =>
 export { get as envGet };
 
 // ── Mapbox ───────────────────────────────────────────
-export const MAPBOX_ACCESS_TOKEN = get('MAPBOX_ACCESS_TOKEN', '');
+export const MAPBOX_ACCESS_TOKEN = get(
+  'MAPBOX_ACCESS_TOKEN',
+  '', // Set in .env file — do NOT commit tokens
+);
 
 // ── Firebase ─────────────────────────────────────────
 export const FIREBASE_API_KEY = get('FIREBASE_API_KEY', '');
