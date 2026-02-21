@@ -120,6 +120,27 @@ const catchService = {
     this._syncToFirestore();
   },
 
+  async updateCatch(id, updates) {
+    await this.init();
+    const idx = this._catches.findIndex(c => c.id === id);
+    if (idx === -1) throw new Error('Catch not found');
+
+    const updated = {
+      ...this._catches[idx],
+      ...updates,
+      updatedAt: new Date().toISOString(),
+      synced: false,
+    };
+    this._catches[idx] = updated;
+    await this._persist();
+
+    // Queue update for Firestore sync
+    await this._queueSync('update', updated);
+    this._syncToFirestore();
+
+    return updated;
+  },
+
   async getCatchCount() {
     await this.init();
     return this._catches.length;
@@ -204,7 +225,7 @@ const catchService = {
 
       for (const item of queue) {
         try {
-          if (item.action === 'add') {
+          if (item.action === 'add' || item.action === 'update') {
             await catchesRef.doc(item.data.id).set({
               ...item.data,
               synced: true,

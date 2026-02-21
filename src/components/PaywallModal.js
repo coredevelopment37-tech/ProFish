@@ -22,15 +22,18 @@ import subscriptionService, {
 } from '../services/subscriptionService';
 import PurchaseSuccessModal from './PurchaseSuccessModal';
 
-const PRO_FEATURES = [
-  { icon: '🎣', key: 'unlimitedCatches' },
-  { icon: '🗺️', key: 'allMapLayers' },
-  { icon: '📊', key: 'fullFishCast' },
-  { icon: '📷', key: 'catchPhotos' },
-  { icon: '📴', key: 'offlineMaps' },
-  { icon: '📈', key: 'catchStats' },
-  { icon: '🌊', key: 'bathymetry' },
-  { icon: '🌡️', key: 'seaSurfaceTemp' },
+// Feature comparison: [icon, key, free value, pro value]
+const FEATURE_COMPARISON = [
+  { icon: '🎣', key: 'catches', free: '10/mo', pro: '∞' },
+  { icon: '🗺️', key: 'mapLayers', free: '6', pro: '18' },
+  { icon: '📊', key: 'fishCast', free: '3 days', pro: '16 days' },
+  { icon: '🤖', key: 'aiId', free: '5/day', pro: '∞' },
+  { icon: '📷', key: 'catchPhotos', free: '—', pro: '✓' },
+  { icon: '📴', key: 'offlineMaps', free: '—', pro: '✓' },
+  { icon: '📈', key: 'catchStats', free: '—', pro: '✓' },
+  { icon: '🌊', key: 'bathymetry', free: '—', pro: '✓' },
+  { icon: '🌡️', key: 'seaSurfaceTemp', free: '—', pro: '✓' },
+  { icon: '🏆', key: 'leaderboards', free: '—', pro: '✓' },
 ];
 
 export default function PaywallModal({ visible, onClose, feature }) {
@@ -56,7 +59,6 @@ export default function PaywallModal({ visible, onClose, feature }) {
 
   async function handlePurchase(pkg) {
     if (!pkg) {
-      // Fallback — no offerings loaded (dev/test mode)
       Alert.alert(
         'Not Available',
         'In-app purchases are not configured yet. Set up products in RevenueCat & App Store Connect / Google Play Console.',
@@ -70,7 +72,46 @@ export default function PaywallModal({ visible, onClose, feature }) {
         setShowSuccess(true);
       }
     } catch (e) {
-      Alert.alert(t('common.error', 'Error'), e.message);
+      // Handle specific purchase errors
+      const code = e?.userCancelled ? 'USER_CANCELLED' : e?.code || '';
+      if (e?.userCancelled || code === 'USER_CANCELLED') {
+        // User cancelled — do nothing
+      } else if (
+        code === 'PRODUCT_ALREADY_PURCHASED' ||
+        code === 'RECEIPT_ALREADY_IN_USE'
+      ) {
+        Alert.alert(
+          t('paywall.alreadySubscribed', 'Already Subscribed'),
+          t(
+            'paywall.alreadySubscribedMsg',
+            'You already have an active subscription. Try restoring purchases.',
+          ),
+          [
+            { text: t('common.ok', 'OK') },
+            {
+              text: t('subscription.restore', 'Restore'),
+              onPress: handleRestore,
+            },
+          ],
+        );
+      } else if (code === 'NETWORK_ERROR' || code === 'STORE_PROBLEM') {
+        Alert.alert(
+          t('paywall.networkError', 'Connection Error'),
+          t(
+            'paywall.networkErrorMsg',
+            'Please check your internet connection and try again.',
+          ),
+        );
+      } else {
+        Alert.alert(
+          t('common.error', 'Error'),
+          e.message ||
+            t(
+              'paywall.purchaseFailed',
+              'Purchase could not be completed. Please try again.',
+            ),
+        );
+      }
     } finally {
       setPurchasing(false);
     }
@@ -119,21 +160,36 @@ export default function PaywallModal({ visible, onClose, feature }) {
             </Text>
           </View>
 
-          {/* Features */}
+          {/* Feature Comparison Table */}
           <ScrollView
             style={styles.features}
             showsVerticalScrollIndicator={false}
           >
-            {PRO_FEATURES.map(f => (
-              <View key={f.key} style={styles.featureRow}>
-                <Text style={styles.featureIcon}>{f.icon}</Text>
-                <Text style={styles.featureText}>
-                  {t(
-                    `paywall.feature.${f.key}`,
-                    f.key.replace(/([A-Z])/g, ' $1'),
-                  )}
-                </Text>
-                <Text style={styles.checkmark}>✓</Text>
+            {/* Table header */}
+            <View style={styles.tableHeader}>
+              <Text style={styles.tableHeaderFeature}>
+                {t('paywall.feature', 'Feature')}
+              </Text>
+              <Text style={styles.tableHeaderTier}>
+                {t('paywall.free', 'Free')}
+              </Text>
+              <Text style={[styles.tableHeaderTier, styles.tableHeaderPro]}>
+                Pro
+              </Text>
+            </View>
+            {FEATURE_COMPARISON.map(f => (
+              <View key={f.key} style={styles.tableRow}>
+                <View style={styles.tableFeatureCell}>
+                  <Text style={styles.featureIcon}>{f.icon}</Text>
+                  <Text style={styles.featureText}>
+                    {t(
+                      `paywall.feature.${f.key}`,
+                      f.key.replace(/([A-Z])/g, ' $1'),
+                    )}
+                  </Text>
+                </View>
+                <Text style={styles.tableFreeValue}>{f.free}</Text>
+                <Text style={styles.tableProValue}>{f.pro}</Text>
               </View>
             ))}
           </ScrollView>
@@ -255,22 +311,62 @@ const styles = StyleSheet.create({
   icon: { fontSize: 48, marginBottom: 12 },
   title: { fontSize: 26, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
   subtitle: { fontSize: 15, color: '#888', textAlign: 'center' },
-  features: { maxHeight: 260, marginBottom: 24 },
-  featureRow: {
+  features: { maxHeight: 300, marginBottom: 24 },
+  tableHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 2,
+    borderBottomColor: '#2a2a3e',
+    marginBottom: 4,
+  },
+  tableHeaderFeature: {
+    flex: 1,
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '600',
+    textTransform: 'uppercase',
+  },
+  tableHeaderTier: {
+    width: 56,
+    fontSize: 12,
+    color: '#666',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  tableHeaderPro: { color: '#FF9800' },
+  tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
     borderBottomColor: '#1a1a2e',
   },
-  featureIcon: { fontSize: 20, width: 36 },
+  tableFeatureCell: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  tableFreeValue: {
+    width: 56,
+    fontSize: 14,
+    color: '#666',
+    textAlign: 'center',
+  },
+  tableProValue: {
+    width: 56,
+    fontSize: 14,
+    color: '#4CAF50',
+    fontWeight: '600',
+    textAlign: 'center',
+  },
+  featureIcon: { fontSize: 18, width: 30 },
   featureText: {
     flex: 1,
-    fontSize: 15,
+    fontSize: 14,
     color: '#ccc',
     textTransform: 'capitalize',
   },
-  checkmark: { fontSize: 16, color: '#4CAF50', fontWeight: 'bold' },
   pricing: { marginBottom: 16 },
   yearlyButton: {
     flexDirection: 'row',

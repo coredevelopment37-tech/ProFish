@@ -2,7 +2,7 @@
  * CatchesScreen — Catch log list with stats summary
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import {
   View,
   Text,
@@ -12,8 +12,10 @@ import {
   RefreshControl,
   Platform,
   Alert,
+  Animated,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Swipeable } from 'react-native-gesture-handler';
 import catchService from '../../services/catchService';
 import { useApp } from '../../store/AppContext';
 import CatchCard from '../../components/CatchCard';
@@ -189,17 +191,72 @@ export default function CatchesScreen({ navigation }) {
         </TouchableOpacity>
       </View>
 
+  const swipeableRefs = useRef({});
+
+  const renderRightActions = useCallback(
+    (progress, dragX, id) => {
+      const scale = dragX.interpolate({
+        inputRange: [-100, 0],
+        outputRange: [1, 0.5],
+        extrapolate: 'clamp',
+      });
+      return (
+        <View style={styles.swipeActions}>
+          <TouchableOpacity
+            style={styles.editAction}
+            onPress={() => {
+              swipeableRefs.current[id]?.close();
+              const item = catches.find(c => c.id === id);
+              if (item) navigation.navigate('LogCatch', { editCatch: item });
+            }}
+          >
+            <Animated.Text style={[styles.actionText, { transform: [{ scale }] }]}>
+              ✏️
+            </Animated.Text>
+            <Animated.Text style={[styles.actionLabel, { transform: [{ scale }] }]}>
+              {t('common.edit', 'Edit')}
+            </Animated.Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.deleteAction}
+            onPress={() => {
+              swipeableRefs.current[id]?.close();
+              handleDelete(id);
+            }}
+          >
+            <Animated.Text style={[styles.actionText, { transform: [{ scale }] }]}>
+              🗑️
+            </Animated.Text>
+            <Animated.Text style={[styles.actionLabel, { transform: [{ scale }] }]}>
+              {t('common.delete', 'Delete')}
+            </Animated.Text>
+          </TouchableOpacity>
+        </View>
+      );
+    },
+    [catches, t, handleDelete, navigation],
+  );
+
       <FlatList
         data={displayed}
         renderItem={({ item }) => (
-          <CatchCard
-            item={item}
-            units={units}
-            onPress={() =>
-              navigation.navigate('CatchDetail', { catchData: item })
+          <Swipeable
+            ref={ref => { swipeableRefs.current[item.id] = ref; }}
+            renderRightActions={(progress, dragX) =>
+              renderRightActions(progress, dragX, item.id)
             }
-            onLongPress={() => handleDelete(item.id)}
-          />
+            friction={2}
+            rightThreshold={40}
+            overshootRight={false}
+          >
+            <CatchCard
+              item={item}
+              units={units}
+              onPress={() =>
+                navigation.navigate('CatchDetail', { catchData: item })
+              }
+            />
+          </Swipeable>
         )}
         keyExtractor={item => item.id}
         contentContainerStyle={styles.list}
@@ -343,4 +400,26 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   sortText: { fontSize: 18 },
+  swipeActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  editAction: {
+    backgroundColor: '#0080FF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 72,
+    borderRadius: 12,
+    marginRight: 4,
+  },
+  deleteAction: {
+    backgroundColor: '#F44336',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 72,
+    borderRadius: 12,
+  },
+  actionText: { fontSize: 20, marginBottom: 2 },
+  actionLabel: { fontSize: 11, color: '#fff', fontWeight: '600' },
 });

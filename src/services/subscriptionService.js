@@ -315,11 +315,65 @@ const subscriptionService = {
   },
 
   getCurrentTier() {
+    // Check expiration on every access
+    if (_expiresAt && new Date(_expiresAt) < new Date()) {
+      const previousTier = _currentTier;
+      _currentTier = TIERS.FREE;
+      _expiresAt = null;
+      this._persist();
+      if (previousTier !== TIERS.FREE) {
+        this._notifyListeners();
+      }
+    }
     return _currentTier;
   },
 
   getExpiresAt() {
     return _expiresAt;
+  },
+
+  /**
+   * Check if subscription is expiring soon (within 3 days)
+   */
+  isExpiringSoon() {
+    if (!_expiresAt) return false;
+    const daysLeft =
+      (new Date(_expiresAt) - new Date()) / (1000 * 60 * 60 * 24);
+    return daysLeft > 0 && daysLeft <= 3;
+  },
+
+  /**
+   * Check if subscription has expired (was previously a paid tier)
+   */
+  hasExpired() {
+    return (
+      _currentTier === TIERS.FREE &&
+      _expiresAt !== null &&
+      new Date(_expiresAt) < new Date()
+    );
+  },
+
+  /**
+   * Get days remaining until expiration
+   */
+  getDaysRemaining() {
+    if (!_expiresAt) return null;
+    const days = Math.ceil(
+      (new Date(_expiresAt) - new Date()) / (1000 * 60 * 60 * 24),
+    );
+    return Math.max(0, days);
+  },
+
+  /**
+   * Handle subscription expiration gracefully — keeps user data, downgrades features
+   */
+  async handleExpiration() {
+    const previousTier = _currentTier;
+    _currentTier = TIERS.FREE;
+    // Keep _expiresAt so we know they were previously subscribed
+    await this._persist();
+    this._notifyListeners();
+    return previousTier;
   },
 
   isPro() {

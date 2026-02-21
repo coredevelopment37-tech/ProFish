@@ -77,10 +77,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
 
         {/* Quick facts */}
         <View style={styles.factsRow}>
-          <FactChip
-            icon="🌊"
-            label={species.habitat}
-          />
+          <FactChip icon="🌊" label={species.habitat} />
           <FactChip
             icon="📍"
             label={`${species.regions?.length || 0} regions`}
@@ -207,7 +204,12 @@ const styles = StyleSheet.create({
     color: '#fff',
     textTransform: 'capitalize',
   },
-  scientific: { fontSize: 14, color: '#888', fontStyle: 'italic', marginTop: 2 },
+  scientific: {
+    fontSize: 14,
+    color: '#888',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
   scroll: { flex: 1 },
   scrollContent: { padding: 20 },
   illustrationBox: {
@@ -296,7 +298,12 @@ const styles = StyleSheet.create({
     padding: 40,
   },
   errorIcon: { fontSize: 48, marginBottom: 16 },
-  error: { color: '#F44336', fontSize: 18, fontWeight: '600', marginBottom: 16 },
+  error: {
+    color: '#F44336',
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 16,
+  },
   backButton: {
     backgroundColor: '#1a1a2e',
     borderRadius: 12,
@@ -304,10 +311,4 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   backButtonText: { color: '#0080FF', fontSize: 16, fontWeight: '600' },
-});
-    color: '#F44336',
-    fontSize: 16,
-    textAlign: 'center',
-    marginTop: 100,
-  },
 });

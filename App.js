@@ -6,7 +6,7 @@
  */
 
 import React, { useEffect, useRef } from 'react';
-import { LogBox, Linking } from 'react-native';
+import { LogBox } from 'react-native';
 import './src/config/i18n'; // Initialize i18n before any component renders
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { StyleSheet } from 'react-native';

@@ -186,11 +186,32 @@ export default function MapScreen({ navigation }) {
     [navigation],
   );
 
-  // Handle catch marker tap
+  // Handle catch marker tap (individual or cluster)
   const handleCatchPress = useCallback(
     event => {
       const feature = event.features?.[0];
-      if (!feature?.properties?.id) return;
+      if (!feature) return;
+
+      // If it's a cluster, zoom in to expand it
+      if (
+        feature.properties?.cluster === true ||
+        feature.properties?.point_count
+      ) {
+        const coords = feature.geometry?.coordinates;
+        if (coords && cameraRef.current) {
+          const currentZoom = 12;
+          cameraRef.current.setCamera({
+            centerCoordinate: coords,
+            zoomLevel: Math.min((currentZoom || 12) + 2, 16),
+            animationDuration: 500,
+          });
+          setFollowUser(false);
+        }
+        return;
+      }
+
+      // Individual marker tap
+      if (!feature.properties?.id) return;
       const catchItem = catches.find(c => c.id === feature.properties.id);
       if (catchItem) {
         setSelectedCatch(catchItem);
@@ -300,15 +321,64 @@ export default function MapScreen({ navigation }) {
             </MapboxGL.RasterSource>
           ))}
 
-        {/* Catch markers */}
+        {/* Catch markers — clustered */}
         {activeLayers.includes('catch_markers') && catches.length > 0 && (
           <MapboxGL.ShapeSource
             id="catches"
             shape={catchGeoJSON}
             onPress={handleCatchPress}
+            cluster
+            clusterRadius={50}
+            clusterMaxZoomLevel={14}
           >
+            {/* Cluster circles */}
+            <MapboxGL.CircleLayer
+              id="catch-clusters"
+              filter={['has', 'point_count']}
+              style={{
+                circleRadius: [
+                  'step',
+                  ['get', 'point_count'],
+                  18, // default radius
+                  5,
+                  22, // 5+ points
+                  15,
+                  28, // 15+ points
+                  30,
+                  34, // 30+ points
+                ],
+                circleColor: [
+                  'step',
+                  ['get', 'point_count'],
+                  '#FF9800', // default
+                  5,
+                  '#FF6B00', // 5+
+                  15,
+                  '#F44336', // 15+
+                  30,
+                  '#D32F2F', // 30+
+                ],
+                circleStrokeWidth: 2,
+                circleStrokeColor: '#fff',
+                circleOpacity: 0.9,
+              }}
+            />
+            {/* Cluster count labels */}
+            <MapboxGL.SymbolLayer
+              id="catch-cluster-count"
+              filter={['has', 'point_count']}
+              style={{
+                textField: ['get', 'point_count_abbreviated'],
+                textSize: 13,
+                textColor: '#fff',
+                textFont: ['DIN Pro Medium', 'Arial Unicode MS Bold'],
+                textAllowOverlap: true,
+              }}
+            />
+            {/* Individual catch markers */}
             <MapboxGL.CircleLayer
               id="catch-circles"
+              filter={['!', ['has', 'point_count']]}
               style={{
                 circleRadius: 8,
                 circleColor: '#FF6B00',

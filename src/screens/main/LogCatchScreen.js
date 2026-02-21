@@ -37,6 +37,14 @@ try {
   // Not linked yet
 }
 
+const PHOTO_OPTIONS = {
+  mediaType: 'photo',
+  maxWidth: 1024,
+  maxHeight: 1024,
+  quality: 0.8,
+  includeExtra: false,
+};
+
 // Water type options
 const WATER_TYPES = [
   { key: 'freshwater', label: '🏞️ Fresh', color: '#4FC3F7' },
@@ -82,30 +90,53 @@ export default function LogCatchScreen({ navigation, route }) {
   const { state, dispatch } = useApp();
   const units = state.units || 'metric';
 
-  // Accept pre-filled coordinates from map long-press
+  // Accept pre-filled coordinates from map long-press or edit data
   const routeCoords = route?.params;
+  const editCatch = route?.params?.editCatch || null;
+  const isEditing = !!editCatch;
 
-  // Form state
-  const [species, setSpecies] = useState('');
-  const [weight, setWeight] = useState('');
-  const [length, setLength] = useState('');
-  const [bait, setBait] = useState('');
-  const [notes, setNotes] = useState('');
-  const [released, setReleased] = useState(false);
-  const [photoUri, setPhotoUri] = useState(null);
-  const [waterType, setWaterType] = useState('freshwater');
-  const [method, setMethod] = useState('');
+  // Form state — pre-fill from editCatch if editing
+  const [species, setSpecies] = useState(editCatch?.species || '');
+  const [weight, setWeight] = useState(
+    editCatch?.weight
+      ? units === 'imperial'
+        ? String((editCatch.weight / 0.453592).toFixed(1))
+        : String(editCatch.weight)
+      : '',
+  );
+  const [length, setLength] = useState(
+    editCatch?.length
+      ? units === 'imperial'
+        ? String((editCatch.length / 2.54).toFixed(1))
+        : String(editCatch.length)
+      : '',
+  );
+  const [bait, setBait] = useState(editCatch?.bait || '');
+  const [notes, setNotes] = useState(editCatch?.notes || '');
+  const [released, setReleased] = useState(editCatch?.released || false);
+  const [photoUri, setPhotoUri] = useState(editCatch?.photo || null);
+  const [waterType, setWaterType] = useState(
+    editCatch?.waterType || 'freshwater',
+  );
+  const [method, setMethod] = useState(editCatch?.method || '');
   const [saving, setSaving] = useState(false);
 
   // Auto-captured data
   const [coords, setCoords] = useState(
-    routeCoords?.latitude ? routeCoords : null,
+    editCatch
+      ? { latitude: editCatch.latitude, longitude: editCatch.longitude }
+      : routeCoords?.latitude
+      ? routeCoords
+      : null,
   );
   const [autoWeather, setAutoWeather] = useState(null);
-  const [gpsLoading, setGpsLoading] = useState(!routeCoords?.latitude);
+  const [gpsLoading, setGpsLoading] = useState(
+    !editCatch && !routeCoords?.latitude,
+  );
 
-  // Get GPS on mount (skip if coords came from route)
+  // Get GPS on mount (skip if coords came from route or editing)
   useEffect(() => {
+    if (editCatch) return; // Already have coords from edited catch
     if (routeCoords?.latitude) {
       // Coords from map long-press — fetch weather for that location
       weatherService
@@ -153,27 +184,21 @@ export default function LogCatchScreen({ navigation, route }) {
       {
         text: t('catch.takePhoto', 'Take Photo'),
         onPress: () => {
-          launchCamera(
-            { mediaType: 'photo', maxWidth: 1200, quality: 0.8 },
-            res => {
-              if (!res.didCancel && res.assets?.[0]) {
-                setPhotoUri(res.assets[0].uri);
-              }
-            },
-          );
+          launchCamera({ ...PHOTO_OPTIONS, saveToPhotos: false }, res => {
+            if (!res.didCancel && !res.errorCode && res.assets?.[0]) {
+              setPhotoUri(res.assets[0].uri);
+            }
+          });
         },
       },
       {
         text: t('catch.chooseFromLibrary', 'Choose from Library'),
         onPress: () => {
-          launchImageLibrary(
-            { mediaType: 'photo', maxWidth: 1200, quality: 0.8 },
-            res => {
-              if (!res.didCancel && res.assets?.[0]) {
-                setPhotoUri(res.assets[0].uri);
-              }
-            },
-          );
+          launchImageLibrary(PHOTO_OPTIONS, res => {
+            if (!res.didCancel && !res.errorCode && res.assets?.[0]) {
+              setPhotoUri(res.assets[0].uri);
+            }
+          });
         },
       },
       { text: t('common.cancel', 'Cancel'), style: 'cancel' },
@@ -189,19 +214,21 @@ export default function LogCatchScreen({ navigation, route }) {
       return;
     }
 
-    // Enforce free tier catch limit
-    try {
-      await catchService.init();
-      const monthCount = await catchService.getMonthCatchCount();
-      const { allowed, max } = checkLimit('maxCatchesPerMonth', monthCount);
-      if (!allowed) {
-        const wantsUpgrade = await requireFeature('maxCatchesPerMonth');
-        if (wantsUpgrade) {
-          navigation.navigate('Profile'); // opens paywall
+    // Enforce free tier catch limit (skip if editing)
+    if (!isEditing) {
+      try {
+        await catchService.init();
+        const monthCount = await catchService.getMonthCatchCount();
+        const { allowed, max } = checkLimit('maxCatchesPerMonth', monthCount);
+        if (!allowed) {
+          const wantsUpgrade = await requireFeature('maxCatchesPerMonth');
+          if (wantsUpgrade) {
+            navigation.navigate('Profile');
+          }
+          return;
         }
-        return;
-      }
-    } catch {}
+      } catch {}
+    }
 
     setSaving(true);
     try {
@@ -210,12 +237,12 @@ export default function LogCatchScreen({ navigation, route }) {
         species: species.trim(),
         weight: weight
           ? units === 'imperial'
-            ? parseFloat(weight) * 0.453592 // lb → kg
+            ? parseFloat(weight) * 0.453592
             : parseFloat(weight)
           : null,
         length: length
           ? units === 'imperial'
-            ? parseFloat(length) * 2.54 // in → cm
+            ? parseFloat(length) * 2.54
             : parseFloat(length)
           : null,
         bait: bait.trim(),
@@ -233,10 +260,16 @@ export default function LogCatchScreen({ navigation, route }) {
               wind: autoWeather.wind,
               pressure: autoWeather.pressure,
             }
-          : null,
+          : editCatch?.conditions || null,
       };
-      const saved = await catchService.logCatch(catchData);
-      dispatch({ type: 'ADD_CATCH', payload: saved });
+
+      if (isEditing) {
+        const updated = await catchService.updateCatch(editCatch.id, catchData);
+        dispatch({ type: 'UPDATE_CATCH', payload: updated });
+      } else {
+        const saved = await catchService.logCatch(catchData);
+        dispatch({ type: 'ADD_CATCH', payload: saved });
+      }
       notificationSuccess();
       navigation.goBack();
     } catch (e) {
@@ -262,7 +295,11 @@ export default function LogCatchScreen({ navigation, route }) {
           <TouchableOpacity onPress={() => navigation.goBack()}>
             <Text style={styles.cancel}>{t('common.cancel', 'Cancel')}</Text>
           </TouchableOpacity>
-          <Text style={styles.title}>{t('catch.logCatch', 'Log Catch')}</Text>
+          <Text style={styles.title}>
+            {isEditing
+              ? t('catch.editCatch', 'Edit Catch')
+              : t('catch.logCatch', 'Log Catch')}
+          </Text>
           <TouchableOpacity onPress={handleSave} disabled={saving}>
             <Text style={[styles.save, saving && { opacity: 0.5 }]}>
               {saving ? '...' : t('common.save', 'Save')}
