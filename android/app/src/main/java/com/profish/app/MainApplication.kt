@@ -1,4 +1,4 @@
-package com.helloworld
+package com.profish.app
 
 import android.app.Application
 import com.facebook.react.PackageList
