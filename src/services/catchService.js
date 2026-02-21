@@ -21,8 +21,6 @@ try {
   // Not linked yet
 }
 
-const LOCAL_CATCHES_KEY = '@profish_catches';
-
 // Catch data structure
 export const createCatch = ({
   species = '',
