@@ -1,0 +1,491 @@
+/**
+ * BucketListScreen — Species bucket list / life list tracker
+ * #554 — Dream catches with progress tracking
+ */
+
+import React, { useState, useEffect, useMemo } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  FlatList,
+  TextInput,
+} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+const THEME = {
+  bg: '#0A0A1A',
+  card: '#1A1A2E',
+  primary: '#0080FF',
+  accent: '#00D4AA',
+  text: '#FFF',
+  muted: '#8A8A9A',
+  border: '#2A2A40',
+};
+
+const SUGGESTED_BUCKET_LIST = [
+  {
+    species: 'Largemouth Bass',
+    region: 'North America',
+    emoji: '🐟',
+    difficulty: 'Easy',
+  },
+  {
+    species: 'Rainbow Trout',
+    region: 'Global',
+    emoji: '🌈',
+    difficulty: 'Easy',
+  },
+  {
+    species: 'Tarpon',
+    region: 'Florida / Caribbean',
+    emoji: '⚡',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Peacock Bass',
+    region: 'Amazon / Florida',
+    emoji: '🌴',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Blue Marlin',
+    region: 'Atlantic / Pacific',
+    emoji: '🏆',
+    difficulty: 'Hard',
+  },
+  {
+    species: 'Giant Trevally',
+    region: 'Indo-Pacific',
+    emoji: '💪',
+    difficulty: 'Hard',
+  },
+  {
+    species: 'Atlantic Salmon',
+    region: 'Scandinavia / Canada',
+    emoji: '🏔️',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Permit',
+    region: 'Florida Keys / Belize',
+    emoji: '🎯',
+    difficulty: 'Very Hard',
+  },
+  {
+    species: 'Golden Dorado',
+    region: 'South America',
+    emoji: '✨',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Arapaima',
+    region: 'Amazon Basin',
+    emoji: '🐊',
+    difficulty: 'Hard',
+  },
+  {
+    species: 'Bonefish',
+    region: 'Tropical Flats',
+    emoji: '👻',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Muskie',
+    region: 'Great Lakes / Canada',
+    emoji: '🦈',
+    difficulty: 'Hard',
+  },
+  {
+    species: 'Yellowfin Tuna',
+    region: 'Offshore Global',
+    emoji: '🔥',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Barramundi',
+    region: 'Australia / SE Asia',
+    emoji: '🦘',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Sailfish',
+    region: 'Tropical Oceans',
+    emoji: '⛵',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Alligator Gar',
+    region: 'Southern USA',
+    emoji: '🐊',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Wels Catfish',
+    region: 'Europe',
+    emoji: '🐱',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Mahseer',
+    region: 'India / SE Asia',
+    emoji: '🏔️',
+    difficulty: 'Hard',
+  },
+  {
+    species: 'Roosterfish',
+    region: 'Central America',
+    emoji: '🌅',
+    difficulty: 'Medium',
+  },
+  {
+    species: 'Swordfish',
+    region: 'Deep Ocean',
+    emoji: '⚔️',
+    difficulty: 'Very Hard',
+  },
+];
+
+export default function BucketListScreen({ navigation }) {
+  const [bucketList, setBucketList] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [customSpecies, setCustomSpecies] = useState('');
+
+  useEffect(() => {
+    loadBucketList();
+  }, []);
+
+  const loadBucketList = async () => {
+    try {
+      const data = await AsyncStorage.getItem('@profish_bucket_list');
+      if (data) setBucketList(JSON.parse(data));
+    } catch (e) {
+      /* ignore */
+    }
+  };
+
+  const saveBucketList = async list => {
+    setBucketList(list);
+    try {
+      await AsyncStorage.setItem('@profish_bucket_list', JSON.stringify(list));
+    } catch (e) {
+      /* ignore */
+    }
+  };
+
+  const addFromSuggestion = item => {
+    if (bucketList.find(b => b.species === item.species)) return;
+    saveBucketList([
+      ...bucketList,
+      { ...item, caught: false, caughtDate: null, id: Date.now().toString() },
+    ]);
+  };
+
+  const addCustom = () => {
+    if (!customSpecies.trim()) return;
+    saveBucketList([
+      ...bucketList,
+      {
+        species: customSpecies.trim(),
+        region: 'Custom',
+        emoji: '🐟',
+        difficulty: 'Unknown',
+        caught: false,
+        caughtDate: null,
+        id: Date.now().toString(),
+      },
+    ]);
+    setCustomSpecies('');
+  };
+
+  const toggleCaught = id => {
+    const updated = bucketList.map(b =>
+      b.id === id
+        ? {
+            ...b,
+            caught: !b.caught,
+            caughtDate: !b.caught ? new Date().toISOString() : null,
+          }
+        : b,
+    );
+    saveBucketList(updated);
+  };
+
+  const removeItem = id => {
+    saveBucketList(bucketList.filter(b => b.id !== id));
+  };
+
+  const stats = useMemo(() => {
+    const total = bucketList.length;
+    const caught = bucketList.filter(b => b.caught).length;
+    return {
+      total,
+      caught,
+      pct: total > 0 ? Math.round((caught / total) * 100) : 0,
+    };
+  }, [bucketList]);
+
+  return (
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => navigation.goBack()}>
+          <Text style={styles.backBtn}>← Back</Text>
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>🏆 Bucket List</Text>
+        <Text style={styles.headerDesc}>Your dream catches</Text>
+      </View>
+
+      {/* Stats */}
+      <View style={styles.statsRow}>
+        <View style={styles.statBox}>
+          <Text style={styles.statValue}>{stats.total}</Text>
+          <Text style={styles.statLabel}>Target</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={[styles.statValue, { color: THEME.accent }]}>
+            {stats.caught}
+          </Text>
+          <Text style={styles.statLabel}>Caught</Text>
+        </View>
+        <View style={styles.statBox}>
+          <Text style={[styles.statValue, { color: THEME.primary }]}>
+            {stats.pct}%
+          </Text>
+          <Text style={styles.statLabel}>Complete</Text>
+        </View>
+      </View>
+
+      {/* Progress bar */}
+      {stats.total > 0 && (
+        <View style={styles.progressContainer}>
+          <View style={styles.progressBar}>
+            <View style={[styles.progressFill, { width: `${stats.pct}%` }]} />
+          </View>
+        </View>
+      )}
+
+      {/* Add custom */}
+      <View style={styles.addRow}>
+        <TextInput
+          style={styles.addInput}
+          value={customSpecies}
+          onChangeText={setCustomSpecies}
+          placeholder="Add custom species..."
+          placeholderTextColor={THEME.muted}
+        />
+        <TouchableOpacity style={styles.addBtn} onPress={addCustom}>
+          <Text style={styles.addBtnText}>+</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.suggestBtn}
+          onPress={() => setShowSuggestions(!showSuggestions)}
+        >
+          <Text style={styles.suggestBtnText}>💡</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Suggestions */}
+      {showSuggestions && (
+        <View style={styles.suggestionsCard}>
+          <Text style={styles.suggestionsTitle}>Suggested Dream Catches</Text>
+          <FlatList
+            data={SUGGESTED_BUCKET_LIST}
+            keyExtractor={item => item.species}
+            renderItem={({ item }) => {
+              const alreadyAdded = bucketList.find(
+                b => b.species === item.species,
+              );
+              return (
+                <TouchableOpacity
+                  style={[
+                    styles.suggestItem,
+                    alreadyAdded && styles.suggestItemAdded,
+                  ]}
+                  onPress={() => !alreadyAdded && addFromSuggestion(item)}
+                  disabled={!!alreadyAdded}
+                >
+                  <Text style={styles.suggestEmoji}>{item.emoji}</Text>
+                  <Text style={styles.suggestSpecies}>{item.species}</Text>
+                  <Text style={styles.suggestRegion}>{item.region}</Text>
+                  <Text style={styles.suggestDiff}>
+                    {alreadyAdded ? '✅' : '+'}
+                  </Text>
+                </TouchableOpacity>
+              );
+            }}
+            style={styles.suggestList}
+            nestedScrollEnabled
+          />
+        </View>
+      )}
+
+      {/* Bucket list */}
+      <FlatList
+        data={bucketList}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={[styles.bucketItem, item.caught && styles.bucketItemCaught]}
+            onPress={() => toggleCaught(item.id)}
+            onLongPress={() => removeItem(item.id)}
+          >
+            <Text style={styles.bucketCheck}>{item.caught ? '✅' : '⬜'}</Text>
+            <Text style={styles.bucketEmoji}>{item.emoji}</Text>
+            <View style={styles.bucketContent}>
+              <Text
+                style={[
+                  styles.bucketSpecies,
+                  item.caught && styles.bucketSpeciesCaught,
+                ]}
+              >
+                {item.species}
+              </Text>
+              <Text style={styles.bucketRegion}>
+                {item.region} • {item.difficulty}
+              </Text>
+              {item.caught && item.caughtDate && (
+                <Text style={styles.bucketDate}>
+                  Caught: {new Date(item.caughtDate).toLocaleDateString()}
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
+        )}
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <Text style={styles.emptyText}>
+            Add species to your bucket list to start tracking your dream
+            catches!
+          </Text>
+        }
+      />
+    </View>
+  );
+}
+
+export { SUGGESTED_BUCKET_LIST };
+
+const styles = StyleSheet.create({
+  container: { flex: 1, backgroundColor: THEME.bg },
+  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 8 },
+  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
+  headerDesc: { fontSize: 14, color: THEME.muted, marginTop: 4 },
+  statsRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 10,
+    marginTop: 12,
+  },
+  statBox: {
+    flex: 1,
+    backgroundColor: THEME.card,
+    borderRadius: 12,
+    padding: 14,
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+  statValue: { fontSize: 24, fontWeight: '800', color: THEME.text },
+  statLabel: { fontSize: 12, color: THEME.muted, marginTop: 2 },
+  progressContainer: { paddingHorizontal: 16, marginTop: 12 },
+  progressBar: { height: 6, backgroundColor: THEME.border, borderRadius: 3 },
+  progressFill: { height: 6, backgroundColor: THEME.accent, borderRadius: 3 },
+  addRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    marginTop: 16,
+    gap: 8,
+  },
+  addInput: {
+    flex: 1,
+    backgroundColor: THEME.card,
+    borderRadius: 12,
+    padding: 12,
+    fontSize: 14,
+    color: THEME.text,
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+  addBtn: {
+    backgroundColor: THEME.primary,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addBtnText: { fontSize: 24, color: '#FFF', fontWeight: '700' },
+  suggestBtn: {
+    backgroundColor: THEME.card,
+    width: 44,
+    height: 44,
+    borderRadius: 12,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+  suggestBtnText: { fontSize: 20 },
+  suggestionsCard: {
+    margin: 16,
+    backgroundColor: THEME.card,
+    borderRadius: 12,
+    padding: 14,
+    maxHeight: 250,
+    borderWidth: 1,
+    borderColor: THEME.accent + '40',
+  },
+  suggestionsTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: THEME.accent,
+    marginBottom: 8,
+  },
+  suggestList: { maxHeight: 200 },
+  suggestItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: THEME.border,
+  },
+  suggestItemAdded: { opacity: 0.5 },
+  suggestEmoji: { fontSize: 18, marginRight: 8 },
+  suggestSpecies: { flex: 1, fontSize: 14, color: THEME.text },
+  suggestRegion: { fontSize: 12, color: THEME.muted, marginRight: 8 },
+  suggestDiff: { fontSize: 16, color: THEME.primary },
+  listContent: { padding: 16, paddingBottom: 100 },
+  bucketItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: THEME.card,
+    borderRadius: 12,
+    padding: 14,
+    marginBottom: 8,
+    borderWidth: 1,
+    borderColor: THEME.border,
+  },
+  bucketItemCaught: {
+    borderColor: THEME.accent + '60',
+    backgroundColor: THEME.accent + '08',
+  },
+  bucketCheck: { fontSize: 20, marginRight: 10 },
+  bucketEmoji: { fontSize: 24, marginRight: 10 },
+  bucketContent: { flex: 1 },
+  bucketSpecies: { fontSize: 16, fontWeight: '600', color: THEME.text },
+  bucketSpeciesCaught: {
+    textDecorationLine: 'line-through',
+    color: THEME.accent,
+  },
+  bucketRegion: { fontSize: 12, color: THEME.muted, marginTop: 2 },
+  bucketDate: { fontSize: 11, color: THEME.accent, marginTop: 4 },
+  emptyText: {
+    fontSize: 15,
+    color: THEME.muted,
+    textAlign: 'center',
+    marginTop: 40,
+    lineHeight: 22,
+  },
+});

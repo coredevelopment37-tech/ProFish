@@ -1,6 +1,7 @@
 /**
  * Root Navigator — ProFish
  * Auth flow → Main tabs with modals
+ * #501 — Lazy loading via React.lazy() + Suspense for non-tab screens
  */
 
 import React from 'react';
@@ -8,33 +9,116 @@ import { Text, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useApp } from '../store/AppContext';
+import lazyScreen from '../components/LazyScreen';
 
-// Auth screens
+// Auth screens (eagerly loaded — first impression)
 import WelcomeScreen from '../screens/auth/WelcomeScreen';
 import AuthScreen from '../screens/auth/AuthScreen';
 
-// Main screens
+// Main tab screens (eagerly loaded — always visible)
 import MapScreen from '../screens/main/MapScreen';
 import CatchesScreen from '../screens/main/CatchesScreen';
 import FishCastScreen from '../screens/main/FishCastScreen';
 import CommunityScreen from '../screens/main/CommunityScreen';
 import ProfileScreen from '../screens/main/ProfileScreen';
-import LogCatchScreen from '../screens/main/LogCatchScreen';
-import SpeciesDetailScreen from '../screens/main/SpeciesDetailScreen';
-import CatchDetailScreen from '../screens/main/CatchDetailScreen';
-import CatchStatsScreen from '../screens/main/CatchStatsScreen';
-import SettingsScreen from '../screens/main/SettingsScreen';
-import UserProfileScreen from '../screens/community/UserProfileScreen';
-import LeaderboardScreen from '../screens/main/LeaderboardScreen';
-import NotificationCenterScreen from '../screens/main/NotificationCenterScreen';
-import NotificationPrefsScreen from '../screens/main/NotificationPrefsScreen';
-import CatchComparisonScreen from '../screens/main/CatchComparisonScreen';
-import SeasonalCalendarScreen from '../screens/main/SeasonalCalendarScreen';
-import TournamentListScreen from '../screens/main/TournamentListScreen';
-import TournamentDetailScreen from '../screens/main/TournamentDetailScreen';
-import TournamentStatsScreen from '../screens/main/TournamentStatsScreen';
-import OfflineMapScreen from '../screens/main/OfflineMapScreen';
-import MarketplaceScreen from '../screens/main/MarketplaceScreen';
+
+// Lazy-loaded screens — only loaded when navigated to (#501)
+const LazyLogCatch = lazyScreen(
+  () => import('../screens/main/LogCatchScreen'),
+  'form',
+);
+const LazySpeciesDetail = lazyScreen(
+  () => import('../screens/main/SpeciesDetailScreen'),
+  'detail',
+);
+const LazyCatchDetail = lazyScreen(
+  () => import('../screens/main/CatchDetailScreen'),
+  'detail',
+);
+const LazyCatchStats = lazyScreen(
+  () => import('../screens/main/CatchStatsScreen'),
+  'detail',
+);
+const LazySettings = lazyScreen(
+  () => import('../screens/main/SettingsScreen'),
+  'list',
+);
+const LazyUserProfile = lazyScreen(
+  () => import('../screens/community/UserProfileScreen'),
+  'profile',
+);
+const LazyLeaderboard = lazyScreen(
+  () => import('../screens/main/LeaderboardScreen'),
+  'list',
+);
+const LazyNotificationCenter = lazyScreen(
+  () => import('../screens/main/NotificationCenterScreen'),
+  'list',
+);
+const LazyNotificationPrefs = lazyScreen(
+  () => import('../screens/main/NotificationPrefsScreen'),
+  'list',
+);
+const LazyCatchComparison = lazyScreen(
+  () => import('../screens/main/CatchComparisonScreen'),
+  'detail',
+);
+const LazySeasonalCalendar = lazyScreen(
+  () => import('../screens/main/SeasonalCalendarScreen'),
+  'detail',
+);
+const LazyTournamentList = lazyScreen(
+  () => import('../screens/main/TournamentListScreen'),
+  'list',
+);
+const LazyTournamentDetail = lazyScreen(
+  () => import('../screens/main/TournamentDetailScreen'),
+  'detail',
+);
+const LazyTournamentStats = lazyScreen(
+  () => import('../screens/main/TournamentStatsScreen'),
+  'detail',
+);
+const LazyOfflineMap = lazyScreen(
+  () => import('../screens/main/OfflineMapScreen'),
+  'map',
+);
+const LazyMarketplace = lazyScreen(
+  () => import('../screens/main/MarketplaceScreen'),
+  'list',
+);
+const LazyOnboarding = lazyScreen(
+  () => import('../screens/onboarding/OnboardingScreen'),
+  'detail',
+);
+const LazyFishingSchool = lazyScreen(
+  () => import('../screens/education/FishingSchoolScreen'),
+  'list',
+);
+const LazyKnotGuide = lazyScreen(
+  () => import('../screens/education/KnotGuideScreen'),
+  'detail',
+);
+const LazyTripPlanner = lazyScreen(
+  () => import('../screens/planner/TripPlannerScreen'),
+  'form',
+);
+const LazyBucketList = lazyScreen(
+  () => import('../screens/tools/BucketListScreen'),
+  'list',
+);
+const LazyMoonCalendar = lazyScreen(
+  () => import('../screens/tools/MoonCalendarScreen'),
+  'detail',
+);
+const LazyIsItLegal = lazyScreen(
+  () => import('../screens/regulations/IsItLegalScreen'),
+  'detail',
+);
+const LazyFishIdQuiz = lazyScreen(
+  () => import('../screens/education/FishIdQuizScreen'),
+  'detail',
+);
 
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
@@ -142,84 +226,124 @@ export default function RootNavigator() {
         <>
           <Stack.Screen name="MainTabs" component={MainTabs} />
           <Stack.Screen
+            name="Onboarding"
+            component={LazyOnboarding}
+            options={{ presentation: 'modal', gestureEnabled: false }}
+          />
+          <Stack.Screen
             name="LogCatch"
-            component={LogCatchScreen}
+            component={LazyLogCatch}
             options={{ presentation: 'modal' }}
           />
           <Stack.Screen
             name="SpeciesDetail"
-            component={SpeciesDetailScreen}
+            component={LazySpeciesDetail}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="CatchDetail"
-            component={CatchDetailScreen}
+            component={LazyCatchDetail}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="CatchStats"
-            component={CatchStatsScreen}
+            component={LazyCatchStats}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="Settings"
-            component={SettingsScreen}
+            component={LazySettings}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="UserProfile"
-            component={UserProfileScreen}
+            component={LazyUserProfile}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="Leaderboard"
-            component={LeaderboardScreen}
+            component={LazyLeaderboard}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="NotificationCenter"
-            component={NotificationCenterScreen}
+            component={LazyNotificationCenter}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="NotificationPrefs"
-            component={NotificationPrefsScreen}
+            component={LazyNotificationPrefs}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="CatchComparison"
-            component={CatchComparisonScreen}
+            component={LazyCatchComparison}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="SeasonalCalendar"
-            component={SeasonalCalendarScreen}
+            component={LazySeasonalCalendar}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="TournamentList"
-            component={TournamentListScreen}
+            component={LazyTournamentList}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="TournamentDetail"
-            component={TournamentDetailScreen}
+            component={LazyTournamentDetail}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="TournamentStats"
-            component={TournamentStatsScreen}
+            component={LazyTournamentStats}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="OfflineMap"
-            component={OfflineMapScreen}
+            component={LazyOfflineMap}
             options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="Marketplace"
-            component={MarketplaceScreen}
+            component={LazyMarketplace}
             options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="FishingSchool"
+            component={LazyFishingSchool}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="KnotGuide"
+            component={LazyKnotGuide}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="TripPlanner"
+            component={LazyTripPlanner}
+            options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="BucketList"
+            component={LazyBucketList}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="MoonCalendar"
+            component={LazyMoonCalendar}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="IsItLegal"
+            component={LazyIsItLegal}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="FishIdQuiz"
+            component={LazyFishIdQuiz}
+            options={{ presentation: 'modal' }}
           />
         </>
       ) : (

@@ -85,3 +85,7 @@ sentry.properties
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+
+# Test artifacts
+__test_bundle.js
+NUL
