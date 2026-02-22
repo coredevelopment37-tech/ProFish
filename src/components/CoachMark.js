@@ -1,0 +1,159 @@
+/**
+ * CoachMark — Tooltip overlay component for first-use feature highlights
+ * #508 — Renders a positioned tooltip with dismiss action
+ */
+
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  Animated,
+  StyleSheet,
+  Dimensions,
+} from 'react-native';
+import {
+  shouldShowCoachMark,
+  dismissCoachMark,
+} from '../services/coachMarkService';
+
+const { width: SCREEN_W } = Dimensions.get('window');
+
+/**
+ * @param {string} markId — coach mark key (e.g. 'MAP_LAYERS')
+ * @param {Object} [anchorStyle] — position overrides {top, left, right, bottom}
+ * @param {React.ReactNode} children — the wrapped element
+ */
+export default function CoachMark({ markId, anchorStyle, children }) {
+  const [mark, setMark] = useState(null);
+  const opacity = useRef(new Animated.Value(0)).current;
+  const translateY = useRef(new Animated.Value(10)).current;
+
+  useEffect(() => {
+    let cancelled = false;
+    shouldShowCoachMark(markId).then(m => {
+      if (m && !cancelled) {
+        setMark(m);
+        Animated.parallel([
+          Animated.timing(opacity, {
+            toValue: 1,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+          Animated.timing(translateY, {
+            toValue: 0,
+            duration: 400,
+            useNativeDriver: true,
+          }),
+        ]).start();
+      }
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [markId, opacity, translateY]);
+
+  const handleDismiss = async () => {
+    Animated.parallel([
+      Animated.timing(opacity, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+      Animated.timing(translateY, {
+        toValue: -10,
+        duration: 200,
+        useNativeDriver: true,
+      }),
+    ]).start(async () => {
+      await dismissCoachMark(markId);
+      setMark(null);
+    });
+  };
+
+  return (
+    <View>
+      {children}
+      {mark && (
+        <Animated.View
+          style={[
+            styles.tooltip,
+            mark.position === 'top' ? styles.tooltipTop : styles.tooltipBottom,
+            anchorStyle,
+            { opacity, transform: [{ translateY }] },
+          ]}
+        >
+          <View style={styles.tooltipContent}>
+            <Text style={styles.tooltipEmoji}>{mark.emoji}</Text>
+            <View style={styles.tooltipTextWrap}>
+              <Text style={styles.tooltipTitle}>{mark.title}</Text>
+              <Text style={styles.tooltipMessage}>{mark.message}</Text>
+            </View>
+          </View>
+          <TouchableOpacity onPress={handleDismiss} style={styles.dismissBtn}>
+            <Text style={styles.dismissText}>Got it ✓</Text>
+          </TouchableOpacity>
+          {/* Arrow */}
+          <View
+            style={[
+              styles.arrow,
+              mark.position === 'top' ? styles.arrowBottom : styles.arrowTop,
+            ]}
+          />
+        </Animated.View>
+      )}
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  tooltip: {
+    position: 'absolute',
+    left: 16,
+    right: 16,
+    maxWidth: SCREEN_W - 32,
+    backgroundColor: '#1A1A2E',
+    borderRadius: 12,
+    padding: 16,
+    borderWidth: 1,
+    borderColor: '#0080FF',
+    shadowColor: '#0080FF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 10,
+    zIndex: 9999,
+  },
+  tooltipTop: { bottom: '100%', marginBottom: 12 },
+  tooltipBottom: { top: '100%', marginTop: 12 },
+  tooltipContent: { flexDirection: 'row', alignItems: 'flex-start' },
+  tooltipEmoji: { fontSize: 28, marginRight: 12 },
+  tooltipTextWrap: { flex: 1 },
+  tooltipTitle: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#FFF',
+    marginBottom: 4,
+  },
+  tooltipMessage: { fontSize: 13, color: '#AAA', lineHeight: 18 },
+  dismissBtn: {
+    alignSelf: 'flex-end',
+    marginTop: 12,
+    backgroundColor: '#0080FF',
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 16,
+  },
+  dismissText: { fontSize: 13, fontWeight: '600', color: '#FFF' },
+  arrow: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    backgroundColor: '#1A1A2E',
+    borderColor: '#0080FF',
+    transform: [{ rotate: '45deg' }],
+    left: 30,
+  },
+  arrowTop: { top: -6, borderTopWidth: 1, borderLeftWidth: 1 },
+  arrowBottom: { bottom: -6, borderBottomWidth: 1, borderRightWidth: 1 },
+});

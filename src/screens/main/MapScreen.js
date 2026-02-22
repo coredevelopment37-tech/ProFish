@@ -75,6 +75,8 @@ export default function MapScreen({ navigation }) {
   const [hotspotModal, setHotspotModal] = useState(null);
   const [distanceMode, setDistanceMode] = useState(false);
   const [distancePoints, setDistancePoints] = useState([]);
+  const [rainViewerTs, setRainViewerTs] = useState(null);
+  const [tideStations, setTideStations] = useState([]);
 
   // Request location permission and start tracking
   useEffect(() => {
@@ -124,6 +126,51 @@ export default function MapScreen({ navigation }) {
         .catch(() => {});
     }
   }, [userCoords]);
+
+  // Fetch RainViewer latest radar timestamp (free, no key needed)
+  useEffect(() => {
+    if (!activeLayers.includes('weather')) return;
+    fetch('https://api.rainviewer.com/public/weather-maps.json')
+      .then(r => r.json())
+      .then(data => {
+        const past = data?.radar?.past;
+        if (past?.length) {
+          setRainViewerTs(past[past.length - 1].path);
+        }
+      })
+      .catch(() => {});
+    // Refresh every 5 minutes
+    const iv = setInterval(() => {
+      fetch('https://api.rainviewer.com/public/weather-maps.json')
+        .then(r => r.json())
+        .then(data => {
+          const past = data?.radar?.past;
+          if (past?.length) setRainViewerTs(past[past.length - 1].path);
+        })
+        .catch(() => {});
+    }, 300000);
+    return () => clearInterval(iv);
+  }, [activeLayers]);
+
+  // Load nearby tide stations when layer active
+  useEffect(() => {
+    if (!activeLayers.includes('tide_stations') || !userCoords) return;
+    // Use WorldTides nearby stations endpoint (free tier: 5 calls/day)
+    const { latitude, longitude } = userCoords;
+    fetch(
+      `https://www.worldtides.info/api/v3?stations&lat=${latitude}&lon=${longitude}&stationDistance=100&key=${require('../../config/env').WORLDTIDES_API_KEY || ''}`,
+    )
+      .then(r => r.json())
+      .then(data => {
+        if (data.stations?.length) {
+          setTideStations(data.stations.slice(0, 20));
+        }
+      })
+      .catch(() => {
+        // Fallback: just show a message, no crash
+        setTideStations([]);
+      });
+  }, [activeLayers, userCoords]);
 
   async function loadCatches() {
     try {
@@ -414,20 +461,41 @@ export default function MapScreen({ navigation }) {
 
         {/* Raster tile layers (bathymetry, nautical charts, etc.) */}
         {mapReady &&
-          getActiveTileLayers(activeLayers).map(layer => (
+          getActiveTileLayers(activeLayers)
+            .filter(layer => layer.id !== 'weather') // weather handled separately
+            .map(layer => (
+              <MapboxGL.RasterSource
+                key={layer.id}
+                id={`source-${layer.id}`}
+                tileUrlTemplates={[layer.tileUrl]}
+                tileSize={256}
+              >
+                <MapboxGL.RasterLayer
+                  id={`layer-${layer.id}`}
+                  style={{ rasterOpacity: layer.opacity || 0.7 }}
+                  belowLayerID="catch-circles"
+                />
+              </MapboxGL.RasterSource>
+            ))}
+
+        {/* Weather radar — RainViewer dynamic tiles */}
+        {mapReady &&
+          activeLayers.includes('weather') &&
+          rainViewerTs && (
             <MapboxGL.RasterSource
-              key={layer.id}
-              id={`source-${layer.id}`}
-              tileUrlTemplates={[layer.tileUrl]}
+              id="source-weather"
+              tileUrlTemplates={[
+                `https://tilecache.rainviewer.com${rainViewerTs}/256/{z}/{x}/{y}/2/1_1.png`,
+              ]}
               tileSize={256}
             >
               <MapboxGL.RasterLayer
-                id={`layer-${layer.id}`}
-                style={{ rasterOpacity: layer.opacity || 0.7 }}
+                id="layer-weather"
+                style={{ rasterOpacity: 0.5 }}
                 belowLayerID="catch-circles"
               />
             </MapboxGL.RasterSource>
-          ))}
+          )}
 
         {/* Catch markers — clustered */}
         {activeLayers.includes('catch_markers') && catches.length > 0 && (
@@ -509,6 +577,137 @@ export default function MapScreen({ navigation }) {
                 circleStrokeWidth: 2,
                 circleStrokeColor: '#fff',
                 circleOpacity: 0.85,
+              }}
+            />
+          </MapboxGL.ShapeSource>
+        )}
+
+        {/* Fish Hotspots — heatmap layer from aggregated catch data */}
+        {activeLayers.includes('fish_hotspots') && catches.length > 0 && (
+          <MapboxGL.ShapeSource id="fish-hotspots" shape={catchGeoJSON}>
+            <MapboxGL.HeatmapLayer
+              id="fish-hotspots-heat"
+              style={{
+                heatmapRadius: [
+                  'interpolate',
+                  ['linear'],
+                  ['zoom'],
+                  0,
+                  2,
+                  9,
+                  20,
+                  15,
+                  40,
+                ],
+                heatmapWeight: 1,
+                heatmapIntensity: [
+                  'interpolate',
+                  ['linear'],
+                  ['zoom'],
+                  0,
+                  0.3,
+                  9,
+                  1,
+                  15,
+                  3,
+                ],
+                heatmapColor: [
+                  'interpolate',
+                  ['linear'],
+                  ['heatmap-density'],
+                  0,
+                  'rgba(0,0,0,0)',
+                  0.2,
+                  'rgba(0,128,255,0.4)',
+                  0.4,
+                  'rgba(0,210,170,0.6)',
+                  0.6,
+                  'rgba(255,200,0,0.7)',
+                  0.8,
+                  'rgba(255,120,0,0.85)',
+                  1.0,
+                  'rgba(255,50,50,1)',
+                ],
+                heatmapOpacity: 0.7,
+              }}
+            />
+          </MapboxGL.ShapeSource>
+        )}
+
+        {/* Boat Ramps — points from local spots tagged as ramps */}
+        {activeLayers.includes('boat_ramps') && spots.length > 0 && (
+          <MapboxGL.ShapeSource
+            id="boat-ramps"
+            shape={{
+              type: 'FeatureCollection',
+              features: spots
+                .filter(
+                  s =>
+                    (s.type || '').toLowerCase().includes('ramp') ||
+                    (s.name || '').toLowerCase().includes('ramp'),
+                )
+                .map(s => ({
+                  type: 'Feature',
+                  geometry: {
+                    type: 'Point',
+                    coordinates: [s.longitude, s.latitude],
+                  },
+                  properties: { name: s.name },
+                })),
+            }}
+          >
+            <MapboxGL.SymbolLayer
+              id="boat-ramp-icons"
+              style={{
+                textField: '⛵',
+                textSize: 22,
+                textAllowOverlap: true,
+                textAnchor: 'center',
+              }}
+            />
+          </MapboxGL.ShapeSource>
+        )}
+
+        {/* Tide Stations — markers for nearby tidal stations */}
+        {activeLayers.includes('tide_stations') && tideStations.length > 0 && (
+          <MapboxGL.ShapeSource
+            id="tide-stations"
+            shape={{
+              type: 'FeatureCollection',
+              features: tideStations.map((s, idx) => ({
+                type: 'Feature',
+                geometry: {
+                  type: 'Point',
+                  coordinates: [s.lng || s.lon || 0, s.lat || 0],
+                },
+                properties: { name: s.name || `Station ${idx + 1}`, id: s.id || idx },
+              })),
+            }}
+            onPress={event => {
+              const feat = event.features?.[0];
+              if (feat) {
+                const [lng, lat] = feat.geometry.coordinates;
+                handleTideStationTap(lat, lng, feat.properties?.name);
+              }
+            }}
+          >
+            <MapboxGL.CircleLayer
+              id="tide-station-circles"
+              style={{
+                circleRadius: 10,
+                circleColor: '#0080FF',
+                circleStrokeWidth: 2,
+                circleStrokeColor: '#fff',
+                circleOpacity: 0.9,
+              }}
+            />
+            <MapboxGL.SymbolLayer
+              id="tide-station-labels"
+              style={{
+                textField: '🌊',
+                textSize: 14,
+                textAllowOverlap: true,
+                textAnchor: 'center',
               }}
             />
           </MapboxGL.ShapeSource>
@@ -639,17 +838,6 @@ export default function MapScreen({ navigation }) {
         </TouchableOpacity>
       )}
 
-      {/* FishCast score badge */}
-      {fishCastScore && (
-        <TouchableOpacity
-          style={styles.fishCastBadge}
-          onPress={() => navigation.navigate('FishCast')}
-        >
-          <Text style={styles.fishCastBadgeScore}>{fishCastScore.score}</Text>
-          <Text style={styles.fishCastBadgeLabel}>{fishCastScore.label}</Text>
-        </TouchableOpacity>
-      )}
-
       {/* Tile loading indicator */}
       {tilesLoading && (
         <View style={styles.tileLoadingBanner}>
@@ -660,39 +848,55 @@ export default function MapScreen({ navigation }) {
         </View>
       )}
 
-      {/* Map controls */}
-      <View style={styles.controls}>
-        {/* Layers button */}
+      {/* ── Right-side control panel ── */}
+      <View style={styles.controlPanel}>
+        {/* FishCast score badge — top of panel */}
+        {fishCastScore && (
+          <TouchableOpacity
+            style={styles.controlBadge}
+            onPress={() => navigation.navigate('FishCast')}
+          >
+            <Text style={styles.controlBadgeScore}>{fishCastScore.score}</Text>
+            <Text style={styles.controlBadgeLabel}>{fishCastScore.label}</Text>
+          </TouchableOpacity>
+        )}
+
+        {/* Separator */}
+        {fishCastScore && <View style={styles.controlSep} />}
+
+        {/* Layers */}
         <TouchableOpacity
           style={styles.controlBtn}
           onPress={() => setLayerPickerVisible(true)}
           accessibilityLabel={t('map.layers', 'Map layers')}
-          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>🗂️</Text>
+          <Text style={styles.controlLabel}>Layers</Text>
         </TouchableOpacity>
 
-        {/* Center on user */}
+        {/* Center on me */}
         <TouchableOpacity
           style={styles.controlBtn}
           onPress={centerOnUser}
           accessibilityLabel={t('map.centerOnMe', 'Center on my location')}
-          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>📍</Text>
+          <Text style={styles.controlLabel}>Center</Text>
         </TouchableOpacity>
 
-        {/* Toggle follow */}
+        {/* Follow mode */}
         <TouchableOpacity
           style={[styles.controlBtn, followUser && styles.controlBtnActive]}
           onPress={() => setFollowUser(!followUser)}
           accessibilityLabel={t('map.followMe', 'Follow my location')}
-          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>🧭</Text>
+          <Text style={styles.controlLabel}>
+            {followUser ? 'Follow' : 'Free'}
+          </Text>
         </TouchableOpacity>
 
-        {/* Distance measurement tool */}
+        {/* Distance measurement */}
         <TouchableOpacity
           style={[styles.controlBtn, distanceMode && styles.controlBtnActive]}
           onPress={() => {
@@ -700,9 +904,9 @@ export default function MapScreen({ navigation }) {
             setDistancePoints([]);
           }}
           accessibilityLabel={t('map.measureDistance', 'Measure distance')}
-          accessibilityRole="button"
         >
           <Text style={styles.controlIcon}>📏</Text>
+          <Text style={styles.controlLabel}>Ruler</Text>
         </TouchableOpacity>
       </View>
 
@@ -987,30 +1191,63 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Platform.OS === 'ios' ? 116 : 72,
     left: 12,
-    right: 80,
+    right: 68,
   },
-  controls: {
+
+  // ── Clean right-side control panel ──
+  controlPanel: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 16,
-    right: 12,
-    gap: 8,
+    top: Platform.OS === 'ios' ? 60 : 44,
+    right: 10,
+    alignItems: 'center',
+    backgroundColor: 'rgba(16, 16, 32, 0.88)',
+    borderRadius: 16,
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.08)',
+  },
+  controlBadge: {
+    alignItems: 'center',
+    paddingVertical: 4,
+    paddingHorizontal: 6,
+  },
+  controlBadgeScore: {
+    fontSize: 20,
+    fontWeight: '800',
+    color: '#00D4AA',
+  },
+  controlBadgeLabel: {
+    fontSize: 8,
+    color: '#6688aa',
+    fontWeight: '700',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  controlSep: {
+    width: 28,
+    height: 1,
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    marginVertical: 4,
   },
   controlBtn: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(26, 26, 46, 0.9)',
+    width: 46,
+    height: 46,
+    borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
-    borderWidth: 1,
-    borderColor: '#333',
+    marginVertical: 2,
   },
   controlBtnActive: {
-    borderColor: '#0080FF',
-    backgroundColor: 'rgba(0, 128, 255, 0.2)',
+    backgroundColor: 'rgba(0, 212, 170, 0.18)',
   },
-  controlIcon: { fontSize: 20 },
+  controlIcon: { fontSize: 18 },
+  controlLabel: {
+    fontSize: 8,
+    color: '#6688aa',
+    fontWeight: '600',
+    marginTop: 1,
+  },
   fab: {
     position: 'absolute',
     bottom: 30,
@@ -1032,7 +1269,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: Platform.OS === 'ios' ? 60 : 16,
     left: 12,
-    right: 64,
+    right: 70,
     zIndex: 10,
   },
   searchInput: {
@@ -1067,32 +1304,6 @@ const styles = StyleSheet.create({
   popupStats: { flexDirection: 'row', gap: 12, marginBottom: 8 },
   popupStat: { fontSize: 14, color: '#ccc' },
   popupHint: { fontSize: 12, color: '#0080FF' },
-
-  // FishCast badge
-  fishCastBadge: {
-    position: 'absolute',
-    top: Platform.OS === 'ios' ? 60 : 16,
-    right: 12,
-    backgroundColor: 'rgba(26, 26, 46, 0.92)',
-    borderRadius: 14,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333',
-    zIndex: 10,
-  },
-  fishCastBadgeScore: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#0080FF',
-  },
-  fishCastBadgeLabel: {
-    fontSize: 10,
-    color: '#888',
-    fontWeight: '600',
-    textTransform: 'uppercase',
-  },
 
   // Tile loading
   tileLoadingBanner: {

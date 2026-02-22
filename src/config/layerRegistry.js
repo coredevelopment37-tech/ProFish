@@ -44,12 +44,11 @@ const LAYERS = {
     label: 'layer.weather',
     cost: 1,
     tier: 'free',
-    source: 'open-meteo',
+    source: 'rainviewer',
     default: true,
-    tileUrl:
-      'https://tile.openweathermap.org/map/clouds_new/{z}/{x}/{y}.png?appid=',
-    type: 'raster',
-    opacity: 0.4,
+    // Rendered dynamically in MapScreen via RainViewer API (no API key needed)
+    type: 'data-driven',
+    opacity: 0.5,
   },
   WIND_ARROWS: {
     id: 'wind_arrows',
@@ -57,6 +56,7 @@ const LAYERS = {
     cost: 1,
     tier: 'free',
     source: 'open-meteo',
+    type: 'data-driven',
     default: false,
   },
   SOLUNAR: {
@@ -65,6 +65,7 @@ const LAYERS = {
     cost: 1,
     tier: 'free',
     source: 'calculated',
+    type: 'data-driven',
     default: false,
   },
   CATCH_MARKERS: {
@@ -81,6 +82,7 @@ const LAYERS = {
     cost: 1,
     tier: 'free',
     source: 'worldtides',
+    type: 'data-driven',
     default: false,
   },
 
@@ -139,6 +141,7 @@ const LAYERS = {
     cost: 2,
     tier: 'pro',
     source: 'aggregated-catches',
+    type: 'data-driven',
     default: false,
   },
   CURRENT_ARROWS: {
@@ -147,6 +150,7 @@ const LAYERS = {
     cost: 2,
     tier: 'pro',
     source: 'copernicus',
+    type: 'data-driven',
     default: false,
   },
   WATER_TEMP_CONTOURS: {
@@ -155,6 +159,7 @@ const LAYERS = {
     cost: 2,
     tier: 'pro',
     source: 'copernicus',
+    type: 'data-driven',
     default: false,
   },
   DEPTH_CONTOURS: {
@@ -163,7 +168,11 @@ const LAYERS = {
     cost: 2,
     tier: 'pro',
     source: 'gebco',
+    type: 'raster',
     default: false,
+    tileUrl:
+      'https://tiles.arcgis.com/tiles/C8EMgrsFcRFL6LrL/arcgis/rest/services/GEBCO_contours/MapServer/tile/{z}/{y}/{x}',
+    opacity: 0.6,
   },
 
   // ── Phase 2 layers (not yet active) ────────────────
@@ -185,6 +194,7 @@ const LAYERS = {
     cost: 1,
     tier: 'free',
     source: 'osm',
+    type: 'data-driven',
     default: false,
   },
   FISHING_REGULATIONS: {
@@ -193,6 +203,7 @@ const LAYERS = {
     cost: 2,
     tier: 'pro',
     source: 'custom',
+    type: 'data-driven',
     default: false,
   },
   CMAP_CHARTS: {
