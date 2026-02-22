@@ -13,10 +13,13 @@ import {
   Switch,
   Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../store/AppContext';
 import cacheService from '../../services/cacheService';
 import offlineQueue from '../../services/offlineQueue';
+
+const NOTIF_PREFS_KEY = '@profish_notification_prefs';
 
 export default function SettingsScreen({ navigation }) {
   const { t } = useTranslation();
@@ -33,7 +36,17 @@ export default function SettingsScreen({ navigation }) {
 
   useEffect(() => {
     loadStats();
+    loadNotificationPrefs();
   }, []);
+
+  async function loadNotificationPrefs() {
+    try {
+      const saved = await AsyncStorage.getItem(NOTIF_PREFS_KEY);
+      if (saved) setNotifications(JSON.parse(saved));
+    } catch (e) {
+      // Keep defaults on error
+    }
+  }
 
   async function loadStats() {
     const stats = await cacheService.getStats();
@@ -79,8 +92,13 @@ export default function SettingsScreen({ navigation }) {
   }, [t]);
 
   const toggleNotification = key => {
-    setNotifications(prev => ({ ...prev, [key]: !prev[key] }));
-    // TODO: Save to AsyncStorage and update push notification subscriptions
+    setNotifications(prev => {
+      const updated = { ...prev, [key]: !prev[key] };
+      AsyncStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(updated)).catch(
+        () => {},
+      );
+      return updated;
+    });
   };
 
   return (

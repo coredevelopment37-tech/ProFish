@@ -120,6 +120,18 @@ const LazyFishIdQuiz = lazyScreen(
   'detail',
 );
 
+// Paywall — wraps PaywallModal as a navigable screen (#fix-paywall)
+import PaywallModal from '../components/PaywallModal';
+function PaywallScreen({ navigation, route }) {
+  return (
+    <PaywallModal
+      visible={true}
+      onClose={() => navigation.goBack()}
+      feature={route.params?.feature}
+    />
+  );
+}
+
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
 try {
@@ -344,6 +356,11 @@ export default function RootNavigator() {
             name="FishIdQuiz"
             component={LazyFishIdQuiz}
             options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="Paywall"
+            component={PaywallScreen}
+            options={{ presentation: 'transparentModal', headerShown: false }}
           />
         </>
       ) : (
