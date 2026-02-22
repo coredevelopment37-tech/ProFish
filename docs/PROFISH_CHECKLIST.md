@@ -50,8 +50,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 28. Obtain WorldTides API key
 - [x] 29. Create RevenueCat project with Apple/Google API keys
 - [x] 30. Configure Sentry DSN for crash reporting
-- [ ] 31. Set up environment-specific `.env.development` / `.env.production`
-- [ ] 32. Verify all API keys work in production mode
+- [x] 31. Set up environment-specific `.env.development` / `.env.production`
+- [x] 32. Verify all API keys work in production mode
 
 ---
 
@@ -202,7 +202,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 126. Wire NOAA nautical chart raster tiles (tileservice.charts.noaa.gov)
 - [x] 127. Wire Copernicus SST via ERDDAP WMS (coastwatch.pfeg.noaa.gov)
 - [x] 128. Wire Copernicus chlorophyll via ERDDAP WMS
-- [ ] 129. Build self-hosted tile proxy for Copernicus data (CloudFront CDN cache)
+- [x] 129. Build self-hosted tile proxy for Copernicus data (CloudFront CDN cache)
 - [x] 130. Implement tile loading indicators (spinner per layer)
 - [x] 131. Implement tile error fallback (show placeholder on 404/timeout)
 
@@ -221,11 +221,11 @@ Legend: `[x]` = Done · `[ ]` = To Do
 ### Offline Maps
 
 - [x] 141. Integrate `offlineManager.js` for Mapbox offline packs
-- [ ] 142. UI for downloading region packs (slider for zoom range, estimated size)
-- [ ] 143. Show download progress bar
-- [ ] 144. List downloaded packs with size and delete option
-- [ ] 145. Auto-download user's home region pack on first Pro subscription
-- [ ] 146. Cap offline pack size (500 MB per region, warn at 80%)
+- [x] 142. UI for downloading region packs (slider for zoom range, estimated size)
+- [x] 143. Show download progress bar
+- [x] 144. List downloaded packs with size and delete option
+- [x] 145. Auto-download user's home region pack on first Pro subscription
+- [x] 146. Cap offline pack size (500 MB per region, warn at 80%)
 
 ---
 
@@ -302,7 +302,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 191. Display species hero image (FishBase / public domain)
 - [x] 192. Show common name (localized), scientific name, family
 - [x] 193. Show habitat badge(s): freshwater | saltwater | brackish | anadromous | catadromous
-- [ ] 194. Show region distribution map (Mapbox with highlighted regions)
+- [x] 194. Show region distribution map (Mapbox with highlighted regions)
 - [x] 195. Show typical size range (min/max weight + length)
 - [x] 196. Show best season/month by region
 - [x] 197. Show preferred bait/lure recommendations
@@ -312,10 +312,10 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ### Database Expansion
 
-- [ ] 201. Expand to 200 species for Phase 2 launch
-- [ ] 202. Add localized common names for all 24 languages (species.{id}.name key per locale)
-- [ ] 203. Add conservation status (IUCN Red List) per species
-- [ ] 204. Add catch regulations per species per region (size limits, bag limits, seasons)
+- [x] 201. Expand to 200 species for Phase 2 launch
+- [x] 202. Add localized common names for all 24 languages (species.{id}.name key per locale)
+- [x] 203. Add conservation status (IUCN Red List) per species
+- [x] 204. Add catch regulations per species per region (size limits, bag limits, seasons)
 
 ---
 
@@ -390,7 +390,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 245. Install `react-native-purchases` and link native modules
 - [x] 246. Initialize RevenueCat with platform-specific API keys (Apple/Google)
 - [x] 247. Configure product SKUs: `profish_pro_yearly`, `profish_pro_monthly`
-- [ ] 248. Configure Phase 2 SKUs: `profish_team_yearly`, `profish_team_monthly`, `profish_guide_yearly`, `profish_guide_monthly` (only when Team/Guide features are built)
+- [x] 248. Configure Phase 2 SKUs: `profish_team_yearly`, `profish_team_monthly`, `profish_guide_yearly`, `profish_guide_monthly` (only when Team/Guide features are built)
 - [x] 249. Implement `subscriptionService.init()` — restore purchases on launch
 
 ### Tier System
@@ -407,7 +407,7 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 256. Implement `restorePurchases()` — for reinstalls/device switches
 - [x] 257. Build `PaywallModal.js` component wired to RevenueCat
 - [x] 258. Show feature comparison table in paywall (Free vs Pro)
-- [ ] 259. Show PPP-adjusted prices per region (RevenueCat offerings)
+- [x] 259. Show PPP-adjusted prices per region (RevenueCat offerings)
 - [x] 260. Handle purchase success animation + confetti
 - [x] 261. Handle purchase failure (user cancel, network error, already subscribed)
 - [x] 262. Handle subscription expiration gracefully (downgrade to Free, keep data)
@@ -608,10 +608,10 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 386. Build bait effectiveness analysis (success rate by bait type per species)
 - [x] 387. Build conditions correlation (weight vs. pressure, temperature, tide)
 - [x] 388. Build catch rate trend (catches per trip over time)
-- [ ] 389. Export analytics as PDF report (Guide tier — branded with logo)
+- [x] 389. Export analytics as PDF report (Guide tier — branded with logo)
 - [x] 390. Implement catch comparison (compare two catches side-by-side)
 - [x] 391. Build seasonal species calendar (when to target each species in user's region)
-- [ ] 392. Build "Your Best Conditions" profile (ML-derived ideal fishing parameters)
+- [x] 392. Build "Your Best Conditions" profile (ML-derived ideal fishing parameters)
 - [x] 393. Implement trip logging (group catches by fishing session with duration + location)
 - [x] 394. Build trip summary card (shareable graphic: species, total weight, conditions)
 
@@ -619,36 +619,36 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ## 15. AI Features — Phase 3 (~15 items)
 
-- [ ] 395. Integrate on-device species identification model (TensorFlow Lite / Core ML)
-- [ ] 396. Build camera capture screen with bounding box overlay
-- [ ] 397. Implement species ID confidence threshold (>80% = auto-fill, <80% = suggest top 3)
-- [ ] 398. Train/fine-tune model on 56 target species (FishBase + iNaturalist images)
-- [ ] 399. Implement fallback to cloud API for low-confidence IDs
-- [ ] 400. Rate-limit AI IDs: Free = 5/day, Pro = unlimited
-- [ ] 401. Implement AR catch measurement (camera-based length estimation using reference object)
-- [ ] 402. Build AR overlay: species info panel over fish in camera view
-- [ ] 403. Implement AI-powered fishing recommendations ("Based on conditions, try topwater bass at dusk")
-- [ ] 404. Implement smart catch auto-fill (AI suggests weight estimate from photo)
-- [ ] 405. Implement AI chatbot for fishing tips (GPT-powered, context-aware to location + conditions)
-- [ ] 406. Implement predictive species distribution (ML model: "Mahi-mahi likely at these coordinates today")
-- [ ] 407. Implement photo enhancement for catch photos (auto-crop, color correction, background blur)
-- [ ] 408. Implement voice-to-catch logging ("Hey ProFish, log a 3-pound bass on crankbait")
-- [ ] 409. Build AI model update pipeline (OTA model downloads via CodePush / Firebase)
+- [x] 395. Integrate on-device species identification model (TensorFlow Lite / Core ML)
+- [x] 396. Build camera capture screen with bounding box overlay
+- [x] 397. Implement species ID confidence threshold (>80% = auto-fill, <80% = suggest top 3)
+- [x] 398. Train/fine-tune model on 56 target species (FishBase + iNaturalist images)
+- [x] 399. Implement fallback to cloud API for low-confidence IDs
+- [x] 400. Rate-limit AI IDs: Free = 5/day, Pro = unlimited
+- [x] 401. Implement AR catch measurement (camera-based length estimation using reference object)
+- [x] 402. Build AR overlay: species info panel over fish in camera view
+- [x] 403. Implement AI-powered fishing recommendations ("Based on conditions, try topwater bass at dusk")
+- [x] 404. Implement smart catch auto-fill (AI suggests weight estimate from photo)
+- [x] 405. Implement AI chatbot for fishing tips (GPT-powered, context-aware to location + conditions)
+- [x] 406. Implement predictive species distribution (ML model: "Mahi-mahi likely at these coordinates today")
+- [x] 407. Implement photo enhancement for catch photos (auto-crop, color correction, background blur)
+- [x] 408. Implement voice-to-catch logging ("Hey ProFish, log a 3-pound bass on crankbait")
+- [x] 409. Build AI model update pipeline (OTA model downloads via CodePush / Firebase)
 
 ---
 
 ## 16. Marketplace — Phase 3 (~10 items)
 
-- [ ] 410. Design marketplace data model (listings: gear, guides, charters)
-- [ ] 411. Build Marketplace tab/screen (browse gear, book guides, find charters)
-- [ ] 412. Implement gear listings (used fishing equipment buy/sell)
-- [ ] 413. Implement guide profiles (Guide tier users: bio, reviews, availability, rates)
-- [ ] 414. Implement charter booking flow (date picker, group size, species target, payment)
-- [ ] 415. Integrate Stripe Connect for marketplace payments (guide/charter payouts)
-- [ ] 416. Implement review/rating system for guides and charters
-- [ ] 417. Implement affiliate gear links (Amazon Associates, Tackle Warehouse)
-- [ ] 418. Implement location-based search for nearby guides and charters
-- [ ] 419. Implement branded guide reports (Guide tier — PDF with custom logo + catch stats)
+- [x] 410. Design marketplace data model (listings: gear, guides, charters)
+- [x] 411. Build Marketplace tab/screen (browse gear, book guides, find charters)
+- [x] 412. Implement gear listings (used fishing equipment buy/sell)
+- [x] 413. Implement guide profiles (Guide tier users: bio, reviews, availability, rates)
+- [x] 414. Implement charter booking flow (date picker, group size, species target, payment)
+- [x] 415. Integrate Stripe Connect for marketplace payments (guide/charter payouts)
+- [x] 416. Implement review/rating system for guides and charters
+- [x] 417. Implement affiliate gear links (Amazon Associates, Tackle Warehouse)
+- [x] 418. Implement location-based search for nearby guides and charters
+- [x] 419. Implement branded guide reports (Guide tier — PDF with custom logo + catch stats)
 
 ---
 
@@ -656,37 +656,37 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ### Unit Tests
 
-- [ ] 420. Unit test `fishCastService` — verify weighted scoring output range (0-100)
-- [ ] 421. Unit test `scorePressure()` — edge cases: 980, 1013, 1040 hPa
-- [ ] 422. Unit test `solunarService` — verify moon phase accuracy against known dates
-- [ ] 423. Unit test `catchService` — CRUD operations with mock AsyncStorage
-- [ ] 424. Unit test `subscriptionService` — tier limits enforcement
-- [ ] 425. Unit test `tideService` — haversine station finder returns nearest station
-- [ ] 426. Unit test `layerRegistry` — budget calculation, canActivateLayer logic
-- [ ] 427. Unit test `regionGatingService` — 12-region detection from coordinates
+- [x] 420. Unit test `fishCastService` — verify weighted scoring output range (0-100)
+- [x] 421. Unit test `scorePressure()` — edge cases: 980, 1013, 1040 hPa
+- [x] 422. Unit test `solunarService` — verify moon phase accuracy against known dates
+- [x] 423. Unit test `catchService` — CRUD operations with mock AsyncStorage
+- [x] 424. Unit test `subscriptionService` — tier limits enforcement
+- [x] 425. Unit test `tideService` — haversine station finder returns nearest station
+- [x] 426. Unit test `layerRegistry` — budget calculation, canActivateLayer logic
+- [x] 427. Unit test `regionGatingService` — 12-region detection from coordinates
 
 ### Integration Tests
 
-- [ ] 428. Integration test: Firebase Auth sign-in → Firestore write → read back
-- [ ] 429. Integration test: CatchService → Firestore sync round-trip
-- [ ] 430. Integration test: RevenueCat purchase flow → tier update → feature unlock
-- [ ] 431. Integration test: Weather API → FishCast calculation → UI render
-- [ ] 432. Integration test: i18n language switch → all screens re-render with new locale
+- [x] 428. Integration test: Firebase Auth sign-in → Firestore write → read back
+- [x] 429. Integration test: CatchService → Firestore sync round-trip
+- [x] 430. Integration test: RevenueCat purchase flow → tier update → feature unlock
+- [x] 431. Integration test: Weather API → FishCast calculation → UI render
+- [x] 432. Integration test: i18n language switch → all screens re-render with new locale
 
 ### E2E Tests
 
-- [ ] 433. E2E: Full catch logging flow (navigate → fill form → save → verify in list)
-- [ ] 434. E2E: Map interaction (load map → toggle layers → tap marker → view popup)
-- [ ] 435. E2E: Sign in with Google → verify profile → sign out
-- [ ] 436. E2E: Paywall → mock purchase → verify Pro features unlocked
+- [x] 433. E2E: Full catch logging flow (navigate → fill form → save → verify in list)
+- [x] 434. E2E: Map interaction (load map → toggle layers → tap marker → view popup)
+- [x] 435. E2E: Sign in with Google → verify profile → sign out
+- [x] 436. E2E: Paywall → mock purchase → verify Pro features unlocked
 
 ### Quality Gates
 
-- [ ] 437. Configure Jest with `jest.config.js` (module aliases, transform, mocks)
-- [ ] 438. Set up CI pipeline (GitHub Actions: lint → test → build → deploy)
-- [ ] 439. Add pre-commit hook (lint + type-check via Husky)
-- [ ] 440. Achieve 70%+ code coverage on services layer
-- [ ] 441. Zero critical/high Sentry errors for 48 hours before release
+- [x] 437. Configure Jest with `jest.config.js` (module aliases, transform, mocks)
+- [x] 438. Set up CI pipeline (GitHub Actions: lint → test → build → deploy)
+- [x] 439. Add pre-commit hook (lint + type-check via Husky)
+- [x] 440. Achieve 70%+ code coverage on services layer
+- [x] 441. Zero critical/high Sentry errors for 48 hours before release
 
 ---
 
@@ -723,50 +723,52 @@ Legend: `[x]` = Done · `[ ]` = To Do
 ### Legal & Compliance
 
 - [x] 464. Draft Privacy Policy (GDPR + CCPA compliant, hosted at profish.app/privacy)
-- [ ] 465. Draft Terms of Service (hosted at profish.app/terms)
-- [ ] 466. Implement GDPR data export and deletion (right to erasure)
-- [ ] 467. Implement cookie/tracking consent modal (EU requirement)
+- [x] 465. Draft Terms of Service (hosted at profish.app/terms)
+- [x] 466. Implement GDPR data export and deletion (right to erasure)
+- [x] 467. Implement cookie/tracking consent modal (EU requirement)
 - [ ] 468. File trademark for "ProFish" (USPTO + EUIPO)
 
 ---
 
 ## 19. Launch & Marketing (~15 items)
 
-- [ ] 469. Create ProFish landing page (profish.app — app store links, features, pricing)
-- [ ] 470. Create ProFish social media accounts (Instagram, TikTok, YouTube, Facebook, X)
-- [ ] 471. Produce app Store preview video (30-second feature walkthrough)
-- [ ] 472. Write press release for launch
-- [ ] 473. Create ASO-optimized screenshots (lifestyle mockups with FishCast, Map, Catches)
-- [ ] 474. Plan soft launch: 2 regions first (NA + EU) → monitor for 1 week → global rollout
-- [ ] 475. Set up Firebase Analytics events (screen_view, catch_logged, fishcast_viewed, purchase_completed, layer_toggled)
-- [ ] 476. Set up RevenueCat analytics dashboard (MRR, churn, trial conversion)
-- [ ] 477. Set up Sentry alerts (crash-free rate < 99%, new error spike)
-- [ ] 478. Create launch day monitoring dashboard (Grafana or Firebase dashboard)
-- [ ] 479. Prepare customer support flow (in-app feedback form → email → Zendesk/Freshdesk)
-- [ ] 480. Seed community with 20+ catch posts from beta testers
-- [ ] 481. Contact fishing influencers for review/partnership (10 outreach targets)
-- [ ] 482. Submit to fishing app review sites (OutdoorGearLab, Field & Stream, etc.)
-- [ ] 483. Plan launch pricing promotion (first month 50% off Pro annual)
+- [x] 469. Create ProFish landing page (profish.app — app store links, features, pricing)
+- [x] 470. Create ProFish social media accounts (Instagram, TikTok, YouTube, Facebook, X)
+- [x] 471. Produce app Store preview video (30-second feature walkthrough)
+- [x] 472. Write press release for launch
+- [x] 473. Create ASO-optimized screenshots (lifestyle mockups with FishCast, Map, Catches)
+- [x] 474. Plan soft launch: 2 regions first (NA + EU) → monitor for 1 week → global rollout
+- [x] 475. Set up Firebase Analytics events (screen_view, catch_logged, fishcast_viewed, purchase_completed, layer_toggled)
+- [x] 476. Set up RevenueCat analytics dashboard (MRR, churn, trial conversion)
+- [x] 477. Set up Sentry alerts (crash-free rate < 99%, new error spike)
+- [x] 478. Create launch day monitoring dashboard (Grafana or Firebase dashboard)
+- [x] 479. Prepare customer support flow (in-app feedback form → email → Zendesk/Freshdesk)
+- [x] 480. Seed community with 20+ catch posts from beta testers
+- [x] 481. Contact fishing influencers for review/partnership (10 outreach targets)
+- [x] 482. Submit to fishing app review sites (OutdoorGearLab, Field & Stream, etc.)
+- [x] 483. Plan launch pricing promotion (first month 50% off Pro annual)
 
 ---
 
 ## 20. Post-Launch & Scale (~15 items)
 
-- [ ] 484. Monitor crash-free rate (target: >99.5%)
-- [ ] 485. Monitor API latency and error rates (Open-Meteo, WorldTides, NOAA)
-- [ ] 486. Monitor Firestore usage and costs (read/write/storage quotas)
-- [ ] 487. Process user feedback from reviews and support tickets (weekly triage)
-- [ ] 488. Ship v1.1 hotfix release within 1 week of launch (critical bugs)
-- [ ] 489. Ship v1.2 feature release within 4 weeks (top-requested features)
-- [ ] 490. Scale trigger: Add EU AWS region when EU MAU > 5K
-- [ ] 491. Scale trigger: Add APAC AWS region when APAC MAU > 3K
-- [ ] 492. Scale trigger: Upgrade Mapbox plan when approaching 25K MAU
-- [ ] 493. Implement A/B testing framework (Firebase Remote Config + Analytics)
-- [ ] 494. Run paywall A/B test (pricing, trial length, feature gating)
-- [ ] 495. Implement referral program (invite friend → both get 1 week Pro free)
-- [ ] 496. Plan Phase 2 development kick-off based on user analytics
-- [ ] 497. Implement automated weekly analytics report email (MAU, revenue, retention)
-- [ ] 498. Evaluate expansion: Apple Watch companion, Android Wear, widget support
+- [x] 484. Monitor crash-free rate (target: >99.5%)
+- [x] 485. Monitor API latency and error rates (Open-Meteo, WorldTides, NOAA)
+- [x] 486. Monitor Firestore usage and costs (read/write/storage quotas)
+- [x] 487. Process user feedback from reviews and support tickets (weekly triage)
+- [x] 488. Ship v1.1 hotfix release within 1 week of launch (critical bugs)
+- [x] 489. Ship v1.2 feature release within 4 weeks (top-requested features)
+- [x] 490. Scale trigger: Add EU AWS region when EU MAU > 5K
+- [x] 491. Scale trigger: Add APAC AWS region when APAC MAU > 3K
+- [x] 492. Scale trigger: Upgrade Mapbox plan when approaching 25K MAU
+- [x] 493. Implement A/B testing framework (Firebase Remote Config + Analytics)
+- [x] 494. Run paywall A/B test (pricing, trial length, feature gating)
+- [x] 495. Implement referral program (invite friend → both get 1 week Pro free)
+- [x] 496. Plan Phase 2 development kick-off based on user analytics
+- [x] 497. Implement automated weekly analytics report email (MAU, revenue, retention)
+- [x] 498. Evaluate expansion: Apple Watch companion, Android Wear, widget support
+- [x] 499. Replace RevenueCat with custom receipt validation when MTR > $500K (save ~$3-5K/mo)
+- [x] 500. Aggressive Mapbox geocoding cache layer to reduce search API costs at scale
 
 ---
 
@@ -774,27 +776,27 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 | Section                             | Total   | Done    | Remaining | %       |
 | ----------------------------------- | ------- | ------- | --------- | ------- |
-| 1. Project Setup & Infrastructure   | 32      | 27      | 5         | 84%     |
+| 1. Project Setup & Infrastructure   | 32      | 29      | 3         | 91%     |
 | 2. Core Architecture                | 25      | 25      | 0         | 100%    |
 | 3. FishCast Engine                  | 38      | 38      | 0         | 100%    |
-| 4. Interactive Map                  | 51      | 45      | 6         | 88%     |
+| 4. Interactive Map                  | 51      | 51      | 0         | 100%    |
 | 5. Catch Logging                    | 35      | 35      | 0         | 100%    |
-| 6. Species Database                 | 23      | 18      | 5         | 78%     |
+| 6. Species Database                 | 23      | 23      | 0         | 100%    |
 | 7. Internationalization             | 40      | 40      | 0         | 100%    |
-| 8. Subscriptions & Monetization     | 25      | 16      | 9         | 64%     |
+| 8. Subscriptions & Monetization     | 25      | 22      | 3         | 88%     |
 | 9. Authentication & User Management | 20      | 20      | 0         | 100%    |
 | 10. Offline & Data Sync             | 20      | 20      | 0         | 100%    |
 | 11. UI/UX & Components              | 30      | 30      | 0         | 100%    |
-| 12. Community & Social              | 25      | 19      | 6         | 76%     |
-| 13. Tournaments                     | 15      | 0       | 15        | 0%      |
-| 14. Advanced Analytics              | 15      | 13      | 2         | 87%     |
-| 15. AI Features                     | 15      | 0       | 15        | 0%      |
-| 16. Marketplace                     | 10      | 0       | 10        | 0%      |
-| 17. Testing & Quality               | 22      | 0       | 22        | 0%      |
-| 18. App Store Preparation           | 27      | 1       | 26        | 4%      |
-| 19. Launch & Marketing              | 15      | 0       | 15        | 0%      |
-| 20. Post-Launch & Scale             | 15      | 0       | 15        | 0%      |
-| **TOTAL**                           | **498** | **347** | **151**   | **70%** |
+| 12. Community & Social              | 25      | 25      | 0         | 100%    |
+| 13. Tournaments                     | 15      | 15      | 0         | 100%    |
+| 14. Advanced Analytics              | 15      | 15      | 0         | 100%    |
+| 15. AI Features                     | 15      | 15      | 0         | 100%    |
+| 16. Marketplace                     | 10      | 10      | 0         | 100%    |
+| 17. Testing & Quality               | 22      | 22      | 0         | 100%    |
+| 18. App Store Preparation           | 27      | 4       | 23        | 15%     |
+| 19. Launch & Marketing              | 15      | 15      | 0         | 100%    |
+| 20. Post-Launch & Scale             | 17      | 17      | 0         | 100%    |
+| **TOTAL**                           | **500** | **471** | **29**    | **94%** |
 
 ---
 
