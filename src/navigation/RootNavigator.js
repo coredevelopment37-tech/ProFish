@@ -30,6 +30,9 @@ import NotificationCenterScreen from '../screens/main/NotificationCenterScreen';
 import NotificationPrefsScreen from '../screens/main/NotificationPrefsScreen';
 import CatchComparisonScreen from '../screens/main/CatchComparisonScreen';
 import SeasonalCalendarScreen from '../screens/main/SeasonalCalendarScreen';
+import TournamentListScreen from '../screens/main/TournamentListScreen';
+import TournamentDetailScreen from '../screens/main/TournamentDetailScreen';
+import TournamentStatsScreen from '../screens/main/TournamentStatsScreen';
 
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
@@ -189,6 +192,21 @@ export default function RootNavigator() {
           <Stack.Screen
             name="SeasonalCalendar"
             component={SeasonalCalendarScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="TournamentList"
+            component={TournamentListScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="TournamentDetail"
+            component={TournamentDetailScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="TournamentStats"
+            component={TournamentStatsScreen}
             options={{ presentation: 'card' }}
           />
         </>
