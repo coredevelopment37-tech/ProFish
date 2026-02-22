@@ -772,6 +772,99 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ---
 
+## 21. Critical Gaps — "Can't Fish Without It" (~30 items)
+
+### Performance & First Impression
+
+- [ ] 501. Implement React.lazy() + Suspense for all screen imports (lazy loading)
+- [ ] 502. Add skeleton loading screens (shimmer placeholders while screens load)
+- [ ] 503. Design and export custom ProFish app icon (1024×1024 master, all densities)
+- [ ] 504. Design custom adaptive icon for Android (foreground + background layers)
+- [ ] 505. Design iOS app icon set (all required sizes with rounded corners)
+- [ ] 506. Design custom splash screen with ProFish branding (animated logo)
+
+### Onboarding & Tutorial
+
+- [ ] 507. Build 5-screen interactive onboarding walkthrough (species picker, home region, fishing style, notifications, permissions)
+- [ ] 508. Build contextual coach marks / tooltips for first use of each major feature
+- [ ] 509. Build "First Catch" guided tutorial (step-by-step catch logging with prompts)
+- [ ] 510. Build FishCast tutorial overlay ("Here's your score — here's what it means")
+- [ ] 511. Build map tutorial overlay (show layer toggling, spot saving, marker tapping)
+
+### Species Database Expansion
+
+- [ ] 512. Expand species database to 350+ species (cover top species per continent)
+- [ ] 513. Add 50+ freshwater species (trout variants, catfish, panfish, pike, walleye regional)
+- [ ] 514. Add 50+ saltwater species (tuna variants, snapper, grouper, mackerel, sharks)
+- [ ] 515. Add 50+ tropical/exotic species (peacock bass, arapaima, tigerfish, mahseer, GT)
+- [ ] 516. Add 30+ European species (zander, tench, rudd, bream, perch, asp, wels catfish)
+- [ ] 517. Add 20+ ice fishing species (burbot, cisco, lake trout, whitefish, crappie)
+
+### Pre-Loaded Fishing Spots & Free Databases
+
+- [ ] 518. Integrate USGS/NOAA public boat ramp dataset (US — ~10,000 access points)
+- [ ] 519. Integrate OpenStreetMap fishing POIs (worldwide — leisure=fishing tagged nodes)
+- [ ] 520. Integrate state fish stocking reports (US — species planted + dates + quantities)
+- [ ] 521. Pre-populate top 1,000 fishing spots per region (crowd-sourced + public data)
+- [ ] 522. Add fishing pier/jetty locations from OSM worldwide
+- [ ] 523. Add dam and reservoir locations with species lists
+
+### Fishing Education & Training
+
+- [ ] 524. Build FishingSchool screen (browsable video/article library by category)
+- [ ] 525. Knot tying guide — 20+ knots with animated step-by-step diagrams
+- [ ] 526. Bait & lure encyclopedia — when to use what, with species matching
+- [ ] 527. Technique library — casting, trolling, fly fishing, jigging, bottom fishing tutorials
+- [ ] 528. Seasonal strategy guides per region (spring bass, summer offshore, ice fishing, etc.)
+- [ ] 529. "Fish ID Quiz" gamification — learn to identify species, earn badges
+- [ ] 530. Beginner → Advanced progression system (track fishing skill level + unlock tips)
+
+### Regulations & Rules Management
+
+- [ ] 531. Build regulation CMS backend (Firebase collection — update rules without app deploy)
+- [ ] 532. Build "Is It Legal?" screen — select species + region → show limits, seasons, license info
+- [ ] 533. Add fishing license requirement info per state/country
+- [ ] 534. Add catch-and-release zones and marine protected area alerts
+- [ ] 535. Push notification: "Season opens tomorrow for [species] in your region"
+
+### Ad Monetization (Free Tier)
+
+- [ ] 536. Integrate Google AdMob SDK (react-native-google-mobile-ads)
+- [ ] 537. Implement banner ad on Catch Log screen (320×50, bottom of list)
+- [ ] 538. Implement interstitial ad after every 5th catch logged
+- [ ] 539. Implement rewarded video ads ("Watch ad to unlock 1 extra AI species ID")
+- [ ] 540. Implement native ads in Community feed (every 8th post)
+- [ ] 541. Ad-free as Pro benefit — remove all ads on upgrade
+- [ ] 542. Implement ad frequency capping (max 3 interstitials/hour, max 6 rewarded/day)
+- [ ] 543. Configure AdMob mediation (Meta Audience Network, Unity Ads fallback)
+
+### "Can't Fish Without It" Killer Features
+
+- [ ] 544. Live bite alarm — push notification: "FishCast just hit 90+ at your saved spot!"
+- [ ] 545. Tide alert — "High tide at [spot] in 30 min — your best window for [species]"
+- [ ] 546. Weather danger alert — "Storm approaching your fishing location in 45 min"
+- [ ] 547. Personal best tracker with celebration animations + shareable cards
+- [ ] 548. Fishing buddy system — see friends on map in real-time (opt-in GPS sharing)
+- [ ] 549. Trip planner — pick a date + target species → get optimal spot, time, bait, tide window
+- [ ] 550. Live wind & drift calculator — "Cast NE at 15° for optimal drift to structure"
+- [ ] 551. Moon phase fishing calendar — month view with daily ratings, major/minor periods
+- [ ] 552. Catch photo watermark — auto-add species, weight, date, location, FishCast score
+- [ ] 553. Fishing log streak — "7 days in a row! Keep your streak alive" (gamification)
+- [ ] 554. Species bucket list — "Catch all 50 North American gamefish" with progress tracker
+- [ ] 555. Sunrise/sunset countdown widget on home screen
+- [ ] 556. Voice command integration — "Hey ProFish, what's biting right now?"
+
+### Quality Hardening
+
+- [ ] 557. Full button-by-button UI audit — every screen, every tap, every state
+- [ ] 558. Accessibility audit — screen reader labels, contrast ratios, touch targets 48dp+
+- [ ] 559. Performance profiling — app startup < 2s, screen transitions < 300ms
+- [ ] 560. Memory leak audit — Hermes heap snapshots on 30-min fishing session
+- [ ] 561. Network resilience audit — every API call graceful on airplane mode
+- [ ] 562. Deep link testing — every share link opens correct screen
+
+---
+
 ## Progress Summary
 
 | Section                             | Total   | Done    | Remaining | %       |
@@ -796,7 +889,8 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | 18. App Store Preparation           | 27      | 4       | 23        | 15%     |
 | 19. Launch & Marketing              | 15      | 15      | 0         | 100%    |
 | 20. Post-Launch & Scale             | 17      | 17      | 0         | 100%    |
-| **TOTAL**                           | **500** | **471** | **29**    | **94%** |
+| 21. Critical Gaps                   | 62      | 0       | 62        | 0%      |
+| **TOTAL**                           | **562** | **471** | **91**    | **84%** |
 
 ---
 
