@@ -38,7 +38,7 @@ const iosIconDir = path.join(
   'AppIcon.appiconset',
 );
 
-// Android mipmap sizes
+// Android mipmap sizes (legacy launcher icons)
 const androidSizes = [
   { density: 'mipmap-mdpi', size: 48 },
   { density: 'mipmap-hdpi', size: 72 },
@@ -46,6 +46,17 @@ const androidSizes = [
   { density: 'mipmap-xxhdpi', size: 144 },
   { density: 'mipmap-xxxhdpi', size: 192 },
 ];
+
+// Android Adaptive Icon foreground sizes (108dp per density)
+const adaptiveSizes = [
+  { density: 'mipmap-mdpi', size: 108 },
+  { density: 'mipmap-hdpi', size: 162 },
+  { density: 'mipmap-xhdpi', size: 216 },
+  { density: 'mipmap-xxhdpi', size: 324 },
+  { density: 'mipmap-xxxhdpi', size: 432 },
+];
+
+const BACKGROUND_COLOR = '#0A0A1A'; // Dark navy matching icon background
 
 // iOS icon sizes
 const iosSizes = [
@@ -131,6 +142,55 @@ async function generate() {
       `   ✅ ${density}/ic_launcher_round.png (${size}×${size} round)`,
     );
   }
+
+  // ── Android Adaptive Icon (API 26+) ──
+  console.log('\n🎯 Android Adaptive Icons (API 26+):');
+
+  // Generate foreground PNGs at 108dp per density
+  for (const { density, size } of adaptiveSizes) {
+    const dir = path.join(androidResDir, density);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+
+    const fgPath = path.join(dir, 'ic_launcher_foreground.png');
+    await sharp(masterPath)
+      .resize(size, size, { fit: 'cover' })
+      .png()
+      .toFile(fgPath);
+    console.log(
+      `   ✅ ${density}/ic_launcher_foreground.png (${size}×${size})`,
+    );
+  }
+
+  // Create mipmap-anydpi-v26 directory with adaptive icon XMLs
+  const anydpiDir = path.join(androidResDir, 'mipmap-anydpi-v26');
+  if (!fs.existsSync(anydpiDir)) fs.mkdirSync(anydpiDir, { recursive: true });
+
+  const adaptiveXml = `<?xml version="1.0" encoding="utf-8"?>
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/ic_launcher_background"/>
+    <foreground android:drawable="@mipmap/ic_launcher_foreground"/>
+</adaptive-icon>`;
+
+  fs.writeFileSync(path.join(anydpiDir, 'ic_launcher.xml'), adaptiveXml);
+  console.log('   ✅ mipmap-anydpi-v26/ic_launcher.xml');
+
+  fs.writeFileSync(path.join(anydpiDir, 'ic_launcher_round.xml'), adaptiveXml);
+  console.log('   ✅ mipmap-anydpi-v26/ic_launcher_round.xml');
+
+  // Create values/ic_launcher_background.xml color resource
+  const valuesDir = path.join(androidResDir, 'values');
+  if (!fs.existsSync(valuesDir)) fs.mkdirSync(valuesDir, { recursive: true });
+
+  const colorXml = `<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="ic_launcher_background">${BACKGROUND_COLOR}</color>
+</resources>`;
+
+  fs.writeFileSync(
+    path.join(valuesDir, 'ic_launcher_background.xml'),
+    colorXml,
+  );
+  console.log('   ✅ values/ic_launcher_background.xml');
 
   // ── iOS ──
   console.log('\n🍎 iOS icons:');
