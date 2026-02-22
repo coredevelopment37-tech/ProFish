@@ -1,0 +1,344 @@
+/**
+ * Export Service — ProFish (#389)
+ *
+ * PDF and CSV export for catch analytics, trip reports, and statistics.
+ * Uses react-native-share + react-native-html-to-pdf for PDF generation.
+ */
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// ── Export Formats ───────────────────────────────────────
+
+export const EXPORT_FORMAT = {
+  CSV: 'csv',
+  PDF: 'pdf',
+  JSON: 'json',
+};
+
+export const EXPORT_TYPE = {
+  CATCHES: 'catches',
+  TRIP_REPORT: 'trip_report',
+  STATISTICS: 'statistics',
+  SPECIES_LOG: 'species_log',
+  TOURNAMENT_RESULTS: 'tournament_results',
+};
+
+// ── CSV Generation ───────────────────────────────────────
+
+function escapeCsv(val) {
+  if (val == null) return '';
+  const s = String(val);
+  if (s.includes(',') || s.includes('"') || s.includes('\n')) {
+    return `"${s.replace(/"/g, '""')}"`;
+  }
+  return s;
+}
+
+function catchesToCsv(catches) {
+  const headers = [
+    'Date',
+    'Species',
+    'Weight (lb)',
+    'Length (in)',
+    'Location',
+    'Latitude',
+    'Longitude',
+    'Method',
+    'Bait/Lure',
+    'Weather',
+    'Water Temp',
+    'Notes',
+  ];
+
+  const rows = catches.map(c => [
+    c.date || '',
+    c.species || '',
+    c.weight || '',
+    c.length || '',
+    c.locationName || '',
+    c.latitude || '',
+    c.longitude || '',
+    c.method || '',
+    c.bait || '',
+    c.weather || '',
+    c.waterTemp || '',
+    c.notes || '',
+  ]);
+
+  return [headers.map(escapeCsv).join(',')]
+    .concat(rows.map(r => r.map(escapeCsv).join(',')))
+    .join('\n');
+}
+
+function statisticsToCsv(stats) {
+  const rows = [
+    ['Metric', 'Value'],
+    ['Total Catches', stats.totalCatches],
+    ['Total Species', stats.totalSpecies],
+    ['Biggest Fish (lb)', stats.biggestWeight],
+    ['Longest Fish (in)', stats.longestLength],
+    ['Average Weight (lb)', stats.avgWeight?.toFixed(2)],
+    ['Total Trips', stats.totalTrips],
+    ['Most Caught Species', stats.topSpecies],
+    ['Best Month', stats.bestMonth],
+    ['Favorite Spot', stats.favoriteSpot],
+  ];
+  return rows.map(r => r.map(escapeCsv).join(',')).join('\n');
+}
+
+// ── PDF HTML Templates ───────────────────────────────────
+
+function catchesPdfHtml(catches, userName) {
+  const rows = catches
+    .map(
+      c => `
+    <tr>
+      <td>${c.date || ''}</td>
+      <td><strong>${c.species || ''}</strong></td>
+      <td>${c.weight ? c.weight + ' lb' : '—'}</td>
+      <td>${c.length ? c.length + '"' : '—'}</td>
+      <td>${c.locationName || ''}</td>
+      <td>${c.method || ''}</td>
+    </tr>
+  `,
+    )
+    .join('');
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Helvetica, Arial, sans-serif; padding: 20px; color: #1a1a2e; }
+        h1 { color: #0a84ff; border-bottom: 2px solid #0a84ff; padding-bottom: 8px; }
+        h2 { color: #1a1a2e; margin-top: 24px; }
+        .meta { color: #666; font-size: 12px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; font-size: 11px; }
+        th { background: #0a84ff; color: white; padding: 8px; text-align: left; }
+        td { padding: 6px 8px; border-bottom: 1px solid #eee; }
+        tr:nth-child(even) { background: #f8f9fc; }
+        .footer { margin-top: 30px; text-align: center; color: #aaa; font-size: 10px; }
+        .stat-grid { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 12px; }
+        .stat-box { background: #f0f4ff; border-radius: 8px; padding: 12px; flex: 1; min-width: 120px; }
+        .stat-val { font-size: 24px; font-weight: bold; color: #0a84ff; }
+        .stat-label { font-size: 11px; color: #666; }
+      </style>
+    </head>
+    <body>
+      <h1>🐟 ProFish — Catch Report</h1>
+      <p class="meta">Angler: ${
+        userName || 'ProFish User'
+      } | Generated: ${new Date().toLocaleDateString()} | Total: ${
+    catches.length
+  } catches</p>
+
+      <div class="stat-grid">
+        <div class="stat-box">
+          <div class="stat-val">${catches.length}</div>
+          <div class="stat-label">Total Catches</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">${
+            new Set(catches.map(c => c.species)).size
+          }</div>
+          <div class="stat-label">Species</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-val">${catches.reduce(
+            (max, c) => Math.max(max, c.weight || 0),
+            0,
+          )} lb</div>
+          <div class="stat-label">Biggest Catch</div>
+        </div>
+      </div>
+
+      <h2>Catch Log</h2>
+      <table>
+        <thead>
+          <tr><th>Date</th><th>Species</th><th>Weight</th><th>Length</th><th>Location</th><th>Method</th></tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+
+      <div class="footer">Generated by ProFish — The ultimate fishing companion</div>
+    </body>
+    </html>
+  `;
+}
+
+function tripReportPdfHtml(trip, catches, userName) {
+  const catchRows = catches
+    .map(
+      c => `
+    <li><strong>${c.species}</strong> — ${c.weight ? c.weight + ' lb' : ''} ${
+        c.length ? c.length + '"' : ''
+      }</li>
+  `,
+    )
+    .join('');
+
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <style>
+        body { font-family: Helvetica, Arial, sans-serif; padding: 20px; color: #1a1a2e; }
+        h1 { color: #0a84ff; }
+        .trip-info { background: #f0f4ff; border-radius: 8px; padding: 16px; margin: 16px 0; }
+        .trip-info p { margin: 4px 0; }
+        ul { padding-left: 20px; }
+        li { margin: 4px 0; }
+        .footer { margin-top: 30px; text-align: center; color: #aaa; font-size: 10px; }
+      </style>
+    </head>
+    <body>
+      <h1>🎣 Trip Report</h1>
+      <div class="trip-info">
+        <p><strong>Location:</strong> ${trip.location || 'Unknown'}</p>
+        <p><strong>Date:</strong> ${trip.date || ''}</p>
+        <p><strong>Duration:</strong> ${trip.duration || 'N/A'}</p>
+        <p><strong>Weather:</strong> ${trip.weather || 'N/A'}</p>
+        <p><strong>Angler:</strong> ${userName || 'ProFish User'}</p>
+      </div>
+      <h2>Catches (${catches.length})</h2>
+      <ul>${catchRows || '<li>No catches logged</li>'}</ul>
+      ${trip.notes ? `<h2>Notes</h2><p>${trip.notes}</p>` : ''}
+      <div class="footer">Generated by ProFish</div>
+    </body>
+    </html>
+  `;
+}
+
+// ── Export Service ────────────────────────────────────────
+
+const EXPORT_HISTORY_KEY = '@profish_export_history';
+
+const exportService = {
+  /**
+   * Export catches as CSV string
+   */
+  exportCatchesCsv(catches) {
+    return catchesToCsv(catches);
+  },
+
+  /**
+   * Export statistics as CSV string
+   */
+  exportStatsCsv(stats) {
+    return statisticsToCsv(stats);
+  },
+
+  /**
+   * Export catches as JSON string
+   */
+  exportCatchesJson(catches) {
+    return JSON.stringify(catches, null, 2);
+  },
+
+  /**
+   * Generate PDF HTML for catches report
+   */
+  generateCatchesPdf(catches, userName) {
+    return catchesPdfHtml(catches, userName);
+  },
+
+  /**
+   * Generate PDF HTML for trip report
+   */
+  generateTripReportPdf(trip, catches, userName) {
+    return tripReportPdfHtml(trip, catches, userName);
+  },
+
+  /**
+   * Share export via system share sheet
+   * Requires react-native-share to be installed
+   */
+  async shareExport(content, format, filename) {
+    try {
+      const Share = require('react-native-share').default;
+      const mimeTypes = {
+        csv: 'text/csv',
+        json: 'application/json',
+        pdf: 'application/pdf',
+      };
+
+      // For CSV/JSON, share as data URI
+      if (format !== EXPORT_FORMAT.PDF) {
+        const base64 = Buffer.from(content, 'utf-8').toString('base64');
+        await Share.open({
+          url: `data:${mimeTypes[format]};base64,${base64}`,
+          filename: `${filename}.${format}`,
+          type: mimeTypes[format],
+        });
+      } else {
+        // For PDF, use react-native-html-to-pdf
+        try {
+          const RNHTMLtoPDF = require('react-native-html-to-pdf').default;
+          const pdf = await RNHTMLtoPDF.convert({
+            html: content,
+            fileName: filename,
+            directory: 'Documents',
+          });
+
+          await Share.open({
+            url: `file://${pdf.filePath}`,
+            type: 'application/pdf',
+          });
+        } catch (_) {
+          // Fallback: share HTML
+          await Share.open({
+            message: content,
+            filename: `${filename}.html`,
+            type: 'text/html',
+          });
+        }
+      }
+
+      // Log export history
+      await this._logExport(format, filename);
+      return { success: true };
+    } catch (error) {
+      if (error?.message?.includes('User did not share')) {
+        return { success: false, cancelled: true };
+      }
+      console.warn('[ExportService] Share error:', error);
+      return { success: false, error: error.message };
+    }
+  },
+
+  /**
+   * Log export to history
+   */
+  async _logExport(format, filename) {
+    try {
+      const raw = await AsyncStorage.getItem(EXPORT_HISTORY_KEY);
+      const history = raw ? JSON.parse(raw) : [];
+      history.unshift({
+        format,
+        filename,
+        timestamp: Date.now(),
+      });
+      // Keep last 50 exports
+      await AsyncStorage.setItem(
+        EXPORT_HISTORY_KEY,
+        JSON.stringify(history.slice(0, 50)),
+      );
+    } catch (e) {
+      // Non-critical
+    }
+  },
+
+  /**
+   * Get export history
+   */
+  async getExportHistory() {
+    try {
+      const raw = await AsyncStorage.getItem(EXPORT_HISTORY_KEY);
+      return raw ? JSON.parse(raw) : [];
+    } catch (e) {
+      return [];
+    }
+  },
+};
+
+export default exportService;
