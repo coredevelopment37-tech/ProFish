@@ -218,6 +218,18 @@ const LESSONS = [
     emoji: '🪢',
   },
 
+  // Casting Simulator — special interactive entry (#casting-sim)
+  {
+    id: 'casting_simulator',
+    title: '🎮 Casting Simulator',
+    desc: 'Practice 10 real casting techniques! Overhead, fly, surf, skipping & more.',
+    category: 'techniques',
+    difficulty: 'beginner',
+    duration: 'Interactive',
+    emoji: '🎯',
+    isSimulator: true,
+  },
+
   // Technique section (#527)
   {
     id: 'tech_texas_rig',
@@ -725,7 +737,9 @@ export default function FishingSchoolScreen({ navigation }) {
           <LessonCard
             lesson={item}
             onPress={() => {
-              if (item.category === 'knots') {
+              if (item.isSimulator) {
+                navigation.navigate('CastingSimulator');
+              } else if (item.category === 'knots') {
                 navigation.navigate('KnotGuide', { knotId: item.id });
               }
               // Other categories navigate to their respective detail screens

@@ -120,6 +120,16 @@ const LazyFishIdQuiz = lazyScreen(
   'detail',
 );
 
+// Casting Simulator (#casting-sim)
+const LazyCastingSimulator = lazyScreen(
+  () => import('../screens/education/CastingSimulatorScreen'),
+  'list',
+);
+const LazyCastingGame = lazyScreen(
+  () => import('../screens/education/CastingGameScreen'),
+  'detail',
+);
+
 // Night Fishing screens (#night-mode)
 const LazyNightFishing = lazyScreen(
   () => import('../screens/night/NightFishingScreen'),
@@ -370,6 +380,16 @@ export default function RootNavigator() {
             name="FishIdQuiz"
             component={LazyFishIdQuiz}
             options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="CastingSimulator"
+            component={LazyCastingSimulator}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="CastingGame"
+            component={LazyCastingGame}
+            options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="NightFishing"
