@@ -418,20 +418,53 @@ const SPECIES_DB = [
   },
 ];
 
+// ── Phase 2 Integration: Merge expansion data ───────────
+import {
+  EXPANDED_SPECIES,
+  SPECIES_IUCN,
+  getIucnStatus,
+  getLocalizedName,
+  getDistribution,
+  getRegulations,
+} from './speciesExpansion';
+
+// Deduplicate base DB (atlantic_salmon, sea_trout, barramundi had dupes)
+const seen = new Set();
+const DEDUPED_DB = SPECIES_DB.filter(s => {
+  if (seen.has(s.id)) return false;
+  seen.add(s.id);
+  return true;
+});
+
+// Merge expansion species (skip any IDs already present)
+const MERGED_DB = [...DEDUPED_DB];
+for (const species of EXPANDED_SPECIES) {
+  if (!seen.has(species.id)) {
+    seen.add(species.id);
+    MERGED_DB.push(species);
+  }
+}
+
+// Enrich all species with IUCN status
+const FULL_DB = MERGED_DB.map(s => ({
+  ...s,
+  iucn: SPECIES_IUCN[s.id] || 'NE',
+}));
+
 const speciesDatabase = {
   /**
-   * Get all species
+   * Get all species (200+)
    */
   getAll() {
-    return SPECIES_DB;
+    return FULL_DB;
   },
 
   /**
-   * Search by name or scientific name
+   * Search by name, scientific name, or family
    */
   search(query) {
     const q = query.toLowerCase();
-    return SPECIES_DB.filter(
+    return FULL_DB.filter(
       s =>
         s.id.replace(/_/g, ' ').includes(q) ||
         s.scientific.toLowerCase().includes(q) ||
@@ -443,28 +476,70 @@ const speciesDatabase = {
    * Get species by ID
    */
   getById(id) {
-    return SPECIES_DB.find(s => s.id === id) || null;
+    return FULL_DB.find(s => s.id === id) || null;
   },
 
   /**
    * Get species filtered by region
    */
   getByRegion(region) {
-    return SPECIES_DB.filter(s => s.regions.includes(region));
+    return FULL_DB.filter(s => s.regions.includes(region));
   },
 
   /**
    * Get species by habitat type
    */
   getByHabitat(habitat) {
-    return SPECIES_DB.filter(s => s.habitat === habitat);
+    return FULL_DB.filter(s => s.habitat === habitat);
   },
 
   /**
-   * Get species count
+   * Get species count (200+)
    */
   getCount() {
-    return SPECIES_DB.length;
+    return FULL_DB.length;
+  },
+
+  /**
+   * Get IUCN conservation status for a species (#203)
+   */
+  getIucnStatus(speciesId) {
+    return getIucnStatus(speciesId);
+  },
+
+  /**
+   * Get localized name for a species in a given language (#202)
+   */
+  getLocalizedName(speciesId, langCode) {
+    return getLocalizedName(speciesId, langCode);
+  },
+
+  /**
+   * Get geographic distribution data for species map (#194)
+   */
+  getDistribution(speciesId) {
+    return getDistribution(speciesId);
+  },
+
+  /**
+   * Get catch regulations for a species in a region (#204)
+   */
+  getRegulations(speciesId, regionId) {
+    return getRegulations(speciesId, regionId);
+  },
+
+  /**
+   * Get species filtered by IUCN status
+   */
+  getByIucnStatus(status) {
+    return FULL_DB.filter(s => s.iucn === status);
+  },
+
+  /**
+   * Get endangered species (VU, EN, CR)
+   */
+  getEndangered() {
+    return FULL_DB.filter(s => ['VU', 'EN', 'CR'].includes(s.iucn));
   },
 };
 
