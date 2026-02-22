@@ -3,11 +3,15 @@
  *
  * Features:
  * - Global leaderboard (catches, weight, species diversity)
+ * - Regional leaderboard per 12 regions (#359)
+ * - Species-specific leaderboard (#360)
+ * - Friend leaderboard (followed users) (#361)
+ * - Weekly/monthly/all-time filters (#362)
  * - Personal milestone badges
  * - Badge progress tracking
  */
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   View,
   Text,
@@ -16,101 +20,169 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Platform,
+  RefreshControl,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useApp } from '../../store/AppContext';
 import catchService from '../../services/catchService';
 import communityService from '../../services/communityService';
 import badgeService, { BADGE_DEFINITIONS } from '../../services/badgeService';
+import leaderboardService, {
+  LEADERBOARD_TYPE,
+  LEADERBOARD_METRIC,
+  TIME_FILTER,
+  LEADERBOARD_REGIONS,
+} from '../../services/leaderboardService';
+import regionGatingService from '../../services/regionGatingService';
+
+const LEADERBOARD_TABS = [
+  { key: 'global', label: 'Global', icon: '🌍' },
+  { key: 'regional', label: 'Regional', icon: '📍' },
+  { key: 'species', label: 'Species', icon: '🐟' },
+  { key: 'friends', label: 'Friends', icon: '👥' },
+  { key: 'badges', label: 'Badges', icon: '🏅' },
+];
 
 const LEADERBOARD_CATEGORIES = [
-  { key: 'catches', label: 'Total Catches', icon: '🎣' },
-  { key: 'weight', label: 'Biggest Catch', icon: '⚖️' },
-  { key: 'species', label: 'Species Count', icon: '🐟' },
+  {
+    key: 'catches',
+    label: 'Total Catches',
+    icon: '🎣',
+    metric: LEADERBOARD_METRIC.TOTAL_CATCHES,
+  },
+  {
+    key: 'weight',
+    label: 'Biggest Catch',
+    icon: '⚖️',
+    metric: LEADERBOARD_METRIC.BIGGEST_WEIGHT,
+  },
+  {
+    key: 'species',
+    label: 'Species Count',
+    icon: '🐟',
+    metric: LEADERBOARD_METRIC.SPECIES_COUNT,
+  },
+];
+
+const TIME_FILTERS = [
+  { key: TIME_FILTER.WEEKLY, label: 'This Week', icon: '📅' },
+  { key: TIME_FILTER.MONTHLY, label: 'This Month', icon: '🗓️' },
+  { key: TIME_FILTER.ALL_TIME, label: 'All Time', icon: '♾️' },
 ];
 
 export default function LeaderboardScreen({ navigation }) {
   const { t } = useTranslation();
   const { state } = useApp();
-  const [tab, setTab] = useState('leaderboard'); // 'leaderboard' | 'badges'
+  const [tab, setTab] = useState('global');
   const [category, setCategory] = useState('catches');
+  const [timeFilter, setTimeFilter] = useState(TIME_FILTER.ALL_TIME);
+  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const [badges, setBadges] = useState(null);
   const [catches, setCatches] = useState([]);
+  const [showRegionPicker, setShowRegionPicker] = useState(false);
+  const [allSpecies, setAllSpecies] = useState([]);
+
+  // Detect user's region on mount
+  useEffect(() => {
+    const detected = regionGatingService.detect();
+    if (detected.region && !selectedRegion) {
+      setSelectedRegion(detected.region);
+    }
+  }, []);
 
   useEffect(() => {
     loadData();
-  }, []);
+  }, [tab, category, timeFilter, selectedRegion, selectedSpecies]);
 
-  async function loadData() {
+  const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const [catchData, feedData] = await Promise.all([
-        catchService.getCatches(),
-        communityService.getFeed({ limit: 100 }).catch(() => ({ items: [] })),
-      ]);
+      const catchData = await catchService.getCatches();
       setCatches(catchData);
 
-      // Build leaderboard from community feed + own data
-      const users = {};
-      const myId = state.userId || 'me';
+      // Extract species list from catches
+      const speciesSet = new Set(catchData.map(c => c.species).filter(Boolean));
+      setAllSpecies([...speciesSet].sort());
 
-      // Add self
-      users[myId] = {
-        id: myId,
-        name: state.displayName || t('community.you', 'You'),
-        catches: catchData.length,
-        weight: Math.max(...catchData.map(c => c.weight || 0), 0),
-        species: new Set(catchData.map(c => c.species).filter(Boolean)).size,
-        isMe: true,
-      };
+      if (tab === 'badges') {
+        const badgeResult = await badgeService.evaluateBadges(catchData);
+        setBadges(badgeResult);
+        setLoading(false);
+        return;
+      }
 
-      // Add community members from feed
-      const feedItems = feedData.items || feedData || [];
-      feedItems.forEach(item => {
-        if (!item.userId || item.userId === myId) return;
-        if (!users[item.userId]) {
-          users[item.userId] = {
-            id: item.userId,
-            name: item.userName || item.displayName || 'Angler',
-            catches: 0,
-            weight: 0,
-            species: new Set(),
-            isMe: false,
-          };
-        }
-        users[item.userId].catches++;
-        if (item.weight) {
-          users[item.userId].weight = Math.max(
-            users[item.userId].weight,
-            item.weight,
-          );
-        }
-        if (item.species) {
-          if (users[item.userId].species instanceof Set) {
-            users[item.userId].species.add(item.species);
-          }
-        }
-      });
+      const currentMetric =
+        LEADERBOARD_CATEGORIES.find(c => c.key === category)?.metric ||
+        LEADERBOARD_METRIC.TOTAL_CATCHES;
 
-      // Convert species sets to counts
-      const processed = Object.values(users).map(u => ({
-        ...u,
-        species: u.species instanceof Set ? u.species.size : u.species || 0,
+      let entries = [];
+
+      if (tab === 'global') {
+        entries = await leaderboardService.getLeaderboard({
+          type: LEADERBOARD_TYPE.GLOBAL,
+          metric: currentMetric,
+          timeFilter,
+        });
+      } else if (tab === 'regional') {
+        if (selectedRegion) {
+          entries = await leaderboardService.getRegionalLeaderboard({
+            region: selectedRegion,
+            metric: currentMetric,
+            timeFilter,
+          });
+        }
+      } else if (tab === 'species') {
+        if (selectedSpecies) {
+          entries = await leaderboardService.getSpeciesLeaderboard({
+            species: selectedSpecies,
+            metric: LEADERBOARD_METRIC.BIGGEST_WEIGHT,
+            timeFilter,
+          });
+        }
+      } else if (tab === 'friends') {
+        entries = await leaderboardService.getFriendsLeaderboard({
+          metric: currentMetric,
+          timeFilter,
+        });
+      }
+
+      // Transform entries for display
+      const mapped = entries.map(entry => ({
+        id: entry.userId,
+        name: entry.displayName || 'Angler',
+        catches: entry.score || 0,
+        weight: entry.score || 0,
+        species: entry.score || 0,
+        isMe: entry.isMe || entry.userId === state.userId,
+        isFriend: entry.isFriend || false,
+        region: entry.region,
+        rank: entry.rank,
       }));
 
-      setLeaderboard(processed);
-
-      // Evaluate badges
-      const badgeResult = await badgeService.evaluateBadges(catchData);
-      setBadges(badgeResult);
+      setLeaderboard(mapped);
     } catch (e) {
       console.warn('[Leaderboard] Load error:', e);
     } finally {
       setLoading(false);
     }
-  }
+  }, [
+    tab,
+    category,
+    timeFilter,
+    selectedRegion,
+    selectedSpecies,
+    state.userId,
+  ]);
+
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    await loadData();
+    setRefreshing(false);
+  }, [loadData]);
 
   // Sort leaderboard by current category
   const sortedLeaderboard = useMemo(() => {
@@ -138,41 +210,141 @@ export default function LeaderboardScreen({ navigation }) {
         </Text>
       </View>
 
-      {/* Tab selector */}
-      <View style={styles.tabRow}>
-        <TouchableOpacity
-          style={[styles.tabBtn, tab === 'leaderboard' && styles.tabBtnActive]}
-          onPress={() => setTab('leaderboard')}
-          accessibilityRole="tab"
-        >
-          <Text
-            style={[
-              styles.tabText,
-              tab === 'leaderboard' && styles.tabTextActive,
-            ]}
+      {/* Tab selector — scrollable for 5 tabs */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.tabScroll}
+        contentContainerStyle={styles.tabRow}
+      >
+        {LEADERBOARD_TABS.map(item => (
+          <TouchableOpacity
+            key={item.key}
+            style={[styles.tabBtn, tab === item.key && styles.tabBtnActive]}
+            onPress={() => setTab(item.key)}
+            accessibilityRole="tab"
           >
-            🏆 {t('leaderboard.rankings', 'Rankings')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.tabBtn, tab === 'badges' && styles.tabBtnActive]}
-          onPress={() => setTab('badges')}
-          accessibilityRole="tab"
+            <Text
+              style={[styles.tabText, tab === item.key && styles.tabTextActive]}
+            >
+              {item.icon} {t(`leaderboard.tab_${item.key}`, item.label)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </ScrollView>
+
+      {/* Time filter chips (#362) */}
+      {tab !== 'badges' && (
+        <View style={styles.timeFilterRow}>
+          {TIME_FILTERS.map(tf => (
+            <TouchableOpacity
+              key={tf.key}
+              style={[
+                styles.timeChip,
+                timeFilter === tf.key && styles.timeChipActive,
+              ]}
+              onPress={() => setTimeFilter(tf.key)}
+            >
+              <Text
+                style={[
+                  styles.timeChipText,
+                  timeFilter === tf.key && styles.timeChipTextActive,
+                ]}
+              >
+                {t(`leaderboard.time_${tf.key}`, tf.label)}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+      )}
+
+      {/* Region picker for regional tab (#359) */}
+      {tab === 'regional' && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.regionScroll}
+          contentContainerStyle={styles.regionRow}
         >
-          <Text
-            style={[styles.tabText, tab === 'badges' && styles.tabTextActive]}
-          >
-            🏅 {t('leaderboard.badges', 'Badges')}
-          </Text>
-        </TouchableOpacity>
-      </View>
+          {LEADERBOARD_REGIONS.map(r => (
+            <TouchableOpacity
+              key={r.id}
+              style={[
+                styles.regionChip,
+                selectedRegion === r.id && styles.regionChipActive,
+              ]}
+              onPress={() => setSelectedRegion(r.id)}
+            >
+              <Text
+                style={[
+                  styles.regionChipText,
+                  selectedRegion === r.id && styles.regionChipTextActive,
+                ]}
+                numberOfLines={1}
+              >
+                {r.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
+
+      {/* Species picker for species tab (#360) */}
+      {tab === 'species' && (
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={styles.regionScroll}
+          contentContainerStyle={styles.regionRow}
+        >
+          {allSpecies.length > 0 ? (
+            allSpecies.map(sp => (
+              <TouchableOpacity
+                key={sp}
+                style={[
+                  styles.regionChip,
+                  selectedSpecies === sp && styles.regionChipActive,
+                ]}
+                onPress={() => setSelectedSpecies(sp)}
+              >
+                <Text
+                  style={[
+                    styles.regionChipText,
+                    selectedSpecies === sp && styles.regionChipTextActive,
+                  ]}
+                  numberOfLines={1}
+                >
+                  {sp}
+                </Text>
+              </TouchableOpacity>
+            ))
+          ) : (
+            <Text style={styles.emptyHint}>
+              {t(
+                'leaderboard.noSpecies',
+                'Log catches to see species rankings',
+              )}
+            </Text>
+          )}
+        </ScrollView>
+      )}
 
       {loading ? (
         <View style={styles.loadingState}>
           <ActivityIndicator size="large" color="#0080FF" />
         </View>
-      ) : tab === 'leaderboard' ? (
-        <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
+      ) : tab !== 'badges' ? (
+        <ScrollView
+          style={styles.scroll}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="#0080FF"
+            />
+          }
+        >
           {/* Category chips */}
           <View style={styles.categoryRow}>
             {LEADERBOARD_CATEGORIES.map(cat => (
@@ -356,22 +528,68 @@ const styles = StyleSheet.create({
   backText: { fontSize: 28, color: '#fff' },
   title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
 
+  // Tabs (scrollable)
+  tabScroll: { maxHeight: 44, marginBottom: 8 },
   tabRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
     gap: 8,
-    marginBottom: 16,
   },
   tabBtn: {
-    flex: 1,
+    paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
     backgroundColor: '#1a1a2e',
     alignItems: 'center',
   },
   tabBtnActive: { backgroundColor: '#0080FF' },
-  tabText: { color: '#888', fontSize: 14, fontWeight: '600' },
+  tabText: { color: '#888', fontSize: 13, fontWeight: '600' },
   tabTextActive: { color: '#fff' },
+
+  // Time filters (#362)
+  timeFilterRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 8,
+    marginBottom: 8,
+  },
+  timeChip: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    backgroundColor: '#1a1a2e',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  timeChipActive: {
+    backgroundColor: 'rgba(255,152,0,0.15)',
+    borderColor: '#FF9800',
+  },
+  timeChipText: { color: '#888', fontSize: 12, fontWeight: '600' },
+  timeChipTextActive: { color: '#FF9800' },
+
+  // Region chips (#359)
+  regionScroll: { maxHeight: 40, marginBottom: 8 },
+  regionRow: {
+    flexDirection: 'row',
+    paddingHorizontal: 16,
+    gap: 8,
+  },
+  regionChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 16,
+    backgroundColor: '#1a1a2e',
+    borderWidth: 1,
+    borderColor: 'transparent',
+  },
+  regionChipActive: {
+    backgroundColor: 'rgba(0,128,255,0.15)',
+    borderColor: '#0080FF',
+  },
+  regionChipText: { color: '#888', fontSize: 12, fontWeight: '600' },
+  regionChipTextActive: { color: '#0080FF' },
+  emptyHint: { color: '#666', fontSize: 13, paddingHorizontal: 4 },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
 
