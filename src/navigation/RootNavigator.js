@@ -34,6 +34,7 @@ import TournamentListScreen from '../screens/main/TournamentListScreen';
 import TournamentDetailScreen from '../screens/main/TournamentDetailScreen';
 import TournamentStatsScreen from '../screens/main/TournamentStatsScreen';
 import OfflineMapScreen from '../screens/main/OfflineMapScreen';
+import MarketplaceScreen from '../screens/main/MarketplaceScreen';
 
 // Icons — graceful fallback if native module not linked yet
 let Icon = null;
@@ -213,6 +214,11 @@ export default function RootNavigator() {
           <Stack.Screen
             name="OfflineMap"
             component={OfflineMapScreen}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="Marketplace"
+            component={MarketplaceScreen}
             options={{ presentation: 'card' }}
           />
         </>
