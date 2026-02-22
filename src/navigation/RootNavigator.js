@@ -120,6 +120,20 @@ const LazyFishIdQuiz = lazyScreen(
   'detail',
 );
 
+// Night Fishing screens (#night-mode)
+const LazyNightFishing = lazyScreen(
+  () => import('../screens/night/NightFishingScreen'),
+  'detail',
+);
+const LazyNightGear = lazyScreen(
+  () => import('../screens/night/NightGearScreen'),
+  'list',
+);
+const LazyNightSafety = lazyScreen(
+  () => import('../screens/night/NightSafetyScreen'),
+  'list',
+);
+
 // Paywall — wraps PaywallModal as a navigable screen (#fix-paywall)
 import PaywallModal from '../components/PaywallModal';
 function PaywallScreen({ navigation, route }) {
@@ -356,6 +370,21 @@ export default function RootNavigator() {
             name="FishIdQuiz"
             component={LazyFishIdQuiz}
             options={{ presentation: 'modal' }}
+          />
+          <Stack.Screen
+            name="NightFishing"
+            component={LazyNightFishing}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="NightGear"
+            component={LazyNightGear}
+            options={{ presentation: 'card' }}
+          />
+          <Stack.Screen
+            name="NightSafety"
+            component={LazyNightSafety}
+            options={{ presentation: 'card' }}
           />
           <Stack.Screen
             name="Paywall"
