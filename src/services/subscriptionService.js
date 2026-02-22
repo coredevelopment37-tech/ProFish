@@ -170,10 +170,22 @@ let _currentTier = TIERS.FREE;
 let _expiresAt = null;
 let _listeners = [];
 
+// ── DEV OVERRIDE: Set to true to force Pro tier for testing ──
+const DEV_FORCE_PRO = true;
+
 const subscriptionService = {
   _initialized: false,
 
   async init(userId = null) {
+    // DEV: Force Pro tier for testing (set DEV_FORCE_PRO = false for production)
+    if (DEV_FORCE_PRO) {
+      _currentTier = TIERS.PRO;
+      _expiresAt = '2099-12-31T23:59:59Z';
+      await this._persist();
+      this._initialized = true;
+      return;
+    }
+
     // Load local state first (fast)
     try {
       const stored = await AsyncStorage.getItem(STORAGE_KEY);
