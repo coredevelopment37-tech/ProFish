@@ -1,7 +1,7 @@
 # ProFish — Complete Project Checklist
 
-> **Version:** 3.1 · **Target:** ~380 items · **Stack:** React Native 0.83.1, Mapbox GL, Firebase, RevenueCat  
-> **Last Updated:** 2026-02-21
+> **Version:** 3.2 · **Target:** ~620 items · **Stack:** React Native 0.83.1, Mapbox GL, Firebase, RevenueCat  
+> **Last Updated:** 2026-02-23
 
 Legend: `[x]` = Done · `[ ]` = To Do
 
@@ -865,6 +865,100 @@ Legend: `[x]` = Done · `[ ]` = To Do
 
 ---
 
+## 22. UI Overhaul — ProHunt-Style Design System (~25 items)
+
+> Modeled after ProHunt's proven UI patterns. Centralized theme, proper icons, shared components, modern tab bar.
+
+### Phase 1: Centralized Theme System ✅ (commit `4b23be6`)
+
+- [x] 563. Create `src/hooks/useTheme.js` — returns `{ mode, isDark, colors, fonts, spacing, radius, shadows, common }`
+- [x] 564. Update `src/config/theme.js` — add `buildFonts(colors)` and `buildCommon(colors, fonts)` factories
+- [x] 565. Refactor all 37 screens to `createStyles(colors)` pattern
+- [x] 566. Refactor all 25 components to use `useTheme()` hook
+- [x] 567. Refactor 6 services to import `COLORS` from theme.js
+- [x] 568. Refactor `RootNavigator.js` — themed tab bar and navigation chrome
+- [x] 569. Delete all 13 local `const THEME = {}` duplicates across codebase
+- [x] 570. Remove duplicate `COLORS` export from `constants.js`
+- [x] 571. Replace 850+ hardcoded hex color values with theme tokens
+- [x] 572. Bundle verify — clean compile, zero import errors
+- [x] 573. Install `react-native-svg` dependency (was missing)
+
+### Phase 2: Icon System — Lucide Icons (CURRENT)
+
+- [ ] 574. Install `lucide-react-native` + `react-native-svg` (svg already done)
+- [ ] 575. Create `src/constants/icons.js` — centralized icon registry mapping names → Lucide components
+- [ ] 576. Replace all emoji icons in tab bar with Lucide icons
+- [ ] 577. Replace all emoji icons in screen headers with Lucide icons
+- [ ] 578. Replace all emoji icons in list items, cards, and buttons with Lucide icons
+- [ ] 579. Replace all emoji icons in settings, profile, and preference screens
+- [ ] 580. Replace all emoji icons in education screens (FishingSchool, KnotGuide, etc.)
+- [ ] 581. Audit — zero emoji used as UI icons remaining (emoji in content/data OK)
+
+### Phase 3: Shared Components
+
+- [ ] 582. Create `src/components/Common/Button.js` — primary, secondary, outline, danger variants
+- [ ] 583. Create `src/components/Common/Card.js` — surface card with shadow, padding, radius
+- [ ] 584. Create `src/components/Common/Input.js` — themed TextInput with label, error state, icon
+- [ ] 585. Create `src/components/Common/ScreenHeader.js` — consistent header with back, title, actions
+- [ ] 586. Refactor all screens to use shared `<Button>` instead of inline TouchableOpacity styles
+- [ ] 587. Refactor all screens to use shared `<Card>` instead of inline surface containers
+- [ ] 588. Refactor all screens to use shared `<Input>` for text inputs
+- [ ] 589. Refactor all screens to use shared `<ScreenHeader>` for consistent navigation headers
+
+### Phase 4: FloatingTabBar
+
+- [ ] 590. Create `src/components/Navigation/FloatingTabBar.js` — glassmorphic floating tab bar
+- [ ] 591. Style: rounded pill shape, blur background, elevated shadow, animated active indicator
+- [ ] 592. Wire into `RootNavigator.js` as custom `tabBar` component
+- [ ] 593. Add haptic feedback on tab switch
+- [ ] 594. Test on all screen sizes (small phone, large phone, tablet)
+
+---
+
+## 23. Fishing Spots — Worldwide Database (~20 items)
+
+> **Goal:** Compete with Fishbrain's 2M+ spots by combining free open data sources (OSM worldwide + RIDB US) with our own crowdsourced catches. All bodies of water = potential fishing spots.
+
+### OpenStreetMap Integration (Worldwide)
+
+- [ ] 595. Create `src/services/fishingSpotsService.js` — Overpass API client
+- [ ] 596. Query OSM `leisure=fishing` — dedicated fishing areas (~18,700 worldwide)
+- [ ] 597. Query OSM `leisure=slipway` — boat ramps (~25,000 worldwide)
+- [ ] 598. Query OSM `leisure=marina` — marinas (~15,000 worldwide)
+- [ ] 599. Query OSM `natural=water` + `water=lake|pond|reservoir` — all fishable lakes (~4M worldwide)
+- [ ] 600. Query OSM `waterway=river|stream|canal` — rivers and streams (~8M worldwide)
+- [ ] 601. Query OSM `man_made=pier` + `amenity=fish_cleaning` — piers and fish cleaning stations
+- [ ] 602. Implement radius query (fetch spots within X km of user)
+- [ ] 603. Implement result caching (AsyncStorage, 24-hour TTL per bounding box)
+- [ ] 604. Implement rate limiting for Overpass API (max 2 requests/10 sec)
+
+### RIDB Integration (US Federal Lands)
+
+- [ ] 605. Register free API key at ridb.recreation.gov
+- [ ] 606. Query RIDB facilities with activity=FISHING — US recreation areas (~5,000)
+- [ ] 607. Query RIDB for boat ramp facilities
+- [ ] 608. Merge RIDB data with OSM data (deduplicate by proximity)
+
+### Map Layer & UI
+
+- [ ] 609. Add "Fishing Spots" map layer — icons by type (lake, river, boat ramp, pier, marina)
+- [ ] 610. Implement cluster markers at low zoom (show count per region)
+- [ ] 611. Tap spot → detail sheet (name, type, species reported, distance, user catches nearby)
+- [ ] 612. "Navigate Here" button — open in Google Maps / Apple Maps
+- [ ] 613. "Save Spot" — bookmark to user's personal spot collection
+- [ ] 614. "Rate Spot" — 1-5 stars + optional comment (builds our own database)
+
+### Crowdsourced Enrichment
+
+- [ ] 615. Auto-create spots from user catch GPS coordinates (unique water bodies)
+- [ ] 616. Show "X catches logged here" count on spot detail
+- [ ] 617. Show top species caught at each spot (aggregated from community catches)
+- [ ] 618. Let users add spot details: species present, access type (shore/boat/kayak), parking, fees
+- [ ] 619. Implement spot verification (3+ users confirm → "Verified Spot" badge)
+- [ ] 620. Display total spot count on home/profile ("ProFish: 4M+ fishing spots worldwide")
+
+---
+
 ## Progress Summary
 
 | Section                             | Total   | Done    | Remaining | %       |
@@ -890,7 +984,16 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | 19. Launch & Marketing              | 15      | 15      | 0         | 100%    |
 | 20. Post-Launch & Scale             | 17      | 17      | 0         | 100%    |
 | 21. Critical Gaps                   | 62      | 62      | 0         | 100%    |
-| **TOTAL**                           | **562** | **533** | **29**    | **95%** |
+| 22. UI Overhaul                     | 32      | 11      | 21        | 34%     |
+| 23. Fishing Spots — Worldwide DB    | 26      | 0       | 26        | 0%      |
+| **TOTAL**                           | **620** | **544** | **76**    | **88%** |
+
+### Current Sprint Order
+
+1. **NOW →** Phase 2: Lucide Icons (#574-581)
+2. **NEXT →** Phase 3: Shared Components (#582-589)
+3. **THEN →** Phase 4: FloatingTabBar (#590-594)
+4. **AFTER UI →** Fishing Spots Worldwide (#595-620)
 
 ---
 
