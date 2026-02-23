@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '../../config/constants';
 import useTheme from '../../hooks/useTheme';
+import { Button } from '../../components/Common';
 import { AppIcon } from '../../constants/icons';
 
 const { width, height } = Dimensions.get('window');
@@ -47,7 +48,12 @@ const FISHING_STYLES = [
     icon: 'snowflake',
     desc: 'Frozen lakes & ponds',
   },
-  { id: 'kayak', label: 'Kayak/Shore', icon: 'ship', desc: 'Bank, pier, kayak' },
+  {
+    id: 'kayak',
+    label: 'Kayak/Shore',
+    icon: 'ship',
+    desc: 'Bank, pier, kayak',
+  },
   {
     id: 'boat',
     label: 'Boat/Offshore',
@@ -161,7 +167,9 @@ function Step2({ selections, setSelections, styles, colors }) {
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <AppIcon name={s.icon} size={14} color={colors.text} />
-                <Text style={[styles.chipText, { marginLeft: 4 }]}>{s.name}</Text>
+                <Text style={[styles.chipText, { marginLeft: 4 }]}>
+                  {s.name}
+                </Text>
               </View>
             </TouchableOpacity>
           );
@@ -199,7 +207,9 @@ function Step3({ selections, setSelections, styles, colors }) {
               >
                 {r.label}
               </Text>
-              {selected && <AppIcon name="check" size={18} color={colors.primary} />}
+              {selected && (
+                <AppIcon name="check" size={18} color={colors.primary} />
+              )}
             </TouchableOpacity>
           );
         })}
@@ -304,7 +314,10 @@ function Step5({ styles, colors }) {
           { icon: 'map', text: '18 map layers — bathymetry, SST, tides' },
           { icon: 'camera', text: 'Smart catch logging with AI species ID' },
           { icon: 'trophy', text: 'Tournaments, leaderboards, community' },
-          { icon: 'bookOpen', text: 'Fishing school — knots, techniques, tips' },
+          {
+            icon: 'bookOpen',
+            text: 'Fishing school — knots, techniques, tips',
+          },
           { icon: 'moon', text: 'Solunar calendar & tide alerts' },
         ].map((f, i) => (
           <View key={i} style={styles.featureRow}>
@@ -430,166 +443,170 @@ export default function OnboardingScreen({ navigation }) {
       {/* Navigation buttons */}
       <View style={styles.nav}>
         {currentStep > 0 ? (
-          <TouchableOpacity onPress={goBack} style={styles.backBtn}>
-            <Text style={styles.backText}>← Back</Text>
-          </TouchableOpacity>
+          <Button
+            title="Back"
+            onPress={goBack}
+            variant="ghost"
+            size="md"
+            fullWidth={false}
+          />
         ) : (
-          <TouchableOpacity onPress={skip} style={styles.backBtn}>
-            <Text style={styles.skipText}>Skip</Text>
-          </TouchableOpacity>
+          <Button
+            title="Skip"
+            onPress={skip}
+            variant="ghost"
+            size="md"
+            fullWidth={false}
+          />
         )}
 
         <Text style={styles.stepIndicator}>
           {currentStep + 1} / {STEPS.length}
         </Text>
 
-        <TouchableOpacity onPress={goNext} style={styles.nextBtn}>
-          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            <Text style={styles.nextText}>
-              {currentStep === STEPS.length - 1 ? 'Finish ' : 'Next '}
-            </Text>
-            {currentStep === STEPS.length - 1
-              ? <AppIcon name="check" size={16} color={colors.text} />
-              : <AppIcon name="arrowRight" size={16} color={colors.text} />}
-          </View>
-        </TouchableOpacity>
+        <Button
+          title={currentStep === STEPS.length - 1 ? 'Finish' : 'Next'}
+          onPress={goNext}
+          variant="primary"
+          size="md"
+          fullWidth={false}
+          style={{ borderRadius: 24, paddingHorizontal: 24 }}
+        />
       </View>
     </View>
   );
 }
 
-const createStyles = (colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  progressContainer: {
-    height: 4,
-    backgroundColor: colors.border,
-    marginTop: 50,
-  },
-  progressBar: { height: 4, backgroundColor: colors.primary, borderRadius: 2 },
-  step: { flex: 1, paddingHorizontal: 24, paddingTop: 32 },
-  stepEmoji: { fontSize: 48, textAlign: 'center', marginBottom: 12 },
-  stepTitle: {
-    fontSize: 28,
-    fontWeight: '800',
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: 8,
-  },
-  stepSubtitle: {
-    fontSize: 14,
-    color: colors.textTertiary,
-    textAlign: 'center',
-    marginBottom: 24,
-  },
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    progressContainer: {
+      height: 4,
+      backgroundColor: colors.border,
+      marginTop: 50,
+    },
+    progressBar: {
+      height: 4,
+      backgroundColor: colors.primary,
+      borderRadius: 2,
+    },
+    step: { flex: 1, paddingHorizontal: 24, paddingTop: 32 },
+    stepEmoji: { fontSize: 48, textAlign: 'center', marginBottom: 12 },
+    stepTitle: {
+      fontSize: 28,
+      fontWeight: '800',
+      color: colors.text,
+      textAlign: 'center',
+      marginBottom: 8,
+    },
+    stepSubtitle: {
+      fontSize: 14,
+      color: colors.textTertiary,
+      textAlign: 'center',
+      marginBottom: 24,
+    },
 
-  // Grid items (fishing style)
-  grid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
-  },
-  gridItem: {
-    width: (width - 64) / 2,
-    padding: 16,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    marginBottom: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  gridItemSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primary + '15',
-  },
-  gridEmoji: { fontSize: 28, marginBottom: 8 },
-  gridLabel: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  gridLabelSelected: { color: colors.primary },
-  gridDesc: { fontSize: 12, color: colors.textTertiary },
+    // Grid items (fishing style)
+    grid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+    },
+    gridItem: {
+      width: (width - 64) / 2,
+      padding: 16,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      marginBottom: 12,
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    gridItemSelected: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primary + '15',
+    },
+    gridEmoji: { fontSize: 28, marginBottom: 8 },
+    gridLabel: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 4,
+    },
+    gridLabelSelected: { color: colors.primary },
+    gridDesc: { fontSize: 12, color: colors.textTertiary },
 
-  // Chip items (species)
-  chipItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    backgroundColor: colors.surface,
-    borderRadius: 20,
-    marginRight: 8,
-    marginBottom: 8,
-    borderWidth: 1.5,
-    borderColor: 'transparent',
-  },
-  chipSelected: { borderColor: colors.accent, backgroundColor: colors.accent + '15' },
-  chipText: { fontSize: 14, color: colors.text },
+    // Chip items (species)
+    chipItem: {
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      backgroundColor: colors.surface,
+      borderRadius: 20,
+      marginRight: 8,
+      marginBottom: 8,
+      borderWidth: 1.5,
+      borderColor: 'transparent',
+    },
+    chipSelected: {
+      borderColor: colors.accent,
+      backgroundColor: colors.accent + '15',
+    },
+    chipText: { fontSize: 14, color: colors.text },
 
-  // Region list
-  regionList: { gap: 8 },
-  regionItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 14,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: 'transparent',
-  },
-  regionSelected: { borderColor: colors.primary },
-  regionEmoji: { fontSize: 24, marginRight: 12 },
-  regionLabel: { fontSize: 16, color: colors.text, flex: 1 },
-  regionLabelSelected: { color: colors.primary, fontWeight: '700' },
-  checkmark: { fontSize: 18, color: colors.primary, fontWeight: '700' },
+    // Region list
+    regionList: { gap: 8 },
+    regionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 14,
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    regionSelected: { borderColor: colors.primary },
+    regionEmoji: { fontSize: 24, marginRight: 12 },
+    regionLabel: { fontSize: 16, color: colors.text, flex: 1 },
+    regionLabelSelected: { color: colors.primary, fontWeight: '700' },
+    checkmark: { fontSize: 18, color: colors.primary, fontWeight: '700' },
 
-  // Notification toggles
-  notifRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  notifEmoji: { fontSize: 24, marginRight: 12 },
-  notifText: { flex: 1 },
-  notifLabel: { fontSize: 16, fontWeight: '600', color: colors.text },
-  notifDesc: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
+    // Notification toggles
+    notifRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    notifEmoji: { fontSize: 24, marginRight: 12 },
+    notifText: { flex: 1 },
+    notifLabel: { fontSize: 16, fontWeight: '600', color: colors.text },
+    notifDesc: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
 
-  // Feature list (step 5)
-  featureList: { marginTop: 8 },
-  featureRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 12,
-  },
-  featureEmoji: { fontSize: 24, marginRight: 14 },
-  featureText: { fontSize: 15, color: colors.text, flex: 1 },
-  letsGo: {
-    fontSize: 14,
-    color: colors.accent,
-    textAlign: 'center',
-    marginTop: 24,
-    fontWeight: '600',
-  },
+    // Feature list (step 5)
+    featureList: { marginTop: 8 },
+    featureRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 12,
+    },
+    featureEmoji: { fontSize: 24, marginRight: 14 },
+    featureText: { fontSize: 15, color: colors.text, flex: 1 },
+    letsGo: {
+      fontSize: 14,
+      color: colors.accent,
+      textAlign: 'center',
+      marginTop: 24,
+      fontWeight: '600',
+    },
 
-  // Navigation
-  nav: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 24,
-    paddingBottom: 40,
-    paddingTop: 16,
-  },
-  backBtn: { paddingVertical: 12, paddingHorizontal: 16 },
-  backText: { fontSize: 16, color: colors.textTertiary },
-  skipText: { fontSize: 16, color: colors.textTertiary },
-  stepIndicator: { fontSize: 14, color: colors.textTertiary },
-  nextBtn: {
-    backgroundColor: colors.primary,
-    paddingVertical: 12,
-    paddingHorizontal: 24,
-    borderRadius: 24,
-  },
-  nextText: { fontSize: 16, fontWeight: '700', color: colors.text },
-});
+    // Navigation
+    nav: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 24,
+      paddingBottom: 40,
+      paddingTop: 16,
+    },
+    stepIndicator: { fontSize: 14, color: colors.textTertiary },
+  });

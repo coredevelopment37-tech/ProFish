@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 const { width } = Dimensions.get('window');
 
@@ -337,14 +338,7 @@ export default function KnotGuideScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          <AppIcon name="anchor" size={22} color="#fff" /> {knot.name}
-        </Text>
-      </View>
+      <ScreenHeader title={knot.name} onBack={() => navigation.goBack()} />
 
       {/* Knot info */}
       <View style={styles.infoRow}>
@@ -416,9 +410,7 @@ export { KNOT_STEPS };
 const createStyles = colors =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-    backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-    headerTitle: { fontSize: 24, fontWeight: '800', color: colors.text },
+
     infoRow: {
       flexDirection: 'row',
       paddingHorizontal: 16,

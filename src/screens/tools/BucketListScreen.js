@@ -10,11 +10,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
-  TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Input, ScreenHeader } from '../../components/Common';
 
 const SUGGESTED_BUCKET_LIST = [
   {
@@ -222,13 +222,12 @@ export default function BucketListScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="trophy" size={20} color={colors.text} /><Text style={styles.headerTitle}>Bucket List</Text></View>
-        <Text style={styles.headerDesc}>Your dream catches</Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Bucket List"
+        subtitle="Your dream catches"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Stats */}
       <View style={styles.statsRow}>
@@ -261,12 +260,11 @@ export default function BucketListScreen({ navigation }) {
 
       {/* Add custom */}
       <View style={styles.addRow}>
-        <TextInput
-          style={styles.addInput}
+        <Input
           value={customSpecies}
           onChangeText={setCustomSpecies}
           placeholder="Add custom species..."
-          placeholderTextColor={colors.textTertiary}
+          style={{ flex: 1 }}
         />
         <TouchableOpacity style={styles.addBtn} onPress={addCustom}>
           <Text style={styles.addBtnText}>+</Text>
@@ -362,10 +360,7 @@ export { SUGGESTED_BUCKET_LIST };
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 8 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
-  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
+
   statsRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -391,16 +386,6 @@ const createStyles = (colors) => StyleSheet.create({
     paddingHorizontal: 16,
     marginTop: 16,
     gap: 8,
-  },
-  addInput: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 12,
-    fontSize: 14,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   addBtn: {
     backgroundColor: colors.primary,

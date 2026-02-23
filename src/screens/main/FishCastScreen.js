@@ -30,6 +30,7 @@ import TideChart from '../../components/TideChart';
 import FactorBreakdown from '../../components/FactorBreakdown';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Card, ScreenHeader } from '../../components/Common';
 
 export default function FishCastScreen() {
   const { t } = useTranslation();
@@ -156,17 +157,12 @@ export default function FishCastScreen() {
       }
       showsVerticalScrollIndicator={false}
     >
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>
-          {t('fishcast.title', 'FishCast')}
-        </Text>
-        {locationName ? (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <AppIcon name="mapPin" size={16} color={colors.textSecondary} />
-            <Text style={styles.location}>{locationName}</Text>
-          </View>
-        ) : null}
+      <ScreenHeader
+        variant="actions"
+        title={t('fishcast.title', 'FishCast')}
+        subtitle={locationName || undefined}
+      />
+      <View style={{ alignItems: 'center', marginBottom: 20 }}>
         <Text style={styles.timestamp}>
           {new Date(forecast.calculatedAt).toLocaleTimeString([], {
             hour: '2-digit',
@@ -188,13 +184,7 @@ export default function FishCastScreen() {
 
       {/* Best Times Today */}
       {forecast.solunar && (
-        <View style={styles.bestTimesCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <AppIcon name="clock" size={20} color={colors.text} />
-            <Text style={styles.bestTimesTitle}>
-              {t('fishcast.bestTimes', 'Best Times Today')}
-            </Text>
-          </View>
+        <Card title={t('fishcast.bestTimes', 'Best Times Today')} icon="clock" style={{ marginBottom: 16 }}>
           <View style={styles.bestTimesRow}>
             {(forecast.solunar.majorPeriods || []).map((period, i) => (
               <View key={`major-${i}`} style={styles.timeSlot}>
@@ -219,18 +209,12 @@ export default function FishCastScreen() {
               </View>
             ))}
           </View>
-        </View>
+        </Card>
       )}
 
       {/* Hourly Forecast Timeline */}
       {forecast.hourly && forecast.hourly.length > 0 && (
-        <View style={styles.hourlyCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <AppIcon name="barChart" size={20} color={colors.text} />
-            <Text style={styles.hourlyTitle}>
-              {t('fishcast.hourlyForecast', 'Hourly Forecast')}
-            </Text>
-          </View>
+        <Card title={t('fishcast.hourlyForecast', 'Hourly Forecast')} icon="barChart" style={{ marginBottom: 16 }}>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {forecast.hourly.map((h, i) => (
               <View key={i} style={styles.hourlySlot}>
@@ -253,18 +237,12 @@ export default function FishCastScreen() {
               </View>
             ))}
           </ScrollView>
-        </View>
+        </Card>
       )}
 
       {/* 7-Day Outlook (Pro) */}
       {outlook.length > 0 && (
-        <View style={styles.outlookCard}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <AppIcon name="calendar" size={20} color={colors.text} />
-            <Text style={styles.outlookTitle}>
-              {t('fishcast.weekOutlook', '7-Day Outlook')}
-            </Text>
-          </View>
+        <Card title={t('fishcast.weekOutlook', '7-Day Outlook')} icon="calendar" style={{ marginBottom: 16 }}>
           {!isPro && (
             <View style={styles.outlookProBadge}>
               <Text style={styles.outlookProText}>PRO</Text>
@@ -325,7 +303,7 @@ export default function FishCastScreen() {
               )}
             </Text>
           )}
-        </View>
+        </Card>
       )}
 
       {/* Solunar Timeline */}
@@ -403,16 +381,6 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: 'center',
     padding: 40,
   },
-  header: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  headerTitle: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginBottom: 4,
-  },
   location: { fontSize: 14, color: colors.textTertiary, marginBottom: 2 },
   timestamp: { fontSize: 12, color: colors.textDisabled },
   scoreContainer: {
@@ -435,18 +403,7 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 8,
   },
   errorHint: { color: colors.textTertiary, fontSize: 14, textAlign: 'center' },
-  bestTimesCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  bestTimesTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-  },
+
   bestTimesRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -463,18 +420,7 @@ const createStyles = (colors) => StyleSheet.create({
   timeSlotIcon: { fontSize: 20, marginBottom: 4 },
   timeSlotText: { fontSize: 13, color: colors.text, fontWeight: '600' },
   timeSlotLabel: { fontSize: 11, color: colors.textTertiary, marginTop: 2 },
-  hourlyCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  hourlyTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-  },
+
   hourlySlot: {
     alignItems: 'center',
     marginRight: 12,
@@ -487,18 +433,7 @@ const createStyles = (colors) => StyleSheet.create({
     minHeight: 8,
   },
   hourlyScore: { fontSize: 10, color: colors.textSecondary, marginTop: 4 },
-  outlookCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 16,
-    marginBottom: 16,
-  },
-  outlookTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 12,
-  },
+
   outlookProBadge: {
     position: 'absolute',
     top: 16,

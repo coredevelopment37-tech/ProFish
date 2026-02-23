@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 /**
  * Calculate moon phase for a given date
@@ -182,13 +183,12 @@ export default function MoonCalendarScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="moon" size={20} color={colors.text} /><Text style={styles.headerTitle}>Moon Calendar</Text></View>
-        <Text style={styles.headerDesc}>Solunar fishing predictions</Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Moon Calendar"
+        subtitle="Solunar fishing predictions"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Best days banner */}
       <View style={styles.bestDaysBanner}>
@@ -220,10 +220,7 @@ export { getMoonPhase, getMoonInfo, getSolunarPeriods };
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 8 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
-  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
+
   bestDaysBanner: {
     margin: 16,
     backgroundColor: colors.surface,

@@ -21,6 +21,7 @@ import { useApp } from '../../store/AppContext';
 import CatchCard from '../../components/CatchCard';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 const SORT_OPTIONS = ['date', 'weight', 'species'];
 const FILTER_OPTIONS = ['all', 'freshwater', 'saltwater', 'brackish'];
@@ -211,15 +212,11 @@ export default function CatchesScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      <View style={styles.headerRow}>
-        <Text style={styles.header}>{t('catches.title', 'My Catches')}</Text>
-        <TouchableOpacity
-          onPress={() => navigation.navigate('CatchStats')}
-          style={styles.statsBtn}
-        >
-          <AppIcon name="barChart" size={18} color={colors.text} />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        variant="actions"
+        title={t('catches.title', 'My Catches')}
+        rightActions={[{ icon: 'barChart', onPress: () => navigation.navigate('CatchStats') }]}
+      />
 
       {/* Filter + Sort bar */}
       <View style={styles.filterBar}>
@@ -323,29 +320,6 @@ function ScrollableChips({ options, selected, onSelect, labelMap, styles, colors
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingRight: 16,
-  },
-  header: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: colors.text,
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-    paddingBottom: 4,
-  },
-  statsBtn: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 20,
-    backgroundColor: colors.surface,
-    marginTop: Platform.OS === 'ios' ? 40 : 0,
-  },
   statsBtnText: { fontSize: 20 },
   list: { padding: 16, paddingBottom: 100 },
   statsBar: {

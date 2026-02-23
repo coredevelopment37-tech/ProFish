@@ -19,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import notificationService from '../../services/notificationService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import Button from '../../components/Common/Button';
 
 const TYPE_CONFIG = {
   follower: { icon: 'user', color: '#4A90D9' },
@@ -168,18 +169,22 @@ export default function NotificationCenterScreen({ navigation }) {
       {notifications.length > 0 && (
         <View style={styles.actionBar}>
           {unreadCount > 0 && (
-            <TouchableOpacity
+            <Button
+              title="Mark all read"
               onPress={handleMarkAllRead}
-              style={styles.actionBtn}
-            >
-              <Text style={styles.actionText}>Mark all read</Text>
-            </TouchableOpacity>
+              variant="ghost"
+              size="sm"
+              fullWidth={false}
+            />
           )}
-          <TouchableOpacity onPress={handleClearAll} style={styles.actionBtn}>
-            <Text style={[styles.actionText, { color: colors.error }]}>
-              Clear all
-            </Text>
-          </TouchableOpacity>
+          <Button
+            title="Clear all"
+            onPress={handleClearAll}
+            variant="ghost"
+            size="sm"
+            fullWidth={false}
+            textStyle={{ color: colors.error }}
+          />
         </View>
       )}
 
@@ -238,8 +243,6 @@ const createStyles = (colors) => StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
-  actionBtn: { padding: 4 },
-  actionText: { color: colors.primary, fontSize: 13, fontWeight: '600' },
 
   item: {
     flexDirection: 'row',

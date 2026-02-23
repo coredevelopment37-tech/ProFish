@@ -27,6 +27,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import PaywallModal from '../../components/PaywallModal';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Card, ScreenHeader } from '../../components/Common';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -336,6 +337,11 @@ export default function ProfileScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
+      <ScreenHeader
+        variant="actions"
+        title={t('profile.title', 'Profile')}
+        rightActions={[{ icon: 'settings', onPress: () => navigation.navigate('Settings') }]}
+      />
       <View style={styles.header}>
         <View style={styles.avatar}>
           {photoURL ? (
@@ -375,35 +381,28 @@ export default function ProfileScreen({ navigation }) {
             )}
           </Text>
           <View style={styles.linkButtons}>
-            <TouchableOpacity
-              style={styles.linkBtn}
+            <Button
+              title="Google"
               onPress={handleLinkGoogle}
+              variant="secondary"
+              size="sm"
+              icon="chrome"
               disabled={linkLoading}
-              accessibilityLabel={t(
-                'auth.continueGoogle',
-                'Sign in with Google',
-              )}
-              accessibilityRole="button"
-            >
-              <Text style={styles.linkBtnText}>
-                G {t('auth.continueGoogle', 'Google')}
-              </Text>
-            </TouchableOpacity>
+              fullWidth={false}
+              style={{ backgroundColor: '#fff' }}
+              textStyle={{ color: '#000' }}
+            />
             {Platform.OS === 'ios' && (
-              <TouchableOpacity
-                style={[styles.linkBtn, styles.linkBtnApple]}
+              <Button
+                title="Apple"
                 onPress={handleLinkApple}
+                variant="secondary"
+                size="sm"
+                icon="apple"
                 disabled={linkLoading}
-                accessibilityLabel={t(
-                  'auth.continueApple',
-                  'Sign in with Apple',
-                )}
-                accessibilityRole="button"
-              >
-                <Text style={styles.linkBtnText}>
-                  🍎 {t('auth.continueApple', 'Apple')}
-                </Text>
-              </TouchableOpacity>
+                fullWidth={false}
+                style={{ backgroundColor: '#000' }}
+              />
             )}
           </View>
         </View>
@@ -550,7 +549,7 @@ export default function ProfileScreen({ navigation }) {
         <Text style={styles.sectionTitle}>
           {t('profile.subscriptionStatus', 'Subscription')}
         </Text>
-        <View style={styles.subCard}>
+        <Card radius={14}>
           <View style={styles.subCardHeader}>
             <View
               style={[
@@ -585,19 +584,15 @@ export default function ProfileScreen({ navigation }) {
             )}
           </View>
           {subInfo.tier === 'free' ? (
-            <TouchableOpacity
-              style={styles.subUpgradeBtn}
+            <Button
+              title={t('profile.upgradePro', 'Upgrade to Pro')}
               onPress={() => setShowPaywall(true)}
-              accessibilityLabel={t('profile.upgradePro', 'Upgrade to Pro')}
-              accessibilityRole="button"
-            >
-              <Text style={styles.subUpgradeText}>
-                {t('profile.upgradePro', 'Upgrade to Pro')}
-              </Text>
-            </TouchableOpacity>
+              variant="primary"
+              size="md"
+            />
           ) : (
-            <TouchableOpacity
-              style={styles.subManageBtn}
+            <Button
+              title={t('profile.manageSubscription', 'Manage Subscription')}
               onPress={() => {
                 const url =
                   Platform.OS === 'ios'
@@ -605,18 +600,11 @@ export default function ProfileScreen({ navigation }) {
                     : 'https://play.google.com/store/account/subscriptions';
                 Linking.openURL(url).catch(() => {});
               }}
-              accessibilityLabel={t(
-                'profile.manageSubscription',
-                'Manage Subscription',
-              )}
-              accessibilityRole="link"
-            >
-              <Text style={styles.subManageText}>
-                {t('profile.manageSubscription', 'Manage Subscription')}
-              </Text>
-            </TouchableOpacity>
+              variant="ghost"
+              size="md"
+            />
           )}
-        </View>
+        </Card>
       </View>
 
       {/* Help */}
@@ -662,29 +650,23 @@ export default function ProfileScreen({ navigation }) {
       {/* Account Actions */}
       <View style={styles.section}>
         {state.isAuthenticated && (
-          <TouchableOpacity
-            style={styles.signOutButton}
+          <Button
+            title={t('profile.signOut', 'Sign Out')}
             onPress={handleSignOut}
-            accessibilityLabel={t('profile.signOut', 'Sign Out')}
-            accessibilityRole="button"
-          >
-            <Text style={styles.signOutText}>
-              {t('profile.signOut', 'Sign Out')}
-            </Text>
-          </TouchableOpacity>
+            variant="secondary"
+            size="md"
+            textStyle={{ color: colors.warning }}
+          />
         )}
 
         {state.isAuthenticated && (
-          <TouchableOpacity
-            style={styles.deleteButton}
+          <Button
+            title={t('profile.deleteAccount', 'Delete Account')}
             onPress={handleDeleteAccount}
-            accessibilityLabel={t('profile.deleteAccount', 'Delete Account')}
-            accessibilityRole="button"
-          >
-            <Text style={styles.deleteText}>
-              {t('profile.deleteAccount', 'Delete Account')}
-            </Text>
-          </TouchableOpacity>
+            variant="ghost"
+            size="sm"
+            textStyle={{ color: colors.error }}
+          />
         )}
       </View>
 
@@ -702,7 +684,6 @@ const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   header: {
     alignItems: 'center',
-    paddingTop: 60,
     paddingBottom: 30,
     borderBottomWidth: 1,
     borderBottomColor: colors.surface,
@@ -749,19 +730,7 @@ const createStyles = (colors) => StyleSheet.create({
   rowLabel: { fontSize: 16, color: colors.text },
   rowValue: { fontSize: 16, color: colors.textTertiary },
   rowArrow: { fontSize: 16, color: colors.textDisabled },
-  signOutButton: {
-    alignItems: 'center',
-    paddingVertical: 14,
-    borderRadius: 12,
-    backgroundColor: colors.surface,
-    marginBottom: 12,
-  },
-  signOutText: { fontSize: 16, color: colors.warning, fontWeight: '600' },
-  deleteButton: {
-    alignItems: 'center',
-    paddingVertical: 14,
-  },
-  deleteText: { fontSize: 14, color: colors.error },
+
   linkBanner: {
     margin: 16,
     padding: 16,
@@ -786,28 +755,8 @@ const createStyles = (colors) => StyleSheet.create({
     flexDirection: 'row',
     gap: 10,
   },
-  linkBtn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-  },
-  linkBtnApple: {
-    backgroundColor: '#000',
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  linkBtnText: {
-    fontWeight: '600',
-    fontSize: 14,
-    color: colors.border,
-  },
-  subCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-  },
+
+
   subCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -828,26 +777,5 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 13,
     color: colors.textTertiary,
   },
-  subUpgradeBtn: {
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  subUpgradeText: {
-    color: '#fff',
-    fontSize: 15,
-    fontWeight: '700',
-  },
-  subManageBtn: {
-    backgroundColor: 'rgba(255,255,255,0.08)',
-    borderRadius: 10,
-    paddingVertical: 12,
-    alignItems: 'center',
-  },
-  subManageText: {
-    color: colors.primary,
-    fontSize: 15,
-    fontWeight: '600',
-  },
+
 });

@@ -7,7 +7,6 @@ import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
-  TextInput,
   TouchableOpacity,
   StyleSheet,
   ScrollView,
@@ -28,6 +27,7 @@ import { notificationSuccess, notificationWarning } from '../../utils/haptics';
 import SpeciesPicker from '../../components/SpeciesPicker';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Input, ScreenHeader } from '../../components/Common';
 
 // Image picker - graceful import
 let launchImageLibrary, launchCamera;
@@ -324,30 +324,14 @@ export default function LogCatchScreen({ navigation, route }) {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            accessibilityLabel={t('common.cancel', 'Cancel')}
-            accessibilityRole="button"
-          >
-            <Text style={styles.cancel}>{t('common.cancel', 'Cancel')}</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>
-            {isEditing
-              ? t('catch.editCatch', 'Edit Catch')
-              : t('catch.logCatch', 'Log Catch')}
-          </Text>
-          <TouchableOpacity
-            onPress={handleSave}
-            disabled={saving}
-            accessibilityLabel={t('common.save', 'Save catch')}
-            accessibilityRole="button"
-          >
-            <Text style={[styles.save, saving && { opacity: 0.5 }]}>
-              {saving ? '...' : t('common.save', 'Save')}
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <ScreenHeader
+          variant="modal"
+          title={isEditing ? t('catch.editCatch', 'Edit Catch') : t('catch.logCatch', 'Log Catch')}
+          onCancel={() => navigation.goBack()}
+          onSave={handleSave}
+          saveLabel={saving ? '...' : t('common.save', 'Save')}
+          saveDisabled={saving}
+        />
 
         {/* Photo */}
         <TouchableOpacity
@@ -378,33 +362,25 @@ export default function LogCatchScreen({ navigation, route }) {
           {/* Weight + Length row */}
           <View style={styles.row}>
             <View style={styles.halfField}>
-              <Text style={styles.label}>
-                {units === 'metric'
+              <Input
+                label={units === 'metric'
                   ? t('catch.weightKg', 'Weight (kg)')
                   : t('catch.weightLb', 'Weight (lb)')}
-              </Text>
-              <TextInput
-                style={styles.input}
                 value={weight}
                 onChangeText={setWeight}
                 keyboardType="decimal-pad"
                 placeholder="0.0"
-                placeholderTextColor={colors.textDisabled}
               />
             </View>
             <View style={styles.halfField}>
-              <Text style={styles.label}>
-                {units === 'metric'
+              <Input
+                label={units === 'metric'
                   ? t('catch.lengthCm', 'Length (cm)')
                   : t('catch.lengthIn', 'Length (in)')}
-              </Text>
-              <TextInput
-                style={styles.input}
                 value={length}
                 onChangeText={setLength}
                 keyboardType="decimal-pad"
                 placeholder="0"
-                placeholderTextColor={colors.textDisabled}
               />
             </View>
           </View>
@@ -472,12 +448,10 @@ export default function LogCatchScreen({ navigation, route }) {
 
           {/* Bait */}
           <Text style={styles.label}>{t('catch.bait', 'Bait / Lure')}</Text>
-          <TextInput
-            style={styles.input}
+          <Input
             value={bait}
             onChangeText={setBait}
             placeholder={t('catch.baitPlaceholder', 'e.g. Worm, Spinner, Fly')}
-            placeholderTextColor={colors.textDisabled}
           />
           <ScrollView
             horizontal
@@ -520,8 +494,7 @@ export default function LogCatchScreen({ navigation, route }) {
 
           {/* Notes */}
           <Text style={styles.label}>{t('catch.notes', 'Notes')}</Text>
-          <TextInput
-            style={[styles.input, styles.textArea]}
+          <Input
             value={notes}
             onChangeText={setNotes}
             multiline
@@ -530,7 +503,6 @@ export default function LogCatchScreen({ navigation, route }) {
               'catch.notesPlaceholder',
               'Any details about the catch...',
             )}
-            placeholderTextColor={colors.textDisabled}
           />
 
           {/* Auto-captured info */}
@@ -576,16 +548,6 @@ export default function LogCatchScreen({ navigation, route }) {
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 20,
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-  },
-  cancel: { color: colors.textTertiary, fontSize: 16 },
-  title: { color: colors.text, fontSize: 18, fontWeight: 'bold' },
-  save: { color: colors.primary, fontSize: 16, fontWeight: '600' },
   photoBox: {
     margin: 20,
     height: 200,
@@ -615,16 +577,6 @@ const createStyles = (colors) => StyleSheet.create({
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  input: {
-    backgroundColor: colors.surface,
-    borderRadius: 10,
-    padding: 14,
-    color: colors.text,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: colors.surfaceLight,
-  },
-  textArea: { height: 80, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 12 },
   halfField: { flex: 1 },
   chipRow: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },

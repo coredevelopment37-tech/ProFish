@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 import catchService from '../../services/catchService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 function StatRow({ label, left, right, unit = '', highlight = false }) {
   const { colors } = useTheme();
@@ -166,16 +167,7 @@ export default function CatchComparisonScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Compare Catches</Text>
-        <View style={{ width: 40 }} />
-      </View>
+      <ScreenHeader title="Compare Catches" onBack={() => navigation.goBack()} />
 
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {/* Catch selector cards */}
@@ -377,18 +369,7 @@ export default function CatchComparisonScreen({ navigation, route }) {
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingTop: 56,
-    paddingBottom: 12,
-    backgroundColor: colors.surface,
-  },
-  backBtn: { padding: 8 },
-  backText: { color: colors.text, fontSize: 22 },
-  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
+
 
   scrollContent: { paddingBottom: 40 },
 

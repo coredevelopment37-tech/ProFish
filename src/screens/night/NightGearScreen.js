@@ -22,6 +22,7 @@ import {
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 // ── Category config ──
 const CATEGORIES = [
@@ -206,21 +207,12 @@ export default function NightGearScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       {/* ── Header ── */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <View>
-          <Text style={styles.title}><AppIcon name="settings" size={22} color={colors.text} /> Night Gear Guide</Text>
-          <Text style={styles.subtitle}>
-            {NIGHT_GEAR.length} items • {essentialCount} essential •{' '}
-            {checkedCount} packed
-          </Text>
-        </View>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Night Gear Guide"
+        subtitle={`${NIGHT_GEAR.length} items • ${essentialCount} essential • ${checkedCount} packed`}
+        onBack={() => navigation.goBack()}
+      />
 
       {/* ── Connectivity Summary Banner ── */}
       <View style={styles.connSummary}>
@@ -350,19 +342,6 @@ export default function NightGearScreen({ navigation, route }) {
 const createStyles = colors =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: '#050510' },
-
-    // Header
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingTop: 56,
-      paddingHorizontal: 16,
-      paddingBottom: 12,
-    },
-    backBtn: { width: 44, height: 44, justifyContent: 'center' },
-    backText: { fontSize: 28, color: colors.text },
-    title: { fontSize: 22, fontWeight: '800', color: colors.text },
-    subtitle: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
 
     // Connectivity Summary
     connSummary: { paddingHorizontal: 16, marginBottom: 12 },

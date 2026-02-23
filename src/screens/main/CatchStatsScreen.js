@@ -20,6 +20,7 @@ import { formatNumber } from '../../utils/formatting';
 import UpgradePrompt from '../../components/UpgradePrompt';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Card, ScreenHeader } from '../../components/Common';
 
 const { width } = Dimensions.get('window');
 const BAR_MAX_W = width - 120;
@@ -302,17 +303,7 @@ export default function CatchStatsScreen({ navigation }) {
   if (!isPro) {
     return (
       <View style={styles.container}>
-        <View style={styles.header}>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={styles.backBtn}
-          >
-            <Text style={styles.backText}>←</Text>
-          </TouchableOpacity>
-          <Text style={styles.title}>
-            {t('stats.title', 'Catch Statistics')}
-          </Text>
-        </View>
+        <ScreenHeader title={t('stats.title', 'Catch Statistics')} onBack={() => navigation.goBack()} />
         <UpgradePrompt
           featureName={t('stats.title', 'Catch Statistics')}
           requiredTier="pro"
@@ -325,33 +316,14 @@ export default function CatchStatsScreen({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>{t('stats.title', 'Catch Statistics')}</Text>
-        <View style={{ flexDirection: 'row', gap: 8, marginLeft: 'auto' }}>
-          <TouchableOpacity
-            style={styles.headerActionBtn}
-            onPress={() => navigation.navigate('CatchComparison')}
-            accessibilityLabel="Compare catches"
-            accessibilityRole="button"
-          >
-            <AppIcon name="scale" size={18} color={colors.text} />
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.headerActionBtn}
-            onPress={() => navigation.navigate('SeasonalCalendar')}
-            accessibilityLabel="Seasonal calendar"
-            accessibilityRole="button"
-          >
-            <AppIcon name="calendar" size={18} color={colors.text} />
-          </TouchableOpacity>
-        </View>
-      </View>
+      <ScreenHeader
+        title={t('stats.title', 'Catch Statistics')}
+        onBack={() => navigation.goBack()}
+        rightActions={[
+          { icon: 'scale', onPress: () => navigation.navigate('CatchComparison') },
+          { icon: 'calendar', onPress: () => navigation.navigate('SeasonalCalendar') },
+        ]}
+      />
 
       {/* Period filter */}
       <View style={styles.periodRow}>
@@ -480,11 +452,7 @@ export default function CatchStatsScreen({ navigation }) {
           </View>
 
           {/* Catch Trends — monthly bar chart */}
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AppIcon name="trendingUp" size={20} color={colors.text} />
-              <Text style={styles.sectionTitle}>{t('stats.catchTrends', 'Catch Trends')}</Text>
-            </View>
+          <Card title={t('stats.catchTrends', 'Catch Trends')} icon="trendingUp" radius={14} padding={16} style={{ marginHorizontal: 16, marginBottom: 24 }}>
             {(() => {
               const entries = Object.entries(stats.monthlyCount)
                 .sort((a, b) => a[0].localeCompare(b[0]))
@@ -493,7 +461,7 @@ export default function CatchStatsScreen({ navigation }) {
               const maxMonth = Math.max(...entries.map(e => e[1]));
               const TREND_BAR_H = 120;
               return (
-                <View style={styles.trendChart}>
+                <>
                   <View style={styles.trendBars}>
                     {entries.map(([key, count]) => {
                       const label = key.split('-')[1]; // month num
@@ -531,18 +499,13 @@ export default function CatchStatsScreen({ navigation }) {
                       );
                     })}
                   </View>
-                </View>
+                </>
               );
             })()}
-          </View>
+          </Card>
 
           {/* Species Collection Progress */}
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AppIcon name="medal" size={20} color={colors.text} />
-              <Text style={styles.sectionTitle}>{t('stats.speciesCollection', 'Species Collection')}</Text>
-            </View>
-            <View style={styles.collectionCard}>
+          <Card title={t('stats.speciesCollection', 'Species Collection')} icon="medal" radius={14} padding={16} style={{ marginHorizontal: 16, marginBottom: 24 }}>
               <View style={styles.collectionHeader}>
                 <Text style={styles.collectionCount}>
                   {stats.uniqueSpecies}
@@ -593,17 +556,11 @@ export default function CatchStatsScreen({ navigation }) {
                   </View>
                 )}
               </View>
-            </View>
-          </View>
+          </Card>
 
           {/* Catch Hot Spots — location heatmap */}
           {stats.topLocations.length > 0 && (
-            <View style={styles.section}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <AppIcon name="mapPin" size={20} color={colors.text} />
-                <Text style={styles.sectionTitle}>{t('stats.hotSpots', 'Catch Hot Spots')}</Text>
-              </View>
-              <View style={styles.heatmapCard}>
+            <Card title={t('stats.hotSpots', 'Catch Hot Spots')} icon="mapPin" radius={14} padding={12} style={{ marginHorizontal: 16, marginBottom: 24 }}>
                 {stats.topLocations.map((loc, idx) => {
                   const topSp = Object.entries(loc.species)
                     .sort((a, b) => b[1] - a[1])
@@ -653,17 +610,11 @@ export default function CatchStatsScreen({ navigation }) {
                     </View>
                   );
                 })}
-              </View>
-            </View>
+            </Card>
           )}
 
           {/* Time Analysis */}
-          <View style={styles.section}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <AppIcon name="clock" size={20} color={colors.text} />
-              <Text style={styles.sectionTitle}>{t('stats.timeAnalysis', 'Time Analysis')}</Text>
-            </View>
-            <View style={styles.timeCard}>
+          <Card title={t('stats.timeAnalysis', 'Time Analysis')} icon="clock" radius={14} padding={16} style={{ marginHorizontal: 16, marginBottom: 24 }}>
               {/* Best hour + day summary */}
               <View style={styles.timeSummaryRow}>
                 <View style={styles.timeSummaryItem}>
@@ -760,17 +711,11 @@ export default function CatchStatsScreen({ navigation }) {
                   },
                 )}
               </View>
-            </View>
-          </View>
+          </Card>
 
           {/* Bait Effectiveness */}
           {stats.topBaits.length > 0 && (
-            <View style={styles.section}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <AppIcon name="fish" size={20} color={colors.text} />
-                <Text style={styles.sectionTitle}>{t('stats.baitEffectiveness', 'Bait Effectiveness')}</Text>
-              </View>
-              <View style={styles.baitCard}>
+            <Card title={t('stats.baitEffectiveness', 'Bait Effectiveness')} icon="fish" radius={14} padding={12} style={{ marginHorizontal: 16, marginBottom: 24 }}>
                 {stats.topBaits.map(([bait, data], idx) => {
                   const maxBait = stats.topBaits[0][1].count;
                   const pct = data.count / maxBait;
@@ -823,18 +768,12 @@ export default function CatchStatsScreen({ navigation }) {
                     </View>
                   );
                 })}
-              </View>
-            </View>
+            </Card>
           )}
 
           {/* Conditions Correlation */}
           {stats.conditionsCorrelation && (
-            <View style={styles.section}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <AppIcon name="thermometer" size={20} color={colors.text} />
-                <Text style={styles.sectionTitle}>{t('stats.conditionsCorrelation', 'Conditions Correlation')}</Text>
-              </View>
-              <View style={styles.correlationCard}>
+            <Card title={t('stats.conditionsCorrelation', 'Conditions Correlation')} icon="thermometer" radius={14} padding={14} style={{ marginHorizontal: 16, marginBottom: 24 }}>
                 {[
                   {
                     key: 'pressure',
@@ -907,18 +846,12 @@ export default function CatchStatsScreen({ navigation }) {
                       )}
                     </Text>
                   )}
-              </View>
-            </View>
+            </Card>
           )}
 
           {/* Catch Rate Trend */}
           {stats.catchRateTrend && stats.catchRateTrend.length > 0 && (
-            <View style={styles.section}>
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-                <AppIcon name="trendingDown" size={20} color={colors.text} />
-                <Text style={styles.sectionTitle}>{t('stats.catchRateTrend', 'Catch Rate Trend')}</Text>
-              </View>
-              <View style={styles.trendCard}>
+            <Card title={t('stats.catchRateTrend', 'Catch Rate Trend')} icon="trendingDown" radius={14} padding={16} style={{ marginHorizontal: 16, marginBottom: 24 }}>
                 <Text style={styles.trendSubtitle}>
                   {t('stats.catchesPerTrip', 'Catches per trip (day)')}
                 </Text>
@@ -988,8 +921,7 @@ export default function CatchStatsScreen({ navigation }) {
                     </Text>
                   </View>
                 </View>
-              </View>
-            </View>
+            </Card>
           )}
         </>
       )}
@@ -1001,25 +933,7 @@ export default function CatchStatsScreen({ navigation }) {
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 16,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: colors.text },
-  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
-  headerActionBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
-    backgroundColor: colors.surface,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  headerActionText: { fontSize: 18 },
+
   periodRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -1133,11 +1047,6 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 15,
   },
   // Trend chart
-  trendChart: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-  },
   trendBars: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -1164,11 +1073,6 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 6,
   },
   // Species collection
-  collectionCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-  },
   collectionHeader: {
     flexDirection: 'row',
     alignItems: 'baseline',
@@ -1219,11 +1123,6 @@ const createStyles = (colors) => StyleSheet.create({
     textTransform: 'capitalize',
   },
   // Hot spots heatmap
-  heatmapCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 12,
-  },
   hotSpotRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1261,11 +1160,6 @@ const createStyles = (colors) => StyleSheet.create({
     fontSize: 10,
   },
   // Time analysis
-  timeCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-  },
   timeSummaryRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -1341,11 +1235,6 @@ const createStyles = (colors) => StyleSheet.create({
     marginTop: 6,
   },
   // Bait effectiveness
-  baitCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 12,
-  },
   baitRow: {
     flexDirection: 'row',
     paddingVertical: 10,
@@ -1403,11 +1292,6 @@ const createStyles = (colors) => StyleSheet.create({
   },
 
   // Conditions Correlation
-  correlationCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 14,
-  },
   correlationGroup: {
     marginBottom: 16,
   },
@@ -1455,11 +1339,6 @@ const createStyles = (colors) => StyleSheet.create({
   },
 
   // Catch Rate Trend
-  trendCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 16,
-  },
   trendSubtitle: {
     color: colors.textTertiary,
     fontSize: 12,

@@ -45,6 +45,7 @@ import {
   generateWind,
 } from '../../services/castingService';
 import useTheme from '../../hooks/useTheme';
+import { ScreenHeader } from '../../components/Common';
 
 const { width: W, height: H } = Dimensions.get('window');
 const SVG_W = W;
@@ -414,24 +415,19 @@ export default function CastingGameScreen({ navigation, route }) {
         <View style={[styles.container, { backgroundColor: scene.bg1 }]}>
           <StatusBar barStyle="light-content" />
 
-          {/* Top bar */}
-          <View style={styles.topBar}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Text style={styles.backText}>← Back</Text>
-            </TouchableOpacity>
-            <View style={styles.topCenter}>
-              <Text style={styles.techTitle}>
-                {technique.emoji} {technique.name}
-              </Text>
-              <Text
-                style={[
-                  styles.diffLabel,
-                  { color: DIFFICULTY_COLORS[technique.difficulty] },
-                ]}
-              >
-                {technique.difficulty.toUpperCase()}
-              </Text>
-            </View>
+          <ScreenHeader
+            title={`${technique.emoji} ${technique.name}`}
+            onBack={() => navigation.goBack()}
+          />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16 }}>
+            <Text
+              style={[
+                styles.diffLabel,
+                { color: DIFFICULTY_COLORS[technique.difficulty] },
+              ]}
+            >
+              {technique.difficulty.toUpperCase()}
+            </Text>
             <Text style={styles.attemptText}>{Math.min(attempt + 1, 3)}/3</Text>
           </View>
 
@@ -781,28 +777,6 @@ const createStyles = (colors) => StyleSheet.create({
     flex: 1,
   },
 
-  // Top bar
-  topBar: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingTop: Platform.OS === 'ios' ? 54 : 42,
-    paddingHorizontal: 16,
-    paddingBottom: 6,
-  },
-  backText: {
-    color: '#00D4AA',
-    fontSize: 15,
-    fontWeight: '600',
-  },
-  topCenter: {
-    alignItems: 'center',
-  },
-  techTitle: {
-    color: colors.text,
-    fontSize: 18,
-    fontWeight: '800',
-  },
   diffLabel: {
     fontSize: 10,
     fontWeight: '700',

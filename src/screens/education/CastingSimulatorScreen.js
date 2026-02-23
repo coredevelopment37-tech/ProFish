@@ -24,6 +24,7 @@ import {
 } from '../../services/castingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 const { width: W } = Dimensions.get('window');
 const CARD_W = (W - 48) / 2;
@@ -91,19 +92,12 @@ export default function CastingSimulatorScreen({ navigation }) {
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>← Back</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-          <AppIcon name="fish" size={24} color="#fff" />
-          <Text style={styles.title}>Casting Simulator</Text>
-        </View>
-        <Text style={styles.subtitle}>Master 10 real casting techniques</Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Casting Simulator"
+        subtitle="Master 10 real casting techniques"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Progress Summary */}
       <View style={styles.progressCard}>
@@ -170,7 +164,8 @@ export default function CastingSimulatorScreen({ navigation }) {
             2️⃣ Press & hold the CAST button to load power{'\n'}
             3️⃣ Flick/swipe UP to cast!{'\n'}
             4️⃣ Release timing affects accuracy{'\n'}
-            5️⃣ Watch the wind — it drifts your lure{'\n\n'}★ 50+ = 1 star ★★ 75+ = 2 stars ★★★ 90+ = 3 stars
+            5️⃣ Watch the wind — it drifts your lure{'\n\n'}★ 50+ = 1 star ★★ 75+
+            = 2 stars ★★★ 90+ = 3 stars
           </Text>
         </View>
       )}
@@ -249,188 +244,165 @@ export default function CastingSimulatorScreen({ navigation }) {
   );
 }
 
-const createStyles = (colors) => StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  header: {
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  backBtn: {
-    paddingVertical: 4,
-    marginBottom: 4,
-  },
-  backText: {
-    color: '#00D4AA',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  title: {
-    color: colors.text,
-    fontSize: 28,
-    fontWeight: '800',
-  },
-  subtitle: {
-    color: '#8899aa',
-    fontSize: 14,
-    marginTop: 4,
-  },
+const createStyles = colors =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+    },
 
-  // Progress
-  progressCard: {
-    marginHorizontal: 16,
-    marginTop: 12,
-    backgroundColor: '#111830',
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#1a2540',
-  },
-  progressRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginBottom: 12,
-  },
-  progressItem: {
-    alignItems: 'center',
-  },
-  progressValue: {
-    color: colors.text,
-    fontSize: 22,
-    fontWeight: '700',
-  },
-  progressLabel: {
-    color: '#6688aa',
-    fontSize: 12,
-    marginTop: 2,
-  },
-  masterText: {
-    fontSize: 28,
-  },
-  progressBarBg: {
-    height: 6,
-    backgroundColor: '#1a2540',
-    borderRadius: 3,
-    overflow: 'hidden',
-  },
-  progressBarFill: {
-    height: '100%',
-    backgroundColor: '#FFD700',
-    borderRadius: 3,
-  },
+    // Progress
+    progressCard: {
+      marginHorizontal: 16,
+      marginTop: 12,
+      backgroundColor: '#111830',
+      borderRadius: 16,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: '#1a2540',
+    },
+    progressRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+      marginBottom: 12,
+    },
+    progressItem: {
+      alignItems: 'center',
+    },
+    progressValue: {
+      color: colors.text,
+      fontSize: 22,
+      fontWeight: '700',
+    },
+    progressLabel: {
+      color: '#6688aa',
+      fontSize: 12,
+      marginTop: 2,
+    },
+    masterText: {
+      fontSize: 28,
+    },
+    progressBarBg: {
+      height: 6,
+      backgroundColor: '#1a2540',
+      borderRadius: 3,
+      overflow: 'hidden',
+    },
+    progressBarFill: {
+      height: '100%',
+      backgroundColor: '#FFD700',
+      borderRadius: 3,
+    },
 
-  // Tutorial
-  hintBar: {
-    marginHorizontal: 16,
-    marginTop: 10,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#0d1530',
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: '#1a2540',
-  },
-  hintText: {
-    color: '#88aacc',
-    fontSize: 13,
-    textAlign: 'center',
-  },
-  tutorialCard: {
-    marginHorizontal: 16,
-    marginTop: 6,
-    padding: 14,
-    backgroundColor: '#111830',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#00D4AA30',
-  },
-  tutorialText: {
-    color: '#bbccdd',
-    fontSize: 13,
-    lineHeight: 22,
-  },
+    // Tutorial
+    hintBar: {
+      marginHorizontal: 16,
+      marginTop: 10,
+      paddingVertical: 8,
+      paddingHorizontal: 12,
+      backgroundColor: '#0d1530',
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: '#1a2540',
+    },
+    hintText: {
+      color: '#88aacc',
+      fontSize: 13,
+      textAlign: 'center',
+    },
+    tutorialCard: {
+      marginHorizontal: 16,
+      marginTop: 6,
+      padding: 14,
+      backgroundColor: '#111830',
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: '#00D4AA30',
+    },
+    tutorialText: {
+      color: '#bbccdd',
+      fontSize: 13,
+      lineHeight: 22,
+    },
 
-  // Grid
-  grid: {
-    flex: 1,
-    marginTop: 12,
-  },
-  gridContent: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: 12,
-    paddingBottom: 40,
-    gap: 12,
-  },
+    // Grid
+    grid: {
+      flex: 1,
+      marginTop: 12,
+    },
+    gridContent: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      paddingHorizontal: 12,
+      paddingBottom: 40,
+      gap: 12,
+    },
 
-  // Card
-  techCard: {
-    width: CARD_W,
-    backgroundColor: '#111830',
-    borderRadius: 16,
-    padding: 14,
-    borderWidth: 1,
-    borderColor: '#1a2540',
-    minHeight: 180,
-  },
-  techCardLocked: {
-    opacity: 0.45,
-  },
-  lockOverlay: {
-    ...StyleSheet.absoluteFillObject,
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-    borderRadius: 16,
-  },
-  lockIcon: {
-    fontSize: 36,
-  },
-  diffBadge: {
-    alignSelf: 'flex-start',
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 6,
-    marginBottom: 8,
-  },
-  diffText: {
-    fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  techEmoji: {
-    fontSize: 32,
-    marginBottom: 6,
-  },
-  techName: {
-    color: colors.text,
-    fontSize: 15,
-    fontWeight: '700',
-    marginBottom: 4,
-  },
-  techDesc: {
-    color: '#7788aa',
-    fontSize: 11,
-    lineHeight: 16,
-    marginBottom: 8,
-  },
-  starsRow: {
-    flexDirection: 'row',
-    gap: 2,
-    marginBottom: 4,
-  },
-  star: {
-    fontSize: 18,
-    color: '#2a3550',
-  },
-  starEarned: {
-    color: '#FFD700',
-  },
-  techStats: {
-    color: '#5566aa',
-    fontSize: 11,
-  },
-});
+    // Card
+    techCard: {
+      width: CARD_W,
+      backgroundColor: '#111830',
+      borderRadius: 16,
+      padding: 14,
+      borderWidth: 1,
+      borderColor: '#1a2540',
+      minHeight: 180,
+    },
+    techCardLocked: {
+      opacity: 0.45,
+    },
+    lockOverlay: {
+      ...StyleSheet.absoluteFillObject,
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 10,
+      borderRadius: 16,
+    },
+    lockIcon: {
+      fontSize: 36,
+    },
+    diffBadge: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+      borderRadius: 6,
+      marginBottom: 8,
+    },
+    diffText: {
+      fontSize: 10,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+    },
+    techEmoji: {
+      fontSize: 32,
+      marginBottom: 6,
+    },
+    techName: {
+      color: colors.text,
+      fontSize: 15,
+      fontWeight: '700',
+      marginBottom: 4,
+    },
+    techDesc: {
+      color: '#7788aa',
+      fontSize: 11,
+      lineHeight: 16,
+      marginBottom: 8,
+    },
+    starsRow: {
+      flexDirection: 'row',
+      gap: 2,
+      marginBottom: 4,
+    },
+    star: {
+      fontSize: 18,
+      color: '#2a3550',
+    },
+    starEarned: {
+      color: '#FFD700',
+    },
+    techStats: {
+      color: '#5566aa',
+      fontSize: 11,
+    },
+  });

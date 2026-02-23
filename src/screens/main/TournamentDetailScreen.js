@@ -25,6 +25,7 @@ import tournamentService, {
 import { canAccess, requireFeature } from '../../services/featureGate';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Card, ScreenHeader } from '../../components/Common';
 
 export default function TournamentDetailScreen({ route, navigation }) {
   const { tournamentId } = route.params;
@@ -162,20 +163,11 @@ export default function TournamentDetailScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {tournament.name}
-        </Text>
-        <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
-          <Text style={styles.shareBtnText}>↗</Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title={tournament.name || 'Tournament'}
+        onBack={() => navigation.goBack()}
+        rightActions={[{ icon: 'share', onPress: handleShare }]}
+      />
 
       {/* Status banner */}
       <View
@@ -255,24 +247,24 @@ export default function TournamentDetailScreen({ route, navigation }) {
             <Text style={styles.description}>{tournament.description}</Text>
 
             <View style={styles.infoGrid}>
-              <View style={styles.infoItem}>
+              <Card radius={12} padding={12} style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={styles.infoValue}>
                   {tournament.participantCount || 0}
                 </Text>
                 <Text style={styles.infoLabel}>Anglers</Text>
-              </View>
-              <View style={styles.infoItem}>
+              </Card>
+              <Card radius={12} padding={12} style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={styles.infoValue}>
                   {tournament.scoring?.replace(/_/g, ' ')}
                 </Text>
                 <Text style={styles.infoLabel}>Scoring</Text>
-              </View>
-              <View style={styles.infoItem}>
+              </Card>
+              <Card radius={12} padding={12} style={{ flex: 1, alignItems: 'center' }}>
                 <Text style={styles.infoValue}>
                   {tournament.requirePhoto ? 'Yes' : 'No'}
                 </Text>
                 <Text style={styles.infoLabel}>Photo Required</Text>
-              </View>
+              </Card>
             </View>
 
             {tournament.targetSpecies?.length > 0 && (
@@ -315,12 +307,12 @@ export default function TournamentDetailScreen({ route, navigation }) {
 
             {/* Sponsor (#378) */}
             {tournament.sponsor && (
-              <View style={styles.sponsorCard}>
+              <Card radius={12} padding={14} style={{ alignItems: 'center', marginTop: 8 }}>
                 <Text style={styles.sponsorLabel}>Sponsored by</Text>
                 <Text style={styles.sponsorName}>
                   {tournament.sponsor.name}
                 </Text>
-              </View>
+              </Card>
             )}
           </>
         )}
@@ -336,9 +328,11 @@ export default function TournamentDetailScreen({ route, navigation }) {
               </View>
             ) : (
               leaderboard.map(entry => (
-                <View
+                <Card
                   key={entry.userId}
-                  style={[styles.rankRow, entry.isMe && styles.rankRowMe]}
+                  radius={12}
+                  padding={14}
+                  style={[{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }, entry.isMe && styles.rankRowMe]}
                 >
                   <View style={styles.rankBadge}>
                     {entry.rank === 1 ? (
@@ -365,7 +359,7 @@ export default function TournamentDetailScreen({ route, navigation }) {
                   <Text style={styles.rankScore}>
                     {entry.totalScore?.toFixed(1)}
                   </Text>
-                </View>
+                </Card>
               ))
             )}
           </>
@@ -400,35 +394,33 @@ export default function TournamentDetailScreen({ route, navigation }) {
         {isJoined ? (
           <>
             {isActive && (
-              <TouchableOpacity
-                style={styles.submitBtn}
+              <Button
+                title="Submit Catch"
                 onPress={handleSubmitCatch}
-              >
-                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                  <AppIcon name="fish" size={16} color="#fff" />
-                  <Text style={styles.submitBtnText}>Submit Catch</Text>
-                </View>
-              </TouchableOpacity>
+                variant="primary"
+                size="md"
+                icon="fish"
+                style={{ backgroundColor: colors.success }}
+              />
             )}
-            <TouchableOpacity style={styles.leaveBtn} onPress={handleLeave}>
-              <Text style={styles.leaveBtnText}>Leave</Text>
-            </TouchableOpacity>
+            <Button
+              title="Leave"
+              onPress={handleLeave}
+              variant="outline"
+              size="md"
+              fullWidth={false}
+              textStyle={{ color: colors.error }}
+            />
           </>
         ) : isActive || isUpcoming ? (
-          <TouchableOpacity
-            style={styles.joinBtn}
+          <Button
+            title="Join Tournament"
             onPress={handleJoin}
-            disabled={joining}
-          >
-            {joining ? (
-              <ActivityIndicator color="#fff" size="small" />
-            ) : (
-              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                <AppIcon name="trophy" size={16} color="#fff" />
-                <Text style={styles.joinBtnText}>Join Tournament</Text>
-              </View>
-            )}
-          </TouchableOpacity>
+            variant="primary"
+            size="md"
+            icon="trophy"
+            loading={joining}
+          />
         ) : null}
       </View>
     </View>
@@ -445,29 +437,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   errorText: { color: colors.textTertiary, fontSize: 16 },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 56 : 16,
-    paddingHorizontal: 16,
-    paddingBottom: 8,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: colors.text },
-  headerTitle: {
-    flex: 1,
-    fontSize: 18,
-    fontWeight: '700',
-    color: colors.text,
-    marginLeft: 8,
-  },
-  shareBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  shareBtnText: { fontSize: 22, color: colors.primary },
+
 
   statusBanner: {
     marginHorizontal: 16,
@@ -527,13 +497,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
 
   infoGrid: { flexDirection: 'row', gap: 10, marginBottom: 16 },
-  infoItem: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 12,
-    alignItems: 'center',
-  },
+
   infoValue: {
     color: colors.text,
     fontSize: 16,
@@ -568,25 +532,12 @@ const createStyles = (colors) => StyleSheet.create({
   prizeMedal: { fontSize: 18, width: 30 },
   prizeText: { color: colors.textSecondary, fontSize: 14 },
 
-  sponsorCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
+
   sponsorLabel: { color: colors.textTertiary, fontSize: 11, marginBottom: 4 },
   sponsorName: { color: colors.accent, fontSize: 16, fontWeight: '700' },
 
   // Leaderboard
-  rankRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 8,
-  },
+
   rankRowMe: {
     borderWidth: 1,
     borderColor: colors.primary,
@@ -622,28 +573,4 @@ const createStyles = (colors) => StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: '#222',
   },
-  joinBtn: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-  joinBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  submitBtn: {
-    flex: 1,
-    backgroundColor: colors.success,
-    paddingVertical: 14,
-    borderRadius: 14,
-    alignItems: 'center',
-  },
-  submitBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  leaveBtn: {
-    paddingVertical: 14,
-    paddingHorizontal: 20,
-    borderRadius: 14,
-    backgroundColor: colors.surface,
-    alignItems: 'center',
-  },
-  leaveBtnText: { color: colors.error, fontSize: 14, fontWeight: '600' },
 });

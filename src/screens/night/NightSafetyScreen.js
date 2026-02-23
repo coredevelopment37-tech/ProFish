@@ -12,7 +12,6 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
-  TextInput,
   Linking,
   Vibration,
   AppState,
@@ -25,6 +24,7 @@ import {
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Input, ScreenHeader } from '../../components/Common';
 
 // ── Safety Checklist ──
 const SAFETY_CHECKLIST = [
@@ -247,18 +247,12 @@ export default function NightSafetyScreen({ navigation }) {
   return (
     <ScrollView style={styles.container}>
       {/* ── Header ── */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <View>
-          <Text style={styles.title}>🆘 Night Safety Center</Text>
-          <Text style={styles.subtitle}>Stay safe after dark</Text>
-        </View>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="🆘 Night Safety Center"
+        subtitle="Stay safe after dark"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* ── Sunrise Countdown ── */}
       <View style={styles.sunriseCard}>
@@ -356,21 +350,25 @@ export default function NightSafetyScreen({ navigation }) {
         </View>
 
         {/* Emergency contact */}
-        <Text style={styles.inputLabel}>Emergency Contact Phone</Text>
-        <TextInput
-          style={styles.input}
+        <Input
+          label="Emergency Contact Phone"
           value={emergencyContact}
           onChangeText={setEmergencyContact}
           placeholder="e.g. +1-555-123-4567"
-          placeholderTextColor={colors.textDisabled}
           keyboardType="phone-pad"
         />
 
         {/* Start/Stop button */}
         {!checkInActive ? (
-          <TouchableOpacity style={styles.startBtn} onPress={startCheckIn}>
-            <Text style={styles.startBtnText}><AppIcon name="play" size={16} color="#000" /> Start Check-In Timer</Text>
-          </TouchableOpacity>
+          <Button
+            title="Start Check-In Timer"
+            onPress={startCheckIn}
+            variant="primary"
+            size="lg"
+            icon="play"
+            style={{ backgroundColor: '#00FF88' }}
+            textStyle={{ color: '#000' }}
+          />
         ) : (
           <View>
             <View style={styles.activeBox}>
@@ -379,9 +377,13 @@ export default function NightSafetyScreen({ navigation }) {
                 {lastCheckIn?.toLocaleTimeString() || 'just now'}
               </Text>
             </View>
-            <TouchableOpacity style={styles.stopBtn} onPress={stopCheckIn}>
-              <Text style={styles.stopBtnText}><AppIcon name="stop" size={14} color="#FF4444" /> Stop Check-In</Text>
-            </TouchableOpacity>
+            <Button
+              title="Stop Check-In"
+              onPress={stopCheckIn}
+              variant="danger"
+              size="md"
+              icon="square"
+            />
           </View>
         )}
       </View>
@@ -490,24 +492,6 @@ export default function NightSafetyScreen({ navigation }) {
 const createStyles = colors =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: '#050510' },
-
-    // Header
-    header: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      paddingTop: 56,
-      paddingHorizontal: 16,
-      paddingBottom: 12,
-    },
-    backBtn: { width: 44, height: 44, justifyContent: 'center' },
-    backText: { fontSize: 28, color: colors.text },
-    title: { fontSize: 22, fontWeight: '800', color: colors.text },
-    subtitle: {
-      fontSize: 12,
-      color: '#FF4444',
-      fontWeight: '600',
-      marginTop: 2,
-    },
 
     // Sunrise
     sunriseCard: {
@@ -625,30 +609,6 @@ const createStyles = colors =>
       fontWeight: '600',
     },
     intervalLabelActive: { color: '#00FF88' },
-    inputLabel: {
-      fontSize: 12,
-      fontWeight: '600',
-      color: colors.textTertiary,
-      marginBottom: 6,
-    },
-    input: {
-      backgroundColor: '#0a0f20',
-      borderRadius: 12,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 15,
-      color: colors.text,
-      borderWidth: 1,
-      borderColor: '#1a2040',
-      marginBottom: 16,
-    },
-    startBtn: {
-      backgroundColor: '#00FF88',
-      borderRadius: 14,
-      paddingVertical: 16,
-      alignItems: 'center',
-    },
-    startBtnText: { fontSize: 16, fontWeight: '800', color: '#000' },
     activeBox: {
       backgroundColor: '#0a2a0a',
       borderRadius: 12,
@@ -658,16 +618,6 @@ const createStyles = colors =>
       borderColor: '#00FF8833',
     },
     activeText: { fontSize: 13, color: '#00FF88', fontWeight: '600' },
-    stopBtn: {
-      backgroundColor: '#2a0a0a',
-      borderRadius: 14,
-      paddingVertical: 14,
-      alignItems: 'center',
-      borderWidth: 1,
-      borderColor: '#FF444433',
-    },
-    stopBtnText: { fontSize: 14, fontWeight: '700', color: '#FF4444' },
-
     // Emergency
     emergencyRow: {
       flexDirection: 'row',

@@ -9,11 +9,9 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ActivityIndicator,
   Alert,
   Platform,
   StatusBar,
-  TextInput,
   KeyboardAvoidingView,
   ScrollView,
 } from 'react-native';
@@ -21,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import firebaseAuthService from '../../services/firebaseAuthService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Input } from '../../components/Common';
 
 export default function AuthScreen({ route, navigation }) {
   const { colors } = useTheme();
@@ -204,46 +203,31 @@ export default function AuthScreen({ route, navigation }) {
         <View style={styles.buttons}>
           {/* Google */}
           {providers.google && (
-            <TouchableOpacity
-              style={[styles.authBtn, styles.googleBtn]}
+            <Button
+              title={t('auth.continueGoogle', 'Continue with Google')}
               onPress={handleGoogle}
+              variant="secondary"
+              size="lg"
+              icon="chrome"
+              loading={loadingProvider === 'google'}
               disabled={loading}
-              activeOpacity={0.8}
-            >
-              {loadingProvider === 'google' ? (
-                <ActivityIndicator color={colors.border} size="small" />
-              ) : (
-                <>
-                  <Text style={styles.authBtnIcon}>G</Text>
-                  <Text style={[styles.authBtnText, styles.googleText]}>
-                    {t('auth.continueGoogle', 'Continue with Google')}
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
+              style={{ backgroundColor: '#fff' }}
+              textStyle={{ color: '#000' }}
+            />
           )}
 
           {/* Apple (iOS primarily) */}
           {providers.apple && Platform.OS === 'ios' && (
-            <TouchableOpacity
-              style={[styles.authBtn, styles.appleBtn]}
+            <Button
+              title={t('auth.continueApple', 'Continue with Apple')}
               onPress={handleApple}
+              variant="secondary"
+              size="lg"
+              icon="apple"
+              loading={loadingProvider === 'apple'}
               disabled={loading}
-              activeOpacity={0.8}
-            >
-              {loadingProvider === 'apple' ? (
-                <ActivityIndicator color="#fff" size="small" />
-              ) : (
-                <>
-                  <Text style={[styles.authBtnIcon, { color: '#fff' }]}>
-                    🍎
-                  </Text>
-                  <Text style={[styles.authBtnText, styles.appleText]}>
-                    {t('auth.continueApple', 'Continue with Apple')}
-                  </Text>
-                </>
-              )}
-            </TouchableOpacity>
+              style={{ backgroundColor: '#000' }}
+            />
           )}
 
           {/* Divider */}
@@ -254,23 +238,15 @@ export default function AuthScreen({ route, navigation }) {
           </View>
 
           {/* Anonymous / Guest */}
-          <TouchableOpacity
-            style={[styles.authBtn, styles.anonBtn]}
+          <Button
+            title={t('auth.continueGuest', 'Continue as Guest')}
             onPress={handleAnonymous}
+            variant="outline"
+            size="lg"
+            icon="user"
+            loading={loadingProvider === 'anonymous'}
             disabled={loading}
-            activeOpacity={0.8}
-          >
-            {loadingProvider === 'anonymous' ? (
-              <ActivityIndicator color={colors.textTertiary} size="small" />
-            ) : (
-              <>
-                <AppIcon name="user" size={20} color={colors.text} />
-                <Text style={[styles.authBtnText, styles.anonText]}>
-                  {t('auth.continueGuest', 'Continue as Guest')}
-                </Text>
-              </>
-            )}
-          </TouchableOpacity>
+          />
 
           <Text style={styles.guestNote}>
             {t('auth.guestNote', 'You can sign in later to sync your data')}
@@ -284,33 +260,27 @@ export default function AuthScreen({ route, navigation }) {
           </View>
 
           {!showEmail ? (
-            <TouchableOpacity
-              style={[styles.authBtn, styles.emailToggleBtn]}
+            <Button
+              title={t('auth.continueEmail', 'Continue with Email')}
               onPress={() => setShowEmail(true)}
+              variant="outline"
+              size="lg"
+              icon="mail"
               disabled={loading}
-            >
-              <AppIcon name="mail" size={20} color={colors.text} />
-              <Text style={[styles.authBtnText, styles.anonText]}>
-                {t('auth.continueEmail', 'Continue with Email')}
-              </Text>
-            </TouchableOpacity>
+            />
           ) : (
             <View style={styles.emailForm}>
               {isSignUp && (
-                <TextInput
-                  style={styles.input}
+                <Input
                   placeholder={t('auth.displayName', 'Display Name')}
-                  placeholderTextColor={colors.textDisabled}
                   value={displayName}
                   onChangeText={setDisplayName}
                   autoCapitalize="words"
                   returnKeyType="next"
                 />
               )}
-              <TextInput
-                style={styles.input}
+              <Input
                 placeholder={t('auth.email', 'Email')}
-                placeholderTextColor={colors.textDisabled}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -318,10 +288,8 @@ export default function AuthScreen({ route, navigation }) {
                 autoCorrect={false}
                 returnKeyType="next"
               />
-              <TextInput
-                style={styles.input}
+              <Input
                 placeholder={t('auth.password', 'Password')}
-                placeholderTextColor={colors.textDisabled}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -329,21 +297,14 @@ export default function AuthScreen({ route, navigation }) {
                 onSubmitEditing={handleEmail}
               />
 
-              <TouchableOpacity
-                style={[styles.authBtn, styles.emailSubmitBtn]}
+              <Button
+                title={isSignUp ? t('auth.createAccount', 'Create Account') : t('auth.signInEmail', 'Sign In')}
                 onPress={handleEmail}
+                variant="primary"
+                size="lg"
+                loading={loadingProvider === 'email'}
                 disabled={loading}
-              >
-                {loadingProvider === 'email' ? (
-                  <ActivityIndicator color="#fff" size="small" />
-                ) : (
-                  <Text style={[styles.authBtnText, { color: '#fff' }]}>
-                    {isSignUp
-                      ? t('auth.createAccount', 'Create Account')
-                      : t('auth.signInEmail', 'Sign In')}
-                  </Text>
-                )}
-              </TouchableOpacity>
+              />
 
               <View style={styles.emailLinks}>
                 <TouchableOpacity onPress={() => setIsSignUp(!isSignUp)}>
@@ -438,45 +399,7 @@ const createStyles = colors =>
     buttons: {
       gap: 12,
     },
-    authBtn: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingVertical: 16,
-      borderRadius: 14,
-      gap: 10,
-      minHeight: 56,
-    },
-    googleBtn: {
-      backgroundColor: '#fff',
-    },
-    appleBtn: {
-      backgroundColor: '#000',
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    anonBtn: {
-      borderWidth: 1.5,
-      borderColor: colors.border,
-    },
-    authBtnIcon: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: '#4285F4',
-    },
-    authBtnText: {
-      fontSize: 16,
-      fontWeight: '600',
-    },
-    googleText: {
-      color: colors.border,
-    },
-    appleText: {
-      color: '#fff',
-    },
-    anonText: {
-      color: colors.textTertiary,
-    },
+
     divider: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -503,26 +426,9 @@ const createStyles = colors =>
       color: colors.textDisabled,
       textAlign: 'center',
     },
-    emailToggleBtn: {
-      borderWidth: 1.5,
-      borderColor: colors.border,
-    },
+
     emailForm: {
       gap: 10,
-    },
-    input: {
-      backgroundColor: colors.surface,
-      color: colors.text,
-      borderRadius: 14,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      borderWidth: 1,
-      borderColor: colors.surfaceLight,
-    },
-    emailSubmitBtn: {
-      backgroundColor: colors.primary,
-      marginTop: 4,
     },
     emailLinks: {
       alignItems: 'center',

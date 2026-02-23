@@ -27,6 +27,8 @@ import {
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import Button from '../../components/Common/Button';
+import { ScreenHeader } from '../../components/Common';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -146,16 +148,12 @@ export default function NightFishingScreen({ navigation }) {
       style={[styles.container, { backgroundColor: glowColor }]}
     >
       {/* ── Header ── */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="moon" size={20} color={colors.text} /><Text style={styles.title}>Night Fishing</Text></View>
-        <Text style={styles.subtitle}>World's First Night Mode</Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Night Fishing"
+        subtitle="World's First Night Mode"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* ── Night Score Card ── */}
       {nightData && (
@@ -236,13 +234,15 @@ export default function NightFishingScreen({ navigation }) {
 
       {/* ── Quick Actions ── */}
       <View style={styles.quickActions}>
-        <TouchableOpacity
-          style={[styles.actionBtn, styles.actionStart]}
+        <Button
+          title="Start Night Session"
           onPress={handleStartSession}
-        >
-          <Text style={styles.actionEmoji}><AppIcon name="fish" size={28} color="#00FF88" /></Text>
-          <Text style={styles.actionLabel}>Start Night Session</Text>
-        </TouchableOpacity>
+          variant="primary"
+          size="lg"
+          icon="fish"
+          style={{ backgroundColor: '#00FF88' }}
+          textStyle={{ color: '#000' }}
+        />
 
         <TouchableOpacity
           style={[styles.actionBtn, styles.actionGear]}
@@ -463,25 +463,6 @@ const createStyles = colors =>
   StyleSheet.create({
     container: { flex: 1, backgroundColor: '#050510' },
 
-    // Header
-    header: { paddingTop: 56, paddingHorizontal: 20, paddingBottom: 10 },
-    backBtn: { width: 44, height: 44, justifyContent: 'center' },
-    backText: { fontSize: 28, color: colors.text },
-    title: {
-      fontSize: 28,
-      fontWeight: '800',
-      color: colors.text,
-      marginTop: 4,
-    },
-    subtitle: {
-      fontSize: 13,
-      color: '#00FF88',
-      fontWeight: '600',
-      marginTop: 2,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-
     // Score Card
     scoreCard: {
       margin: 16,
@@ -559,11 +540,7 @@ const createStyles = colors =>
       padding: 16,
       alignItems: 'center',
     },
-    actionStart: {
-      backgroundColor: '#0a2a0a',
-      borderWidth: 1,
-      borderColor: '#00FF88',
-    },
+
     actionGear: {
       backgroundColor: '#1a1a0a',
       borderWidth: 1,

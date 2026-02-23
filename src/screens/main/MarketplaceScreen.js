@@ -12,7 +12,6 @@ import {
   StyleSheet,
   FlatList,
   TouchableOpacity,
-  TextInput,
   ScrollView,
   RefreshControl,
   Image,
@@ -22,6 +21,7 @@ import {
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Input } from '../../components/Common';
 import marketplaceService, {
   LISTING_TYPE,
   GEAR_CATEGORY,
@@ -463,12 +463,11 @@ export default function MarketplaceScreen({ navigation }) {
 
       {/* Search */}
       <View style={styles.searchBox}>
-        <TextInput
-          style={styles.searchInput}
+        <Input
           placeholder="Search marketplace..."
-          placeholderTextColor={colors.textTertiary}
           value={search}
           onChangeText={setSearch}
+          icon="search"
         />
       </View>
 
@@ -517,14 +516,6 @@ const createStyles = (colors) => StyleSheet.create({
   headerTitle: { color: colors.text, fontSize: 28, fontWeight: '700' },
 
   searchBox: { paddingHorizontal: 20, paddingBottom: 8 },
-  searchInput: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    color: colors.text,
-    fontSize: 15,
-  },
 
   tabBar: { paddingHorizontal: 16, paddingVertical: 4, maxHeight: 48 },
   tab: {

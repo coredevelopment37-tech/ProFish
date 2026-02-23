@@ -23,6 +23,7 @@ import gdprService from '../../services/gdprService';
 import regionGatingService from '../../services/regionGatingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button } from '../../components/Common';
 
 const EU_REGIONS = ['EU', 'NORDICS'];
 
@@ -188,24 +189,28 @@ export default function ConsentModal({ visible, onComplete }) {
 
           {/* Buttons */}
           <View style={styles.buttons}>
-            <TouchableOpacity
-              style={styles.rejectBtn}
+            <Button
+              title="Reject All"
               onPress={handleRejectAll}
-            >
-              <Text style={styles.rejectText}>Reject All</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.acceptSelectedBtn}
+              variant="outline"
+              size="sm"
+              fullWidth={false}
+            />
+            <Button
+              title="Accept Selected"
               onPress={handleAcceptSelected}
-            >
-              <Text style={styles.acceptSelectedText}>Accept Selected</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.acceptAllBtn}
+              variant="secondary"
+              size="sm"
+              fullWidth={false}
+              style={{ backgroundColor: colors.accent }}
+            />
+            <Button
+              title="Accept All"
               onPress={handleAcceptAll}
-            >
-              <Text style={styles.acceptAllText}>Accept All</Text>
-            </TouchableOpacity>
+              variant="primary"
+              size="sm"
+              fullWidth={false}
+            />
           </View>
         </View>
       </View>
@@ -292,28 +297,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderTopWidth: 1,
     borderTopColor: colors.border,
   },
-  rejectBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  rejectText: { color: colors.textSecondary, fontSize: 14, fontWeight: '600' },
-  acceptSelectedBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    backgroundColor: colors.accent,
-  },
-  acceptSelectedText: { color: colors.text, fontSize: 14, fontWeight: '600' },
-  acceptAllBtn: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    backgroundColor: colors.primary,
-  },
-  acceptAllText: { color: colors.text, fontSize: 14, fontWeight: '700' },
+
 });
 
 /**

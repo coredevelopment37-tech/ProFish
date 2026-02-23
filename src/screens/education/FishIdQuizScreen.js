@@ -14,6 +14,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader, Button } from '../../components/Common';
 
 // Quiz questions — species identification by description/characteristics
 const QUIZ_POOL = [
@@ -277,12 +278,14 @@ export default function FishIdQuizScreen({ navigation }) {
               <Text style={styles.resultBadge}>{badge.name}</Text>
             </View>
           )}
-          <TouchableOpacity
-            style={styles.retryBtn}
+          <Button
+            title="Done"
             onPress={() => navigation.goBack()}
-          >
-            <Text style={styles.retryText}>Done</Text>
-          </TouchableOpacity>
+            variant="primary"
+            size="md"
+            fullWidth={false}
+            style={{ borderRadius: 24, paddingHorizontal: 48 }}
+          />
         </View>
       </View>
     );
@@ -290,22 +293,15 @@ export default function FishIdQuizScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <View style={styles.headerRow}>
-          <AppIcon name="fish" size={20} color="#fff" />
-          <Text style={styles.headerTitle}> Fish ID Quiz</Text>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-            <Text style={styles.scoreText}>
-              Score: {score} | Streak: {streak}
-            </Text>
-            <AppIcon name="flame" size={14} color="#FF6633" />
-          </View>
+      <ScreenHeader title="Fish ID Quiz" onBack={() => navigation.goBack()} />
+      {/* Score + Progress */}
+      <View style={{ paddingHorizontal: 16 }}>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', gap: 4, marginBottom: 8 }}>
+          <Text style={styles.scoreText}>
+            Score: {score} | Streak: {streak}
+          </Text>
+          <AppIcon name="flame" size={14} color="#FF6633" />
         </View>
-        {/* Progress bar */}
         <View style={styles.progressBar}>
           <View
             style={[
@@ -367,13 +363,13 @@ export default function FishIdQuizScreen({ navigation }) {
             <AppIcon name="lightbulb" size={14} color="#FFD700" />
             <Text style={styles.factText}>{currentQ.fact}</Text>
           </View>
-          <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
-            <Text style={styles.nextText}>
-              {questionIndex < shuffledQuestions.length - 1
-                ? 'Next Question →'
-                : 'See Results'}
-            </Text>
-          </TouchableOpacity>
+          <Button
+            title={questionIndex < shuffledQuestions.length - 1 ? 'Next Question' : 'See Results'}
+            onPress={handleNext}
+            variant="primary"
+            size="md"
+            style={{ borderRadius: 24 }}
+          />
         </View>
       )}
     </View>
@@ -384,14 +380,6 @@ export { QUIZ_POOL, BADGES };
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: colors.text },
   scoreText: { fontSize: 14, color: colors.accent, fontWeight: '600' },
   progressBar: {
     height: 4,
@@ -444,13 +432,6 @@ const createStyles = (colors) => StyleSheet.create({
     lineHeight: 20,
     marginBottom: 16,
   },
-  nextBtn: {
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    borderRadius: 24,
-    alignItems: 'center',
-  },
-  nextText: { fontSize: 16, fontWeight: '700', color: '#FFF' },
   resultScreen: {
     flex: 1,
     justifyContent: 'center',
@@ -472,11 +453,4 @@ const createStyles = (colors) => StyleSheet.create({
     fontWeight: '600',
     marginBottom: 24,
   },
-  retryBtn: {
-    backgroundColor: colors.primary,
-    paddingVertical: 14,
-    paddingHorizontal: 48,
-    borderRadius: 24,
-  },
-  retryText: { fontSize: 16, fontWeight: '700', color: '#FFF' },
 });

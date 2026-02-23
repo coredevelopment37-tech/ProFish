@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 const CATEGORIES = [
   { id: 'all', label: 'All', icon: 'bookOpen' },
@@ -704,15 +705,12 @@ export default function FishingSchoolScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>
-          <AppIcon name="bookOpen" size={24} color="#fff" /> Fishing School
-        </Text>
-        <Text style={styles.lessonCount}>{filtered.length} lessons</Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Fishing School"
+        subtitle={`${filtered.length} lessons`}
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Category filter */}
       <ScrollView
@@ -759,50 +757,57 @@ export default function FishingSchoolScreen({ navigation }) {
 
 export { LESSONS, SKILL_LEVELS, CATEGORIES };
 
-const createStyles = (colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
-  lessonCount: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
-  pillRow: { maxHeight: 48, marginBottom: 8 },
-  pillContent: { paddingHorizontal: 16, gap: 8 },
-  pill: {
-    backgroundColor: colors.surface,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  pillActive: { borderColor: colors.primary, backgroundColor: colors.primary + '15' },
-  pillText: { fontSize: 13, color: colors.text },
-  listContent: { padding: 16, paddingBottom: 100 },
-  lessonCard: {
-    flexDirection: 'row',
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  lessonEmoji: { width: 40, marginRight: 12, marginTop: 4, alignItems: 'center', justifyContent: 'center' },
-  lessonContent: { flex: 1 },
-  lessonTitle: {
-    fontSize: 16,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: 4,
-  },
-  lessonDesc: {
-    fontSize: 13,
-    color: colors.textTertiary,
-    lineHeight: 18,
-    marginBottom: 8,
-  },
-  lessonMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  diffBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
-  diffText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
-  duration: { fontSize: 12, color: colors.textTertiary },
-});
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+
+    pillRow: { maxHeight: 48, marginBottom: 8 },
+    pillContent: { paddingHorizontal: 16, gap: 8 },
+    pill: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    pillActive: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primary + '15',
+    },
+    pillText: { fontSize: 13, color: colors.text },
+    listContent: { padding: 16, paddingBottom: 100 },
+    lessonCard: {
+      flexDirection: 'row',
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    lessonEmoji: {
+      width: 40,
+      marginRight: 12,
+      marginTop: 4,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    lessonContent: { flex: 1 },
+    lessonTitle: {
+      fontSize: 16,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 4,
+    },
+    lessonDesc: {
+      fontSize: 13,
+      color: colors.textTertiary,
+      lineHeight: 18,
+      marginBottom: 8,
+    },
+    lessonMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+    diffBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
+    diffText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
+    duration: { fontSize: 12, color: colors.textTertiary },
+  });

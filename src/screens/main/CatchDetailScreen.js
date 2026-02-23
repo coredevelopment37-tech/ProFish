@@ -28,6 +28,7 @@ import {
 import PhotoViewer from '../../components/PhotoViewer';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Card, ScreenHeader } from '../../components/Common';
 
 const { width } = Dimensions.get('window');
 
@@ -95,23 +96,14 @@ export default function CatchDetailScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {item.species || t('catches.unknownSpecies', 'Unknown Species')}
-        </Text>
-        <TouchableOpacity onPress={handleDelete} style={styles.deleteBtn}>
-          <AppIcon name="trash" size={20} color={colors.error} />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
-          <AppIcon name="share" size={20} color={colors.text} />
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title={item.species || t('catches.unknownSpecies', 'Unknown Species')}
+        onBack={() => navigation.goBack()}
+        rightActions={[
+          { icon: 'trash', onPress: handleDelete, color: colors.error },
+          { icon: 'share', onPress: handleShare },
+        ]}
+      />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Photo */}
@@ -272,11 +264,11 @@ function StatCard({ iconName, iconColor, label, value }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return (
-    <View style={styles.statCard}>
+    <Card radius={12} style={{ width: (width - 44) / 2, alignItems: 'center' }}>
       <AppIcon name={iconName} size={24} color={iconColor || colors.textSecondary} />
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
-    </View>
+    </Card>
   );
 }
 
@@ -296,39 +288,8 @@ const createStyles = (colors) => StyleSheet.create({
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
     backgroundColor: colors.background,
   },
-  backBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backText: { fontSize: 28, color: colors.text },
-  headerTitle: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-    marginLeft: 4,
-  },
-  deleteBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  deleteText: { fontSize: 22 },
-  shareBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  shareText: { fontSize: 22 },
   scroll: { flex: 1 },
   photo: {
     width: width,
@@ -373,13 +334,7 @@ const createStyles = (colors) => StyleSheet.create({
     padding: 16,
     gap: 12,
   },
-  statCard: {
-    width: (width - 44) / 2,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    alignItems: 'center',
-  },
+
   statIcon: { fontSize: 24, marginBottom: 4 },
   statLabel: { color: colors.textTertiary, fontSize: 12, marginBottom: 2 },
   statValue: { color: colors.text, fontSize: 18, fontWeight: '700' },

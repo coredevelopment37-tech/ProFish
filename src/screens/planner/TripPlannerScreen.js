@@ -10,11 +10,11 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Input, ScreenHeader } from '../../components/Common';
 
 const GEAR_CHECKLIST = [
   { id: 'rod', label: 'Rod & Reel', icon: 'fish', category: 'essentials' },
@@ -110,50 +110,35 @@ export default function TripPlannerScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="calendarDays" size={20} color={colors.text} /><Text style={styles.headerTitle}>Trip Planner</Text></View>
-      </View>
+      <ScreenHeader variant="large" title="Trip Planner" onBack={() => navigation.goBack()} />
 
       {/* Trip details */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Trip Details</Text>
-        <TextInput
-          style={styles.input}
+        <Input
           value={tripName}
           onChangeText={setTripName}
           placeholder="Trip name"
-          placeholderTextColor={colors.textTertiary}
         />
-        <TextInput
-          style={styles.input}
+        <Input
           value={tripDate}
           onChangeText={setTripDate}
           placeholder="Date (e.g. 2025-07-15)"
-          placeholderTextColor={colors.textTertiary}
         />
-        <TextInput
-          style={styles.input}
+        <Input
           value={tripLocation}
           onChangeText={setTripLocation}
           placeholder="Location"
-          placeholderTextColor={colors.textTertiary}
         />
-        <TextInput
-          style={styles.input}
+        <Input
           value={targetSpecies}
           onChangeText={setTargetSpecies}
           placeholder="Target species"
-          placeholderTextColor={colors.textTertiary}
         />
-        <TextInput
-          style={[styles.input, styles.inputMulti]}
+        <Input
           value={notes}
           onChangeText={setNotes}
           placeholder="Notes, tactics, etc."
-          placeholderTextColor={colors.textTertiary}
           multiline
         />
       </View>
@@ -194,15 +179,15 @@ export default function TripPlannerScreen({ navigation }) {
       </View>
 
       {/* Save button */}
-      <TouchableOpacity
-        style={[styles.saveBtn, saved && styles.saveBtnDone]}
+      <Button
+        title={saved ? 'Trip Saved!' : 'Save Trip'}
         onPress={saveTrip}
+        variant="primary"
+        size="lg"
+        icon={saved ? 'check-circle' : 'save'}
         disabled={saved}
-      >
-        <Text style={styles.saveBtnText}>
-          {saved ? <><AppIcon name="checkCircle" size={18} color={colors.text} /> Trip Saved!</> : <><AppIcon name="save" size={18} color={colors.text} /> Save Trip</>}
-        </Text>
-      </TouchableOpacity>
+        style={{ marginHorizontal: 16, borderRadius: 24, ...(saved && { backgroundColor: colors.accent }) }}
+      />
     </ScrollView>
   );
 }
@@ -212,9 +197,6 @@ export { GEAR_CHECKLIST };
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 100 },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
   section: { margin: 16, marginTop: 8 },
   sectionHeader: {
     flexDirection: 'row',
@@ -235,17 +217,6 @@ const createStyles = (colors) => StyleSheet.create({
     marginBottom: 12,
   },
   progressFill: { height: 4, backgroundColor: colors.accent, borderRadius: 2 },
-  input: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 15,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.border,
-    marginBottom: 10,
-  },
-  inputMulti: { height: 80, textAlignVertical: 'top' },
   gearItem: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -257,14 +228,5 @@ const createStyles = (colors) => StyleSheet.create({
   gearEmoji: { fontSize: 20, marginRight: 10 },
   gearLabel: { fontSize: 15, color: colors.text },
   gearLabelChecked: { textDecorationLine: 'line-through', color: colors.textTertiary },
-  saveBtn: {
-    marginHorizontal: 16,
-    marginTop: 20,
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 24,
-    alignItems: 'center',
-  },
-  saveBtnDone: { backgroundColor: colors.accent },
-  saveBtnText: { fontSize: 18, fontWeight: '700', color: colors.text },
+
 });

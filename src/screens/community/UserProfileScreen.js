@@ -18,6 +18,7 @@ import { useTranslation } from 'react-i18next';
 import communityService from '../../services/communityService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader, Button } from '../../components/Common';
 
 export default function UserProfileScreen({ route, navigation }) {
   const { colors } = useTheme();
@@ -181,21 +182,11 @@ export default function UserProfileScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title} numberOfLines={1}>
-          {profile.displayName}
-        </Text>
-        <TouchableOpacity onPress={handleReport} style={styles.menuBtn}>
-          <Text style={styles.menuText}>⋯</Text>
-        </TouchableOpacity>
-      </View>
+      <ScreenHeader
+        title={profile.displayName}
+        onBack={() => navigation.goBack()}
+        rightActions={[{ icon: 'moreHorizontal', onPress: handleReport }]}
+      />
 
       <FlatList
         data={profile.posts}
@@ -249,31 +240,22 @@ export default function UserProfileScreen({ route, navigation }) {
               ) : null}
 
               <View style={styles.actionRow}>
-                <TouchableOpacity
-                  style={[styles.followBtn, following && styles.followingBtn]}
+                <Button
+                  title={following ? 'Following' : 'Follow'}
                   onPress={handleFollow}
-                  disabled={followLoading}
-                >
-                  {followLoading ? (
-                    <ActivityIndicator size="small" color="#fff" />
-                  ) : (
-                    <Text
-                      style={[
-                        styles.followBtnText,
-                        following && styles.followingBtnText,
-                      ]}
-                    >
-                      {following
-                        ? t('community.following', 'Following')
-                        : t('community.follow', 'Follow')}
-                    </Text>
-                  )}
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockBtn} onPress={handleBlock}>
-                  <Text style={styles.blockBtnText}>
-                    {t('community.block', 'Block')}
-                  </Text>
-                </TouchableOpacity>
+                  variant={following ? 'outline' : 'primary'}
+                  size="sm"
+                  loading={followLoading}
+                  fullWidth={false}
+                />
+                <Button
+                  title="Block"
+                  onPress={handleBlock}
+                  variant="danger"
+                  size="sm"
+                  fullWidth={false}
+                  style={{ backgroundColor: '#331111' }}
+                />
               </View>
             </View>
 
@@ -313,29 +295,6 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 8,
   },
   backButtonText: { color: '#fff', fontWeight: '600' },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 50,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: colors.text },
-  title: {
-    flex: 1,
-    fontSize: 20,
-    fontWeight: '700',
-    color: colors.text,
-    marginLeft: 4,
-  },
-  menuBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'flex-end',
-  },
-  menuText: { fontSize: 24, color: colors.textTertiary },
   listContent: { paddingBottom: 40 },
   profileCard: {
     backgroundColor: colors.surface,
@@ -382,39 +341,6 @@ const createStyles = (colors) => StyleSheet.create({
   actionRow: {
     flexDirection: 'row',
     gap: 10,
-  },
-  followBtn: {
-    flex: 1,
-    backgroundColor: colors.primary,
-    borderRadius: 10,
-    paddingVertical: 10,
-    alignItems: 'center',
-  },
-  followingBtn: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  followBtnText: {
-    color: '#fff',
-    fontWeight: '700',
-    fontSize: 15,
-  },
-  followingBtnText: {
-    color: colors.primary,
-  },
-  blockBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 10,
-    backgroundColor: '#331111',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  blockBtnText: {
-    color: colors.error,
-    fontWeight: '600',
-    fontSize: 14,
   },
   postsHeader: {
     fontSize: 16,

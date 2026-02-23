@@ -9,7 +9,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  TextInput,
   ScrollView,
 } from 'react-native';
 import {
@@ -19,6 +18,7 @@ import {
 } from '../../services/regulationsService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { Button, Card, Input, ScreenHeader } from '../../components/Common';
 
 export default function IsItLegalScreen({ navigation }) {
   const { colors } = useTheme();
@@ -67,15 +67,12 @@ export default function IsItLegalScreen({ navigation }) {
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Text style={styles.backBtn}>← Back</Text>
-        </TouchableOpacity>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="scale" size={20} color={colors.text} /><Text style={styles.headerTitle}>Is It Legal?</Text></View>
-        <Text style={styles.headerDesc}>
-          Check if your catch meets local regulations
-        </Text>
-      </View>
+      <ScreenHeader
+        variant="large"
+        title="Is It Legal?"
+        subtitle="Check if your catch meets local regulations"
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Region picker */}
       <Text style={styles.sectionLabel}>1. Select Your Region</Text>
@@ -146,32 +143,31 @@ export default function IsItLegalScreen({ navigation }) {
           <Text style={styles.sectionLabel}>
             3. Fish Length (optional, inches)
           </Text>
-          <TextInput
-            style={styles.input}
+          <Input
             value={fishLength}
             onChangeText={setFishLength}
             placeholder="e.g. 22"
-            placeholderTextColor={colors.textTertiary}
             keyboardType="numeric"
+            style={{ marginHorizontal: 16 }}
           />
         </>
       )}
 
       {/* Check button */}
       {selectedSpecies && (
-        <TouchableOpacity style={styles.checkBtn} onPress={handleCheck}>
-          <Text style={styles.checkBtnText}><AppIcon name="scale" size={18} color={colors.text} /> Check Legality</Text>
-        </TouchableOpacity>
+        <Button
+          title="Check Legality"
+          onPress={handleCheck}
+          variant="primary"
+          size="lg"
+          icon="scale"
+          style={{ marginHorizontal: 16, borderRadius: 24 }}
+        />
       )}
 
       {/* Result */}
       {result && (
-        <View
-          style={[
-            styles.resultCard,
-            { borderColor: getStatusColor(result.status) },
-          ]}
-        >
+        <Card variant="outlined" radius={16} padding={20} style={{ margin: 16, borderWidth: 2, borderColor: getStatusColor(result.status) }}>
           <Text style={styles.resultEmoji}>
             {getStatusIcon(result.status)}
           </Text>
@@ -253,7 +249,7 @@ export default function IsItLegalScreen({ navigation }) {
               ))}
             </View>
           )}
-        </View>
+        </Card>
       )}
 
       {/* Disclaimer */}
@@ -271,10 +267,6 @@ export default function IsItLegalScreen({ navigation }) {
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 100 },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 16 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
-  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
   sectionLabel: {
     fontSize: 16,
     fontWeight: '700',
@@ -316,32 +308,7 @@ const createStyles = (colors) => StyleSheet.create({
   },
   speciesText: { fontSize: 13, color: colors.textTertiary },
   speciesTextActive: { color: colors.accent },
-  input: {
-    marginHorizontal: 16,
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 14,
-    fontSize: 16,
-    color: colors.text,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  checkBtn: {
-    marginHorizontal: 16,
-    marginTop: 20,
-    backgroundColor: colors.primary,
-    paddingVertical: 16,
-    borderRadius: 24,
-    alignItems: 'center',
-  },
-  checkBtnText: { fontSize: 18, fontWeight: '700', color: colors.text },
-  resultCard: {
-    margin: 16,
-    backgroundColor: colors.surface,
-    borderRadius: 16,
-    padding: 20,
-    borderWidth: 2,
-  },
+
   resultEmoji: { fontSize: 48, textAlign: 'center', marginBottom: 8 },
   resultStatus: {
     fontSize: 24,

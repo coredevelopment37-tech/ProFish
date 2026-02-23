@@ -36,6 +36,7 @@ import leaderboardService, {
 import regionGatingService from '../../services/regionGatingService';
 import useTheme from '../../hooks/useTheme';
 import { AppIcon } from '../../constants/icons';
+import { ScreenHeader } from '../../components/Common';
 
 const LEADERBOARD_TABS = [
   { key: 'global', label: 'Global', icon: 'globe' },
@@ -200,19 +201,10 @@ export default function LeaderboardScreen({ navigation }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.backBtn}
-          accessibilityLabel={t('common.back', 'Go back')}
-          accessibilityRole="button"
-        >
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>
-          {t('leaderboard.title', 'Leaderboard')}
-        </Text>
-      </View>
+      <ScreenHeader
+        title={t('leaderboard.title', 'Leaderboard')}
+        onBack={() => navigation.goBack()}
+      />
 
       {/* Tab selector — scrollable for 5 tabs */}
       <ScrollView
@@ -527,16 +519,6 @@ export default function LeaderboardScreen({ navigation }) {
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 56 : 16,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: colors.text },
-  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
 
   // Tabs (scrollable)
   tabScroll: { maxHeight: 44, marginBottom: 8 },
