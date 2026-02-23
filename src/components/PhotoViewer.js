@@ -15,6 +15,7 @@ import {
   StatusBar,
 } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,7 +36,7 @@ export default function PhotoViewer({ visible, uri, onClose }) {
       <View style={styles.container}>
         <Image source={{ uri }} style={styles.image} resizeMode="contain" />
         <TouchableOpacity style={styles.closeBtn} onPress={onClose}>
-          <Text style={styles.closeText}>✕</Text>
+          <AppIcon name="x" size={28} color="#FFFFFF" />
         </TouchableOpacity>
       </View>
     </Modal>

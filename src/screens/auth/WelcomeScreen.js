@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -29,7 +30,7 @@ export default function WelcomeScreen({ navigation }) {
 
       {/* Hero */}
       <View style={styles.hero}>
-        <Text style={styles.logo}>🐟</Text>
+        <AppIcon name="fish" size={64} color={colors.primary} />
         <Text style={styles.title}>ProFish</Text>
         <Text style={styles.subtitle}>
           {t('auth.tagline', "The world's best fishing app")}
@@ -39,19 +40,19 @@ export default function WelcomeScreen({ navigation }) {
       {/* Features */}
       <View style={styles.features}>
         <FeatureRow
-          emoji="🎯"
+          icon="target"
           text={t('auth.feature1', 'FishCast — AI-powered fishing predictions')}
         />
         <FeatureRow
-          emoji="🗺️"
+          icon="map"
           text={t('auth.feature2', 'Interactive maps with 18 fishing layers')}
         />
         <FeatureRow
-          emoji="📊"
+          icon="barChart"
           text={t('auth.feature3', 'Log catches & track your records')}
         />
         <FeatureRow
-          emoji="🌍"
+          icon="globe"
           text={t('auth.feature4', '24 languages, 100+ countries')}
         />
       </View>
@@ -90,10 +91,11 @@ export default function WelcomeScreen({ navigation }) {
   );
 }
 
-function FeatureRow({ emoji, text }) {
+function FeatureRow({ icon, text }) {
+  const { colors } = useTheme();
   return (
     <View style={styles.featureRow}>
-      <Text style={styles.featureEmoji}>{emoji}</Text>
+      <AppIcon name={icon} size={22} color={colors.primary} />
       <Text style={styles.featureText}>{text}</Text>
     </View>
   );

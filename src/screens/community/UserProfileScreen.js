@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import communityService from '../../services/communityService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function UserProfileScreen({ route, navigation }) {
   const { colors } = useTheme();
@@ -136,9 +137,13 @@ export default function UserProfileScreen({ route, navigation }) {
           </View>
         )}
         <View style={styles.postMeta}>
-          <Text style={styles.postMetaText}>
-            ❤️ {item.likeCount || 0} · 💬 {item.commentCount || 0}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="heart" size={14} color={colors.textTertiary} />
+            <Text style={styles.postMetaText}>{item.likeCount || 0}</Text>
+            <Text style={styles.postMetaText}> · </Text>
+            <AppIcon name="messageCircle" size={14} color={colors.textTertiary} />
+            <Text style={styles.postMetaText}>{item.commentCount || 0}</Text>
+          </View>
           <Text style={styles.postDate}>
             {new Date(item.createdAt).toLocaleDateString()}
           </Text>

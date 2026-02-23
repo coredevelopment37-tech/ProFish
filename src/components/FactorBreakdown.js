@@ -7,16 +7,17 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const FACTOR_CONFIG = {
-  pressure: { icon: '🌡️', weight: 20 },
-  moonPhase: { icon: '🌙', weight: 15 },
-  solunarPeriod: { icon: '🎯', weight: 15 },
-  wind: { icon: '💨', weight: 12 },
-  timeOfDay: { icon: '🕐', weight: 12 },
-  tideState: { icon: '🌊', weight: 10 },
-  cloudCover: { icon: '☁️', weight: 8 },
-  precipitation: { icon: '🌧️', weight: 8 },
+  pressure: { icon: 'thermometer', weight: 20 },
+  moonPhase: { icon: 'moon', weight: 15 },
+  solunarPeriod: { icon: 'target', weight: 15 },
+  wind: { icon: 'wind', weight: 12 },
+  timeOfDay: { icon: 'clock', weight: 12 },
+  tideState: { icon: 'waves', weight: 10 },
+  cloudCover: { icon: 'cloud', weight: 8 },
+  precipitation: { icon: 'cloudRain', weight: 8 },
 };
 
 function getBarColor(score, colors) {
@@ -46,14 +47,17 @@ export default function FactorBreakdown({ factors }) {
 
   return (
     <View style={styles.card}>
-      <Text style={styles.title}>
-        📊 {t('fishcast.factorBreakdown', 'Score Breakdown')}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 14 }}>
+        <AppIcon name="barChart" size={16} color={colors.text} />
+        <Text style={[styles.title, { marginBottom: 0, marginLeft: 6 }]}>
+          {t('fishcast.factorBreakdown', 'Score Breakdown')}
+        </Text>
+      </View>
 
       {entries.map(factor => (
         <View key={factor.key} style={styles.factorRow}>
           <View style={styles.factorHeader}>
-            <Text style={styles.factorIcon}>{factor.icon}</Text>
+            <AppIcon name={factor.icon} size={14} color={colors.textSecondary} style={{ width: 24 }} />
             <Text style={styles.factorLabel}>{factor.label}</Text>
             <Text style={styles.factorWeight}>{factor.weight}%</Text>
             <Text

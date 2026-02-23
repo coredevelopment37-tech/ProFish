@@ -6,6 +6,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function OfflineBanner() {
   const { colors } = useTheme();
@@ -32,7 +33,10 @@ export default function OfflineBanner() {
     <Animated.View
       style={[styles.banner, { transform: [{ translateY: slideAnim }] }]}
     >
-      <Text style={styles.text}>📡 Offline — Data may be stale</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <AppIcon name="satellite" size={16} color={colors.text} />
+        <Text style={styles.text}> Offline — Data may be stale</Text>
+      </View>
     </Animated.View>
   );
 }

@@ -19,13 +19,13 @@ const LANDING_PAGE = {
 
   features: [
     {
-      icon: '🎯',
+      icon: 'target',
       title: 'FishCast Score',
       description:
         'Real-time fishing conditions rated 0-100 based on 8 factors including barometric pressure, solunar, tide, and wind.',
     },
     {
-      icon: '🗺️',
+      icon: 'map',
       title: '18 Map Layers',
       description:
         'Bathymetry, SST, chlorophyll, nautical charts, tide stations, fish hotspots — stack layers with a CPU budget system.',
@@ -37,13 +37,13 @@ const LANDING_PAGE = {
         'Snap a photo and instantly identify your catch from 200+ species. Works offline with on-device TFLite model.',
     },
     {
-      icon: '📊',
+      icon: 'barChart',
       title: 'Catch Analytics',
       description:
         'Track every catch with species, weight, conditions. Export to PDF/CSV. See your personal bests and monthly trends.',
     },
     {
-      icon: '🌊',
+      icon: 'waves',
       title: 'Tide & Solunar',
       description:
         'Global tide predictions (NOAA + WorldTides) and solunar feeding windows. Know when fish are biting.',
@@ -61,7 +61,7 @@ const LANDING_PAGE = {
         'Fully localized in English, Spanish, Arabic, Japanese, and 20 more. Fish anywhere in the world.',
     },
     {
-      icon: '🏆',
+      icon: 'trophy',
       title: 'Tournaments & Leaderboards',
       description:
         'Compete in fishing tournaments. Anti-cheat photo verification. Species-specific leaderboards.',

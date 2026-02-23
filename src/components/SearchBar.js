@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function SearchBar({
   placeholder,
@@ -79,7 +80,7 @@ export default function SearchBar({
 
   return (
     <View style={[styles.container, style]}>
-      <Text style={styles.searchIcon}>🔍</Text>
+      <AppIcon name="search" size={18} color={colors.textTertiary} />
       <TextInput
         style={[styles.input, inputStyle]}
         value={localValue}
@@ -101,7 +102,7 @@ export default function SearchBar({
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           accessibilityLabel="Clear search"
         >
-          <Text style={styles.clearText}>✕</Text>
+          <AppIcon name="x" size={16} color={colors.textSecondary} />
         </TouchableOpacity>
       )}
     </View>

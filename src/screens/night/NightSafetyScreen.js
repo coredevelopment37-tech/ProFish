@@ -24,6 +24,7 @@ import {
   performCheckIn,
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // ── Safety Checklist ──
 const SAFETY_CHECKLIST = [
@@ -81,20 +82,23 @@ const EMERGENCY_NUMBERS = [
   },
   {
     id: 'em_uscg',
-    label: '⚓ US Coast Guard',
+    label: 'US Coast Guard',
+    labelIcon: 'anchor',
     number: '+1-800-424-8802',
     region: 'US',
   },
   {
     id: 'em_vhf16',
-    label: '📻 VHF Channel 16',
+    label: 'VHF Channel 16',
+    labelIcon: 'radio',
     number: null,
     region: 'Maritime',
     note: 'Tune radio to Ch 16 for distress',
   },
   {
     id: 'em_epirbsart',
-    label: '🛟 EPIRB/SART',
+    label: 'EPIRB/SART',
+    labelIcon: 'lifebuoy',
     number: null,
     region: 'Maritime',
     note: 'Activate if capsized or person overboard',
@@ -137,7 +141,7 @@ export default function NightSafetyScreen({ navigation }) {
       const now = new Date();
       const diff = sunriseTime.getTime() - now.getTime();
       if (diff <= 0) {
-        setCountdown('☀️ Sunrise!');
+        setCountdown('Sunrise!');
         clearInterval(timer);
         return;
       }
@@ -258,7 +262,7 @@ export default function NightSafetyScreen({ navigation }) {
 
       {/* ── Sunrise Countdown ── */}
       <View style={styles.sunriseCard}>
-        <Text style={styles.sunriseIcon}>🌅</Text>
+        <Text style={styles.sunriseIcon}><AppIcon name="sunrise" size={40} color="#FFD700" /></Text>
         <View style={styles.sunriseInfo}>
           <Text style={styles.sunriseLabel}>SUNRISE COUNTDOWN</Text>
           <Text style={styles.sunriseTime}>
@@ -270,7 +274,7 @@ export default function NightSafetyScreen({ navigation }) {
       {/* ── Safety Checklist ── */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          ✅ Pre-Trip Safety Checklist ({totalChecked}/{SAFETY_CHECKLIST.length}
+          <AppIcon name="checkCircle" size={17} color={colors.text} /> Pre-Trip Safety Checklist ({totalChecked}/{SAFETY_CHECKLIST.length}
           )
         </Text>
 
@@ -284,7 +288,7 @@ export default function NightSafetyScreen({ navigation }) {
         {!criticalChecked && (
           <View style={styles.warningBox}>
             <Text style={styles.warningText}>
-              ⚠️ Critical safety items unchecked — please review before going
+              <AppIcon name="alertTriangle" size={12} color="#FF8800" /> Critical safety items unchecked — please review before going
               out
             </Text>
           </View>
@@ -305,7 +309,7 @@ export default function NightSafetyScreen({ navigation }) {
                   styles.checkboxCritical,
               ]}
             >
-              {checkedItems[item.id] && <Text style={styles.checkmark}>✓</Text>}
+              {checkedItems[item.id] && <Text style={styles.checkmark}><AppIcon name="check" size={14} color="#000" /></Text>}
             </View>
             <Text
               style={[
@@ -313,8 +317,8 @@ export default function NightSafetyScreen({ navigation }) {
                 checkedItems[item.id] && styles.checkTextDone,
               ]}
             >
-              {item.critical ? '🔴 ' : '🟡 '}
-              {item.text}
+              {item.critical ? <AppIcon name="circleDot" size={8} color="#FF4444" /> : <AppIcon name="circleDot" size={8} color="#FFD700" />}
+              {' '}{item.text}
             </Text>
           </TouchableOpacity>
         ))}
@@ -322,7 +326,7 @@ export default function NightSafetyScreen({ navigation }) {
 
       {/* ── Check-In Timer ── */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>⏰ Safety Check-In Timer</Text>
+        <Text style={styles.sectionTitle}><AppIcon name="alarmClock" size={17} color={colors.text} /> Safety Check-In Timer</Text>
         <Text style={styles.sectionDesc}>
           The app will prompt you at intervals to confirm you're safe. If you
           don't respond, your emergency contact is notified.
@@ -365,18 +369,18 @@ export default function NightSafetyScreen({ navigation }) {
         {/* Start/Stop button */}
         {!checkInActive ? (
           <TouchableOpacity style={styles.startBtn} onPress={startCheckIn}>
-            <Text style={styles.startBtnText}>▶ Start Check-In Timer</Text>
+            <Text style={styles.startBtnText}><AppIcon name="play" size={16} color="#000" /> Start Check-In Timer</Text>
           </TouchableOpacity>
         ) : (
           <View>
             <View style={styles.activeBox}>
               <Text style={styles.activeText}>
-                ✅ Check-in active — Last:{' '}
+                <AppIcon name="checkCircle" size={13} color="#00FF88" /> Check-in active — Last:{' '}
                 {lastCheckIn?.toLocaleTimeString() || 'just now'}
               </Text>
             </View>
             <TouchableOpacity style={styles.stopBtn} onPress={stopCheckIn}>
-              <Text style={styles.stopBtnText}>⏹ Stop Check-In</Text>
+              <Text style={styles.stopBtnText}><AppIcon name="stop" size={14} color="#FF4444" /> Stop Check-In</Text>
             </TouchableOpacity>
           </View>
         )}
@@ -384,7 +388,7 @@ export default function NightSafetyScreen({ navigation }) {
 
       {/* ── Emergency Numbers ── */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>📞 Emergency Contacts</Text>
+        <Text style={styles.sectionTitle}><AppIcon name="phone" size={17} color={colors.text} /> Emergency Contacts</Text>
         {EMERGENCY_NUMBERS.map(em => (
           <TouchableOpacity
             key={em.id}
@@ -393,7 +397,7 @@ export default function NightSafetyScreen({ navigation }) {
             disabled={!em.number}
           >
             <View style={styles.emergencyInfo}>
-              <Text style={styles.emergencyLabel}>{em.label}</Text>
+              <Text style={styles.emergencyLabel}>{em.labelIcon ? <AppIcon name={em.labelIcon} size={14} color={colors.text} /> : null} {em.label}</Text>
               <Text style={styles.emergencyRegion}>{em.region}</Text>
               {em.note && <Text style={styles.emergencyNote}>{em.note}</Text>}
             </View>
@@ -408,51 +412,61 @@ export default function NightSafetyScreen({ navigation }) {
 
       {/* ── Night Safety Tips ── */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>💡 Night Safety Tips</Text>
+        <Text style={styles.sectionTitle}><AppIcon name="lightbulb" size={17} color={colors.text} /> Night Safety Tips</Text>
         {[
           {
-            emoji: '🔴',
+            icon: 'circleDot',
+            iconColor: '#FF4444',
             tip: 'Use red light only — white light destroys your night vision for 20-30 minutes',
           },
           {
-            emoji: '🦺',
+            icon: 'shield',
+            iconColor: '#FF8800',
             tip: 'Wear your PFD at ALL times. Falling in at night is 5x more deadly than daytime',
           },
           {
-            emoji: '📱',
+            icon: 'smartphone',
+            iconColor: '#AA66FF',
             tip: 'Tell someone your exact location and expected return time before EVERY trip',
           },
           {
-            emoji: '🌊',
+            icon: 'waves',
+            iconColor: '#00BBFF',
             tip: 'Know your tide schedule — rising water at night is disorienting and dangerous',
           },
           {
-            emoji: '⚡',
+            icon: 'zap',
+            iconColor: '#FFD700',
             tip: 'If you see lightning or hear thunder — GET OFF THE WATER immediately',
           },
           {
-            emoji: '🦈',
+            icon: 'fish',
+            iconColor: '#888',
             tip: 'Sharks are more active at night. Avoid wading in murky water near inlets',
           },
           {
-            emoji: '🐍',
+            icon: 'alertTriangle',
+            iconColor: '#FF8800',
             tip: "Watch for snakes on banks and docks at night — they're active after sunset",
           },
           {
-            emoji: '🧊',
+            icon: 'snowflake',
+            iconColor: '#80DDFF',
             tip: 'Hypothermia risk increases dramatically at night. Bring extra dry layers',
           },
           {
-            emoji: '🦟',
+            icon: 'bug',
+            iconColor: '#88AA00',
             tip: 'Treat clothes with Permethrin + use Thermacell for mosquitoes at night',
           },
           {
-            emoji: '🔋',
+            icon: 'battery',
+            iconColor: '#00FF88',
             tip: 'Start with a fully charged phone. GPS + screen = dead battery in 3-4 hours',
           },
         ].map((tip, i) => (
           <View key={i} style={styles.tipRow}>
-            <Text style={styles.tipEmoji}>{tip.emoji}</Text>
+            <Text style={styles.tipEmoji}><AppIcon name={tip.icon} size={18} color={tip.iconColor} /></Text>
             <Text style={styles.tipText}>{tip.tip}</Text>
           </View>
         ))}
@@ -461,7 +475,7 @@ export default function NightSafetyScreen({ navigation }) {
       {/* ── Disclaimer ── */}
       <View style={styles.disclaimerBox}>
         <Text style={styles.disclaimerText}>
-          ⚠️ Night fishing carries inherent risks. ProFish provides safety tools
+          <AppIcon name="alertTriangle" size={11} color="#FF8888" /> Night fishing carries inherent risks. ProFish provides safety tools
           and information but cannot guarantee your safety. Always exercise good
           judgment, check weather conditions, and never fish alone in dangerous
           conditions. In any emergency, call 911 (US) or 112 (EU) immediately.

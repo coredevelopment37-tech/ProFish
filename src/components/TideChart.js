@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function TideChart({ tide }) {
   const { t } = useTranslation();
@@ -16,7 +17,10 @@ export default function TideChart({ tide }) {
   if (!tide || tide.state === 'unknown') {
     return (
       <View style={styles.card}>
-        <Text style={styles.title}>🌊 {t('fishcast.tide', 'Tide')}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <AppIcon name="waves" size={20} color={colors.text} />
+          <Text style={styles.title}>{t('fishcast.tide', 'Tide')}</Text>
+        </View>
         <Text style={styles.noData}>
           {t('fishcast.noTideData', 'No tide data for this location')}
         </Text>
@@ -34,7 +38,10 @@ export default function TideChart({ tide }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>🌊 {t('fishcast.tide', 'Tide')}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <AppIcon name="waves" size={20} color={colors.text} />
+          <Text style={styles.title}>{t('fishcast.tide', 'Tide')}</Text>
+        </View>
         <View style={[styles.badge, { backgroundColor: stateColor + '20' }]}>
           <Text style={[styles.badgeText, { color: stateColor }]}>
             {stateIcon} {stateLabel}
@@ -46,10 +53,10 @@ export default function TideChart({ tide }) {
       <View style={styles.progressContainer}>
         <View style={styles.progressLabels}>
           <Text style={styles.progressLabel}>
-            {tide.lastExtreme?.type === 'Low' ? '🔽 Low' : '🔼 High'}
+            {tide.lastExtreme?.type === 'Low' ? 'Low' : 'High'}
           </Text>
           <Text style={styles.progressLabel}>
-            {tide.nextExtreme?.type === 'Low' ? '🔽 Low' : '🔼 High'}
+            {tide.nextExtreme?.type === 'Low' ? 'Low' : 'High'}
           </Text>
         </View>
         <View style={styles.progressBar}>

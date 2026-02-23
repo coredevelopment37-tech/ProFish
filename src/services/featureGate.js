@@ -102,7 +102,7 @@ export function requireFeature(featureKey) {
 
   return new Promise(resolve => {
     Alert.alert(
-      `🔒 ${label}`,
+      `${label}`,
       `This feature requires a ${tierLabel} subscription. Upgrade to unlock unlimited access.`,
       [
         { text: 'Not Now', style: 'cancel', onPress: () => resolve(false) },

@@ -6,10 +6,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const TIER_CONFIG = {
-  pro: { name: 'Pro', emoji: '⭐' },
-  elite: { name: 'Elite', color: '#E040FB', emoji: '👑' },
+  pro: { name: 'Pro', icon: 'star' },
+  elite: { name: 'Elite', color: '#E040FB', icon: 'crown' },
 };
 
 export default function UpgradePrompt({
@@ -26,9 +27,12 @@ export default function UpgradePrompt({
   if (compact) {
     return (
       <TouchableOpacity style={styles.compactRow} onPress={onUpgrade}>
-        <Text style={styles.compactText}>
-          {tier.emoji} Upgrade to {tier.name} to unlock {featureName}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
+          <AppIcon name={tier.icon} size={16} color={tier.color} />
+          <Text style={[styles.compactText, { marginLeft: 6 }]}>
+            Upgrade to {tier.name} to unlock {featureName}
+          </Text>
+        </View>
         <Text style={[styles.compactArrow, { color: tier.color }]}>→</Text>
       </TouchableOpacity>
     );
@@ -36,7 +40,7 @@ export default function UpgradePrompt({
 
   return (
     <View style={[styles.card, { borderColor: tier.color }]}>
-      <Text style={styles.emoji}>{tier.emoji}</Text>
+      <AppIcon name={tier.icon} size={40} color={tier.color} style={{ marginBottom: 12 }} />
       <Text style={styles.title}>Unlock {featureName}</Text>
       <Text style={styles.subtitle}>
         Upgrade to {tier.name} to access this feature and much more.

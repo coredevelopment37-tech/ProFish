@@ -21,28 +21,29 @@ import {
   getConnectivitySummary,
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // ── Category config ──
 const CATEGORIES = [
-  { id: 'all', label: 'All', emoji: '🌙' },
-  { id: 'lighting', label: 'Lighting', emoji: '💡' },
-  { id: 'electronics', label: 'Electronics', emoji: '📡' },
-  { id: 'safety', label: 'Safety', emoji: '🆘' },
-  { id: 'lures_bait', label: 'Lures & Bait', emoji: '🎣' },
-  { id: 'clothing', label: 'Clothing', emoji: '🧥' },
-  { id: 'comfort', label: 'Comfort', emoji: '☕' },
-  { id: 'legal', label: 'Legal', emoji: '📄' },
-  { id: 'gigging', label: 'Gigging', emoji: '🔱' },
+  { id: 'all', label: 'All', icon: 'moon' },
+  { id: 'lighting', label: 'Lighting', icon: 'lightbulb' },
+  { id: 'electronics', label: 'Electronics', icon: 'satellite' },
+  { id: 'safety', label: 'Safety', icon: 'shieldAlert' },
+  { id: 'lures_bait', label: 'Lures & Bait', icon: 'fish' },
+  { id: 'clothing', label: 'Clothing', icon: 'shield' },
+  { id: 'comfort', label: 'Comfort', icon: 'package' },
+  { id: 'legal', label: 'Legal', icon: 'fileText' },
+  { id: 'gigging', label: 'Gigging', icon: 'crosshair' },
 ];
 
 // ── Connectivity badge config ──
 const CONN_BADGES = {
-  BLE: { label: 'Bluetooth', color: '#0082FC', emoji: '🔵' },
-  WiFi: { label: 'WiFi', color: '#00CC66', emoji: '📶' },
-  SIM: { label: 'Satellite/Cell', color: '#FF6600', emoji: '📡' },
-  USB: { label: 'USB', color: '#888', emoji: '🔌' },
-  APP: { label: 'App', color: '#AA66FF', emoji: '📱' },
-  NONE: { label: 'Passive', color: '#444', emoji: '—' },
+  BLE: { label: 'Bluetooth', color: '#0082FC', icon: 'bluetooth' },
+  WiFi: { label: 'WiFi', color: '#00CC66', icon: 'wifi' },
+  SIM: { label: 'Satellite/Cell', color: '#FF6600', icon: 'satellite' },
+  USB: { label: 'USB', color: '#888', icon: 'plug' },
+  APP: { label: 'App', color: '#AA66FF', icon: 'smartphone' },
+  NONE: { label: 'Passive', color: '#444', icon: null },
 };
 
 // ── Priority badge config ──
@@ -99,7 +100,7 @@ export default function NightGearScreen({ navigation, route }) {
             style={[styles.checkbox, isChecked && styles.checkboxChecked]}
             onPress={() => toggleCheck(item.id)}
           >
-            {isChecked && <Text style={styles.checkmark}>✓</Text>}
+            {isChecked && <Text style={styles.checkmark}><AppIcon name="check" size={14} color="#000" /></Text>}
           </TouchableOpacity>
           <Text style={styles.gearEmoji}>{item.emoji}</Text>
           <View style={styles.gearInfo}>
@@ -112,7 +113,7 @@ export default function NightGearScreen({ navigation, route }) {
               {/* Connectivity badge */}
               {item.connectivity !== 'NONE' && (
                 <View style={[styles.connBadge, { borderColor: conn.color }]}>
-                  <Text style={styles.connEmoji}>{conn.emoji}</Text>
+                  <Text style={styles.connEmoji}>{conn.icon ? <AppIcon name={conn.icon} size={10} color={conn.color} /> : '—'}</Text>
                   <Text style={[styles.connLabel, { color: conn.color }]}>
                     {conn.label}
                   </Text>
@@ -140,7 +141,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* Brands */}
             {item.brands && item.brands.length > 0 && (
               <View style={styles.detailBlock}>
-                <Text style={styles.detailLabel}>👍 Recommended Brands</Text>
+                <Text style={styles.detailLabel}><AppIcon name="thumbsUp" size={11} color={colors.textTertiary} /> Recommended Brands</Text>
                 <Text style={styles.detailValue}>
                   {item.brands.join(' • ')}
                 </Text>
@@ -150,7 +151,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* Power */}
             {item.powerSource && (
               <View style={styles.detailBlock}>
-                <Text style={styles.detailLabel}>🔋 Power Source</Text>
+                <Text style={styles.detailLabel}><AppIcon name="battery" size={11} color={colors.textTertiary} /> Power Source</Text>
                 <Text style={styles.detailValue}>{item.powerSource}</Text>
               </View>
             )}
@@ -158,7 +159,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* BLE Details */}
             {item.bleProfile && (
               <View style={styles.detailBlock}>
-                <Text style={styles.detailLabel}>🔵 BLE Protocol</Text>
+                <Text style={styles.detailLabel}><AppIcon name="bluetooth" size={11} color={colors.textTertiary} /> BLE Protocol</Text>
                 <Text style={styles.detailValue}>{item.bleProfile}</Text>
               </View>
             )}
@@ -166,7 +167,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* WiFi Details */}
             {item.wifiSpec && (
               <View style={styles.detailBlock}>
-                <Text style={styles.detailLabel}>📶 WiFi Spec</Text>
+                <Text style={styles.detailLabel}><AppIcon name="wifi" size={11} color={colors.textTertiary} /> WiFi Spec</Text>
                 <Text style={styles.detailValue}>{item.wifiSpec}</Text>
               </View>
             )}
@@ -174,7 +175,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* SIM Details */}
             {item.simSpec && (
               <View style={styles.detailBlock}>
-                <Text style={styles.detailLabel}>📡 Cellular/Satellite</Text>
+                <Text style={styles.detailLabel}><AppIcon name="satellite" size={11} color={colors.textTertiary} /> Cellular/Satellite</Text>
                 <Text style={styles.detailValue}>{item.simSpec}</Text>
               </View>
             )}
@@ -182,7 +183,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* App Integration */}
             {item.appIntegration && (
               <View style={[styles.detailBlock, styles.integrationBlock]}>
-                <Text style={styles.detailLabel}>📱 ProFish Integration</Text>
+                <Text style={styles.detailLabel}><AppIcon name="smartphone" size={11} color={colors.textTertiary} /> ProFish Integration</Text>
                 <Text style={styles.integrationText}>
                   {item.appIntegration}
                 </Text>
@@ -192,7 +193,7 @@ export default function NightGearScreen({ navigation, route }) {
             {/* Pro Tip */}
             {item.proTip && (
               <View style={[styles.detailBlock, styles.proTipBlock]}>
-                <Text style={styles.proTipLabel}>💡 Pro Tip</Text>
+                <Text style={styles.proTipLabel}><AppIcon name="lightbulb" size={11} color="#FFD700" /> Pro Tip</Text>
                 <Text style={styles.proTipText}>{item.proTip}</Text>
               </View>
             )}
@@ -213,7 +214,7 @@ export default function NightGearScreen({ navigation, route }) {
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <View>
-          <Text style={styles.title}>⚙️ Night Gear Guide</Text>
+          <Text style={styles.title}><AppIcon name="settings" size={22} color={colors.text} /> Night Gear Guide</Text>
           <Text style={styles.subtitle}>
             {NIGHT_GEAR.length} items • {essentialCount} essential •{' '}
             {checkedCount} packed
@@ -225,31 +226,31 @@ export default function NightGearScreen({ navigation, route }) {
       <View style={styles.connSummary}>
         <View style={styles.connSummaryRow}>
           <View style={styles.connSummaryChip}>
-            <Text style={styles.connSummaryIcon}>🔵</Text>
+            <Text style={styles.connSummaryIcon}><AppIcon name="bluetooth" size={18} color="#0082FC" /></Text>
             <Text style={styles.connSummaryNum}>
               {connectivity.bluetooth.count}
             </Text>
             <Text style={styles.connSummaryLabel}>Bluetooth</Text>
           </View>
           <View style={styles.connSummaryChip}>
-            <Text style={styles.connSummaryIcon}>📶</Text>
+            <Text style={styles.connSummaryIcon}><AppIcon name="wifi" size={18} color="#00CC66" /></Text>
             <Text style={styles.connSummaryNum}>{connectivity.wifi.count}</Text>
             <Text style={styles.connSummaryLabel}>WiFi</Text>
           </View>
           <View style={styles.connSummaryChip}>
-            <Text style={styles.connSummaryIcon}>📡</Text>
+            <Text style={styles.connSummaryIcon}><AppIcon name="satellite" size={18} color="#FF6600" /></Text>
             <Text style={styles.connSummaryNum}>
               {connectivity.cellular.count}
             </Text>
             <Text style={styles.connSummaryLabel}>SIM/Sat</Text>
           </View>
           <View style={styles.connSummaryChip}>
-            <Text style={styles.connSummaryIcon}>🔌</Text>
+            <Text style={styles.connSummaryIcon}><AppIcon name="plug" size={18} color="#888" /></Text>
             <Text style={styles.connSummaryNum}>{connectivity.usb.count}</Text>
             <Text style={styles.connSummaryLabel}>USB</Text>
           </View>
           <View style={styles.connSummaryChip}>
-            <Text style={styles.connSummaryIcon}>🧰</Text>
+            <Text style={styles.connSummaryIcon}><AppIcon name="package" size={18} color={colors.textTertiary} /></Text>
             <Text style={styles.connSummaryNum}>
               {connectivity.passive.count}
             </Text>
@@ -274,7 +275,7 @@ export default function NightGearScreen({ navigation, route }) {
               setShowGigging(cat.id === 'gigging');
             }}
           >
-            <Text style={styles.tabEmoji}>{cat.emoji}</Text>
+            <Text style={styles.tabEmoji}><AppIcon name={cat.icon} size={14} color={category === cat.id ? '#00FF88' : colors.textTertiary} /></Text>
             <Text
               style={[
                 styles.tabLabel,
@@ -291,27 +292,27 @@ export default function NightGearScreen({ navigation, route }) {
       {showGigging && (
         <View style={styles.giggingGuide}>
           <Text style={styles.giggingSectionTitle}>
-            🔱 Flounder Gigging Conditions
+            <AppIcon name="crosshair" size={15} color="#FFD700" /> Flounder Gigging Conditions
           </Text>
           <View style={styles.giggingConditions}>
             <Text style={styles.giggingCond}>
-              🌊 Tide: {GIGGING_CONFIG.bestConditions.tide}
+              <AppIcon name="waves" size={12} color={colors.textSecondary} /> Tide: {GIGGING_CONFIG.bestConditions.tide}
             </Text>
             <Text style={styles.giggingCond}>
-              💧 Water: {GIGGING_CONFIG.bestConditions.water}
+              <AppIcon name="droplet" size={12} color={colors.textSecondary} /> Water: {GIGGING_CONFIG.bestConditions.water}
             </Text>
             <Text style={styles.giggingCond}>
-              💨 Wind: {GIGGING_CONFIG.bestConditions.wind}
+              <AppIcon name="wind" size={12} color={colors.textSecondary} /> Wind: {GIGGING_CONFIG.bestConditions.wind}
             </Text>
             <Text style={styles.giggingCond}>
-              🌑 Moon: {GIGGING_CONFIG.bestConditions.moon}
+              <AppIcon name="moon" size={12} color={colors.textSecondary} /> Moon: {GIGGING_CONFIG.bestConditions.moon}
             </Text>
             <Text style={styles.giggingCond}>
-              🌡️ Temp: {GIGGING_CONFIG.bestConditions.temp}
+              <AppIcon name="thermometer" size={12} color={colors.textSecondary} /> Temp: {GIGGING_CONFIG.bestConditions.temp}
             </Text>
           </View>
 
-          <Text style={styles.giggingSectionTitle}>📋 Technique Steps</Text>
+          <Text style={styles.giggingSectionTitle}><AppIcon name="clipboard" size={15} color="#FFD700" /> Technique Steps</Text>
           {GIGGING_CONFIG.technique.steps.map((step, i) => (
             <Text key={i} style={styles.giggingStep}>
               {i + 1}. {step}
@@ -319,16 +320,16 @@ export default function NightGearScreen({ navigation, route }) {
           ))}
 
           <View style={styles.giggingTipBox}>
-            <Text style={styles.giggingTipTitle}>👁️ What to Look For</Text>
+            <Text style={styles.giggingTipTitle}><AppIcon name="eye" size={12} color="#00FF88" /> What to Look For</Text>
             <Text style={styles.giggingTipText}>
               {GIGGING_CONFIG.technique.whatToLookFor}
             </Text>
           </View>
 
-          <Text style={styles.giggingSectionTitle}>⚠️ Safety Rules</Text>
+          <Text style={styles.giggingSectionTitle}><AppIcon name="alertTriangle" size={15} color="#FFD700" /> Safety Rules</Text>
           {GIGGING_CONFIG.safetyRules.map((rule, i) => (
             <Text key={i} style={styles.giggingSafetyRule}>
-              ⚠️ {rule}
+              <AppIcon name="alertTriangle" size={12} color="#FF8800" /> {rule}
             </Text>
           ))}
         </View>

@@ -7,6 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const NOTIF_COUNT_KEY = '@profish_unread_notif_count';
 
@@ -36,7 +37,7 @@ export default function NotificationBell({ onPress, size = 24 }) {
         count > 0 ? `Notifications, ${count} unread` : 'Notifications'
       }
     >
-      <Text style={[styles.icon, { fontSize: size }]}>🔔</Text>
+      <AppIcon name="bell" size={size} color={colors.text} />
       {count > 0 && (
         <View style={styles.badge}>
           <Text style={styles.badgeText}>{count > 99 ? '99+' : count}</Text>

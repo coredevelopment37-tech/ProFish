@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 import catchService from '../../services/catchService';
 
 const MONTHS = [
@@ -215,7 +216,8 @@ export default function SeasonalCalendarScreen({ navigation }) {
         </View>
         {personalSeasons.length > 0 && (
           <View style={styles.legendItem}>
-            <Text style={styles.legendText}>⭐ = from your catches</Text>
+            <AppIcon name="star" size={12} color="#FFD700" />
+            <Text style={styles.legendText}>= from your catches</Text>
           </View>
         )}
       </View>
@@ -259,10 +261,12 @@ export default function SeasonalCalendarScreen({ navigation }) {
             }
           >
             <View style={styles.speciesCol}>
-              <Text style={styles.speciesName} numberOfLines={1}>
-                {entry.fromCatches ? '⭐ ' : ''}
-                {entry.species}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                {entry.fromCatches && <AppIcon name="star" size={12} color="#FFD700" />}
+                <Text style={[styles.speciesName, entry.fromCatches && { marginLeft: 4 }]} numberOfLines={1}>
+                  {entry.species}
+                </Text>
+              </View>
               {entry.fromCatches && (
                 <Text style={styles.catchCountLabel}>
                   {entry.catchCount} catch{entry.catchCount !== 1 ? 'es' : ''}

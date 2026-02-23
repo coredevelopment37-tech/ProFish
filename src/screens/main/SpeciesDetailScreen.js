@@ -24,6 +24,7 @@ import {
 } from '../../services/fishCastService';
 import { useApp } from '../../store/AppContext';
 import { formatWeight, formatLength } from '../../utils/units';
+import { AppIcon } from '../../constants/icons';
 
 export default function SpeciesDetailScreen({ route, navigation }) {
   const { colors } = useTheme();
@@ -74,7 +75,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.errorContainer}>
-          <Text style={styles.errorIcon}>🐟</Text>
+          <AppIcon name="fish" size={48} color={colors.textTertiary} />
           <Text style={styles.error}>
             {t('species.notFound', 'Species not found')}
           </Text>
@@ -117,19 +118,19 @@ export default function SpeciesDetailScreen({ route, navigation }) {
       >
         {/* Illustration area */}
         <View style={styles.illustrationBox}>
-          <Text style={styles.illustrationEmoji}>🐟</Text>
+          <AppIcon name="fish" size={64} color={colors.primary} />
           <Text style={styles.familyBadge}>{species.family}</Text>
         </View>
 
         {/* Quick facts */}
         <View style={styles.factsRow}>
-          <FactChip icon="🌊" label={species.habitat} />
+          <FactChip icon="waves" label={species.habitat} />
           <FactChip
-            icon="📍"
+            icon="mapPin"
             label={`${species.regions?.length || 0} regions`}
           />
           {species.iucnStatus && (
-            <FactChip icon="🟢" label={species.iucnStatus} />
+            <FactChip icon="circleCheck" label={species.iucnStatus} />
           )}
         </View>
 
@@ -173,7 +174,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
             <View style={styles.chipRow}>
               {species.techniques.map((tech, i) => (
                 <View key={i} style={styles.techChip}>
-                  <Text style={styles.techChipText}>🎣 {tech}</Text>
+                  <Text style={styles.techChipText}><AppIcon name="fish" size={14} color={colors.textSecondary} /> {tech}</Text>
                 </View>
               ))}
             </View>
@@ -189,7 +190,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
             <View style={styles.chipRow}>
               {species.bestBait.map((b, i) => (
                 <View key={i} style={styles.baitChip}>
-                  <Text style={styles.baitChipText}>🪝 {b}</Text>
+                  <Text style={styles.baitChipText}><AppIcon name="anchor" size={14} color={colors.accent} /> {b}</Text>
                 </View>
               ))}
             </View>
@@ -220,7 +221,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
                   navigation.navigate('CatchDetail', { catchId: c.id })
                 }
               >
-                <Text style={styles.catchSpecies}>🐟</Text>
+                <AppIcon name="fish" size={20} color={colors.primary} />
                 <View style={styles.catchInfo}>
                   <Text style={styles.catchWeight}>
                     {c.weight
@@ -242,7 +243,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
         {/* FishCast for This Species */}
         <View style={styles.section}>
           <Text style={styles.sectionTitle}>
-            🎯 {t('species.fishCast', 'FishCast for This Species')}
+            <AppIcon name="target" size={18} color={colors.text} /> {t('species.fishCast', 'FishCast for This Species')}
           </Text>
           {fishCastLoading ? (
             <View style={styles.fishCastLoading}>
@@ -285,18 +286,18 @@ export default function SpeciesDetailScreen({ route, navigation }) {
                     )}
                   {fishCast.speciesInsights?.map((insight, i) => (
                     <Text key={i} style={styles.fishCastInsight}>
-                      ✦ {insight}
+                      <AppIcon name="star" size={12} color={colors.textSecondary} /> {insight}
                     </Text>
                   ))}
                   {fishCast.weather && (
                     <Text style={styles.fishCastCondition}>
-                      🌡️ {Math.round(fishCast.weather.temp)}°C {'  '}
-                      💨 {Math.round(fishCast.weather.wind)} km/h
+                      <AppIcon name="thermometer" size={12} color={colors.textTertiary} /> {Math.round(fishCast.weather.temp)}°C {'  '}
+                      <AppIcon name="wind" size={12} color={colors.textTertiary} /> {Math.round(fishCast.weather.wind)} km/h
                     </Text>
                   )}
                   {fishCast.solunar && (
                     <Text style={styles.fishCastCondition}>
-                      🌙 {fishCast.solunar.moonPhase}
+                      <AppIcon name="moon" size={12} color={colors.textTertiary} /> {fishCast.solunar.moonPhase}
                     </Text>
                   )}
                 </View>
@@ -331,9 +332,10 @@ function DetailRow({ label, value }) {
 }
 
 function FactChip({ icon, label }) {
+  const { colors } = useTheme();
   return (
     <View style={styles.factChip}>
-      <Text style={styles.factIcon}>{icon}</Text>
+      <AppIcon name={icon} size={14} color={colors.textSecondary} />
       <Text style={styles.factLabel}>{label}</Text>
     </View>
   );

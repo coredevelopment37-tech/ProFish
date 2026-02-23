@@ -273,7 +273,7 @@ const OVERLAY_SPECIES_INFO = {
 
       // Quick actions
       actions: [
-        { id: 'log_catch', label: 'Log Catch', icon: '🐟' },
+        { id: 'log_catch', label: 'Log Catch', icon: 'fish' },
         { id: 'species_info', label: 'Details', icon: '📖' },
         { id: 'measure', label: 'Measure', icon: '📏' },
       ],

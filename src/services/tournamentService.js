@@ -732,12 +732,12 @@ const tournamentService = {
       ).toLocaleDateString()}`,
       badge:
         userResult.rank === 1
-          ? '🥇'
+          ? 'medal'
           : userResult.rank === 2
-          ? '🥈'
+          ? 'medal'
           : userResult.rank === 3
-          ? '🥉'
-          : '🏆',
+          ? 'medal'
+          : 'trophy',
       shareText: `I placed #${userResult.rank} out of ${tournament.participantCount} anglers in ${tournament.name}! 🎣 #ProFish`,
     };
   },

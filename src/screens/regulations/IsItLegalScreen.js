@@ -18,6 +18,7 @@ import {
   getRegionRules,
 } from '../../services/regulationsService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function IsItLegalScreen({ navigation }) {
   const { colors } = useTheme();
@@ -57,10 +58,10 @@ export default function IsItLegalScreen({ navigation }) {
     return colors.warning;
   };
 
-  const getStatusEmoji = status => {
-    if (status === 'LEGAL') return '✅';
-    if (status === 'ILLEGAL') return '🚫';
-    return '⚠️';
+  const getStatusIcon = status => {
+    if (status === 'LEGAL') return <AppIcon name="circleCheck" size={20} color={colors.success || colors.accent} />;
+    if (status === 'ILLEGAL') return <AppIcon name="ban" size={20} color={colors.error} />;
+    return <AppIcon name="alertTriangle" size={20} color={colors.accent} />;
   };
 
   return (
@@ -70,7 +71,7 @@ export default function IsItLegalScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>⚖️ Is It Legal?</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="scale" size={20} color={colors.text} /><Text style={styles.headerTitle}>Is It Legal?</Text></View>
         <Text style={styles.headerDesc}>
           Check if your catch meets local regulations
         </Text>
@@ -131,7 +132,7 @@ export default function IsItLegalScreen({ navigation }) {
                     selectedSpecies === sp.id && styles.speciesTextActive,
                   ]}
                 >
-                  🐟 {sp.label}
+                  <AppIcon name="fish" size={14} color={selectedSpecies === sp.id ? colors.accent : colors.textTertiary} /> {sp.label}
                 </Text>
               </TouchableOpacity>
             ))}
@@ -159,7 +160,7 @@ export default function IsItLegalScreen({ navigation }) {
       {/* Check button */}
       {selectedSpecies && (
         <TouchableOpacity style={styles.checkBtn} onPress={handleCheck}>
-          <Text style={styles.checkBtnText}>⚖️ Check Legality</Text>
+          <Text style={styles.checkBtnText}><AppIcon name="scale" size={18} color={colors.text} /> Check Legality</Text>
         </TouchableOpacity>
       )}
 
@@ -172,7 +173,7 @@ export default function IsItLegalScreen({ navigation }) {
           ]}
         >
           <Text style={styles.resultEmoji}>
-            {getStatusEmoji(result.status)}
+            {getStatusIcon(result.status)}
           </Text>
           <Text
             style={[
@@ -218,7 +219,7 @@ export default function IsItLegalScreen({ navigation }) {
               </View>
               {result.notes && (
                 <View style={styles.notesBox}>
-                  <Text style={styles.notesText}>📝 {result.notes}</Text>
+                  <Text style={styles.notesText}><AppIcon name="fileText" size={13} color={colors.accent} /> {result.notes}</Text>
                 </View>
               )}
             </View>
@@ -227,7 +228,7 @@ export default function IsItLegalScreen({ navigation }) {
           {result.region?.licenseUrl && (
             <View style={styles.licenseLink}>
               <Text style={styles.licenseLinkText}>
-                🔗 Get License: {result.region.licenseUrl}
+                <AppIcon name="link" size={13} color={colors.primary} /> Get License: {result.region.licenseUrl}
               </Text>
             </View>
           )}
@@ -247,7 +248,7 @@ export default function IsItLegalScreen({ navigation }) {
                     },
                   ]}
                 >
-                  {issue.severity === 'illegal' ? '🚫' : '⚠️'} {issue.message}
+                  {issue.severity === 'illegal' ? <AppIcon name="ban" size={14} color={colors.error} /> : <AppIcon name="alertTriangle" size={14} color={colors.warning} />} {issue.message}
                 </Text>
               ))}
             </View>
@@ -258,7 +259,7 @@ export default function IsItLegalScreen({ navigation }) {
       {/* Disclaimer */}
       <View style={styles.disclaimer}>
         <Text style={styles.disclaimerText}>
-          ⚠️ Regulations change frequently. Always verify with your local fish &
+          <AppIcon name="alertTriangle" size={12} color={colors.warning} /> Regulations change frequently. Always verify with your local fish &
           wildlife agency before keeping any catch. This tool is for educational
           purposes only.
         </Text>

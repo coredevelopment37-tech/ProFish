@@ -19,6 +19,7 @@ import { formatWeight, formatLength } from '../../utils/units';
 import { formatNumber } from '../../utils/formatting';
 import UpgradePrompt from '../../components/UpgradePrompt';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width } = Dimensions.get('window');
 const BAR_MAX_W = width - 120;
@@ -339,7 +340,7 @@ export default function CatchStatsScreen({ navigation }) {
             accessibilityLabel="Compare catches"
             accessibilityRole="button"
           >
-            <Text style={styles.headerActionText}>⚖️</Text>
+            <AppIcon name="scale" size={18} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.headerActionBtn}
@@ -347,7 +348,7 @@ export default function CatchStatsScreen({ navigation }) {
             accessibilityLabel="Seasonal calendar"
             accessibilityRole="button"
           >
-            <Text style={styles.headerActionText}>📅</Text>
+            <AppIcon name="calendar" size={18} color={colors.text} />
           </TouchableOpacity>
         </View>
       </View>
@@ -374,7 +375,7 @@ export default function CatchStatsScreen({ navigation }) {
 
       {!stats ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>📊</Text>
+          <AppIcon name="barChart" size={48} color={colors.textTertiary} />
           <Text style={styles.emptyText}>
             {t('stats.noCatches', 'No catches to analyze yet')}
           </Text>
@@ -411,9 +412,10 @@ export default function CatchStatsScreen({ navigation }) {
 
           {/* Personal Records */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              🏆 {t('stats.personalRecords', 'Personal Records')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppIcon name="trophy" size={20} color={colors.text} />
+              <Text style={styles.sectionTitle}>{t('stats.personalRecords', 'Personal Records')}</Text>
+            </View>
             {stats.heaviest && (
               <View style={styles.recordRow}>
                 <Text style={styles.recordLabel}>
@@ -448,9 +450,10 @@ export default function CatchStatsScreen({ navigation }) {
 
           {/* Species Breakdown */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              🐟 {t('stats.topSpecies', 'Top Species')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppIcon name="fish" size={20} color={colors.text} />
+              <Text style={styles.sectionTitle}>{t('stats.topSpecies', 'Top Species')}</Text>
+            </View>
             {stats.topSpecies.map(([species, count], idx) => (
               <View key={species} style={styles.barRow}>
                 <Text style={styles.barLabel} numberOfLines={1}>
@@ -478,9 +481,10 @@ export default function CatchStatsScreen({ navigation }) {
 
           {/* Catch Trends — monthly bar chart */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              📈 {t('stats.catchTrends', 'Catch Trends')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppIcon name="trendingUp" size={20} color={colors.text} />
+              <Text style={styles.sectionTitle}>{t('stats.catchTrends', 'Catch Trends')}</Text>
+            </View>
             {(() => {
               const entries = Object.entries(stats.monthlyCount)
                 .sort((a, b) => a[0].localeCompare(b[0]))
@@ -534,9 +538,10 @@ export default function CatchStatsScreen({ navigation }) {
 
           {/* Species Collection Progress */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              🏅 {t('stats.speciesCollection', 'Species Collection')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppIcon name="medal" size={20} color={colors.text} />
+              <Text style={styles.sectionTitle}>{t('stats.speciesCollection', 'Species Collection')}</Text>
+            </View>
             <View style={styles.collectionCard}>
               <View style={styles.collectionHeader}>
                 <Text style={styles.collectionCount}>
@@ -594,9 +599,10 @@ export default function CatchStatsScreen({ navigation }) {
           {/* Catch Hot Spots — location heatmap */}
           {stats.topLocations.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                📍 {t('stats.hotSpots', 'Catch Hot Spots')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <AppIcon name="mapPin" size={20} color={colors.text} />
+                <Text style={styles.sectionTitle}>{t('stats.hotSpots', 'Catch Hot Spots')}</Text>
+              </View>
               <View style={styles.heatmapCard}>
                 {stats.topLocations.map((loc, idx) => {
                   const topSp = Object.entries(loc.species)
@@ -653,9 +659,10 @@ export default function CatchStatsScreen({ navigation }) {
 
           {/* Time Analysis */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              ⏰ {t('stats.timeAnalysis', 'Time Analysis')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <AppIcon name="clock" size={20} color={colors.text} />
+              <Text style={styles.sectionTitle}>{t('stats.timeAnalysis', 'Time Analysis')}</Text>
+            </View>
             <View style={styles.timeCard}>
               {/* Best hour + day summary */}
               <View style={styles.timeSummaryRow}>
@@ -759,9 +766,10 @@ export default function CatchStatsScreen({ navigation }) {
           {/* Bait Effectiveness */}
           {stats.topBaits.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                🎣 {t('stats.baitEffectiveness', 'Bait Effectiveness')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <AppIcon name="fish" size={20} color={colors.text} />
+                <Text style={styles.sectionTitle}>{t('stats.baitEffectiveness', 'Bait Effectiveness')}</Text>
+              </View>
               <View style={styles.baitCard}>
                 {stats.topBaits.map(([bait, data], idx) => {
                   const maxBait = stats.topBaits[0][1].count;
@@ -822,40 +830,42 @@ export default function CatchStatsScreen({ navigation }) {
           {/* Conditions Correlation */}
           {stats.conditionsCorrelation && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                🌡️ {t('stats.conditionsCorrelation', 'Conditions Correlation')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <AppIcon name="thermometer" size={20} color={colors.text} />
+                <Text style={styles.sectionTitle}>{t('stats.conditionsCorrelation', 'Conditions Correlation')}</Text>
+              </View>
               <View style={styles.correlationCard}>
                 {[
                   {
                     key: 'pressure',
-                    icon: '📊',
+                    iconName: 'barChart',
                     label: t('stats.pressure', 'Pressure (hPa)'),
                   },
                   {
                     key: 'temperature',
-                    icon: '🌡️',
+                    iconName: 'thermometer',
                     label: t('stats.temperature', 'Temperature'),
                   },
                   {
                     key: 'wind',
-                    icon: '💨',
+                    iconName: 'wind',
                     label: t('stats.wind', 'Wind Speed'),
                   },
                   {
                     key: 'tide',
-                    icon: '🌊',
+                    iconName: 'waves',
                     label: t('stats.tide', 'Tide State'),
                   },
-                ].map(({ key, icon, label }) => {
+                ].map(({ key, iconName, label }) => {
                   const data = stats.conditionsCorrelation[key];
                   if (!data || data.length === 0) return null;
                   const maxCount = Math.max(...data.map(d => d.count), 1);
                   return (
                     <View key={key} style={styles.correlationGroup}>
-                      <Text style={styles.correlationGroupLabel}>
-                        {icon} {label}
-                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <AppIcon name={iconName} size={14} color={colors.textSecondary} />
+                        <Text style={styles.correlationGroupLabel}>{label}</Text>
+                      </View>
                       {data.map(bucket => (
                         <View key={bucket.label} style={styles.correlationRow}>
                           <Text
@@ -904,9 +914,10 @@ export default function CatchStatsScreen({ navigation }) {
           {/* Catch Rate Trend */}
           {stats.catchRateTrend && stats.catchRateTrend.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>
-                📉 {t('stats.catchRateTrend', 'Catch Rate Trend')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                <AppIcon name="trendingDown" size={20} color={colors.text} />
+                <Text style={styles.sectionTitle}>{t('stats.catchRateTrend', 'Catch Rate Trend')}</Text>
+              </View>
               <View style={styles.trendCard}>
                 <Text style={styles.trendSubtitle}>
                   {t('stats.catchesPerTrip', 'Catches per trip (day)')}

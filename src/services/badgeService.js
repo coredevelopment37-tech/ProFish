@@ -18,7 +18,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'first_catch',
     name: 'First Blood',
-    icon: '🎣',
+    icon: 'fish',
     description: 'Log your first catch',
     category: 'milestones',
     check: catches => catches.length >= 1,
@@ -26,7 +26,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'ten_catches',
     name: 'Getting Started',
-    icon: '🔟',
+    icon: 'award',
     description: 'Log 10 catches',
     category: 'milestones',
     check: catches => catches.length >= 10,
@@ -34,7 +34,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'fifty_catches',
     name: 'Dedicated Angler',
-    icon: '⭐',
+    icon: 'star',
     description: 'Log 50 catches',
     category: 'milestones',
     check: catches => catches.length >= 50,
@@ -42,7 +42,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'hundred_catches',
     name: 'Century Club',
-    icon: '💯',
+    icon: 'trophy',
     description: 'Log 100 catches',
     category: 'milestones',
     check: catches => catches.length >= 100,
@@ -50,7 +50,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'five_hundred_catches',
     name: 'Master Angler',
-    icon: '🏆',
+    icon: 'trophy',
     description: 'Log 500 catches',
     category: 'milestones',
     check: catches => catches.length >= 500,
@@ -60,7 +60,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'five_species',
     name: 'Diverse Angler',
-    icon: '🐟',
+    icon: 'fish',
     description: 'Catch 5 different species',
     category: 'species',
     check: catches => {
@@ -71,7 +71,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'ten_species',
     name: 'Species Explorer',
-    icon: '🦈',
+    icon: 'fish',
     description: 'Catch 10 different species',
     category: 'species',
     check: catches => {
@@ -82,7 +82,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'twenty_species',
     name: 'Ichthyologist',
-    icon: '🧬',
+    icon: 'dna',
     description: 'Catch 20 different species',
     category: 'species',
     check: catches => {
@@ -95,7 +95,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'five_kg',
     name: 'Heavy Hitter',
-    icon: '💪',
+    icon: 'zap',
     description: 'Catch a fish over 5 kg',
     category: 'records',
     check: catches => catches.some(c => c.weight >= 5),
@@ -103,7 +103,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'ten_kg',
     name: 'Trophy Fish',
-    icon: '🏅',
+    icon: 'medal',
     description: 'Catch a fish over 10 kg',
     category: 'records',
     check: catches => catches.some(c => c.weight >= 10),
@@ -111,7 +111,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'twenty_kg',
     name: 'Monster Catch',
-    icon: '🐋',
+    icon: 'fish',
     description: 'Catch a fish over 20 kg',
     category: 'records',
     check: catches => catches.some(c => c.weight >= 20),
@@ -121,7 +121,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'streak_3',
     name: 'Three-Peat',
-    icon: '🔥',
+    icon: 'flame',
     description: 'Log catches 3 days in a row',
     category: 'streaks',
     check: catches => hasConsecutiveDays(catches, 3),
@@ -129,7 +129,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'streak_7',
     name: 'Weekly Warrior',
-    icon: '🔥🔥',
+    icon: 'flame',
     description: 'Log catches 7 days in a row',
     category: 'streaks',
     check: catches => hasConsecutiveDays(catches, 7),
@@ -137,7 +137,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'streak_30',
     name: 'Iron Angler',
-    icon: '⚡',
+    icon: 'zap',
     description: 'Log catches 30 days in a row',
     category: 'streaks',
     check: catches => hasConsecutiveDays(catches, 30),
@@ -147,7 +147,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'catch_and_release',
     name: 'Conservation Hero',
-    icon: '🌿',
+    icon: 'leaf',
     description: 'Release 10 catches',
     category: 'special',
     check: catches => catches.filter(c => c.released).length >= 10,
@@ -155,7 +155,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'night_owl',
     name: 'Night Owl',
-    icon: '🌙',
+    icon: 'moon',
     description: 'Log a catch between midnight and 5 AM',
     category: 'special',
     check: catches =>
@@ -167,7 +167,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'early_bird',
     name: 'Early Bird',
-    icon: '🌅',
+    icon: 'sunrise',
     description: 'Log a catch before 6 AM',
     category: 'special',
     check: catches =>
@@ -179,7 +179,7 @@ export const BADGE_DEFINITIONS = [
   {
     id: 'photo_logger',
     name: 'Shutterbug',
-    icon: '📸',
+    icon: 'camera',
     description: 'Log 10 catches with photos',
     category: 'special',
     check: catches => catches.filter(c => c.photoUri || c.photo).length >= 10,

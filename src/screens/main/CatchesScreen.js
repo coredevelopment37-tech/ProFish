@@ -20,6 +20,7 @@ import catchService from '../../services/catchService';
 import { useApp } from '../../store/AppContext';
 import CatchCard from '../../components/CatchCard';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const SORT_OPTIONS = ['date', 'weight', 'species'];
 const FILTER_OPTIONS = ['all', 'freshwater', 'saltwater', 'brackish'];
@@ -150,11 +151,9 @@ export default function CatchesScreen({ navigation }) {
               if (item) navigation.navigate('LogCatch', { editCatch: item });
             }}
           >
-            <Animated.Text
-              style={[styles.actionText, { transform: [{ scale }] }]}
-            >
-              ✏️
-            </Animated.Text>
+            <Animated.View style={{ transform: [{ scale }], marginBottom: 2 }}>
+              <AppIcon name="edit" size={18} color="#fff" />
+            </Animated.View>
             <Animated.Text
               style={[styles.actionLabel, { transform: [{ scale }] }]}
             >
@@ -168,11 +167,9 @@ export default function CatchesScreen({ navigation }) {
               handleDelete(id);
             }}
           >
-            <Animated.Text
-              style={[styles.actionText, { transform: [{ scale }] }]}
-            >
-              🗑️
-            </Animated.Text>
+            <Animated.View style={{ transform: [{ scale }], marginBottom: 2 }}>
+              <AppIcon name="trash" size={18} color="#fff" />
+            </Animated.View>
             <Animated.Text
               style={[styles.actionLabel, { transform: [{ scale }] }]}
             >
@@ -188,7 +185,9 @@ export default function CatchesScreen({ navigation }) {
   if (catches.length === 0 && !loading) {
     return (
       <View style={styles.empty}>
-        <Text style={styles.emptyIcon}>🎣</Text>
+        <View style={{ marginBottom: 20 }}>
+          <AppIcon name="fish" size={48} color={colors.textTertiary} />
+        </View>
         <Text style={styles.emptyTitle}>
           {t('catches.empty', 'No catches yet')}
         </Text>
@@ -218,7 +217,7 @@ export default function CatchesScreen({ navigation }) {
           onPress={() => navigation.navigate('CatchStats')}
           style={styles.statsBtn}
         >
-          <Text style={styles.statsBtnText}>📊</Text>
+          <AppIcon name="barChart" size={18} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -230,11 +229,12 @@ export default function CatchesScreen({ navigation }) {
           onSelect={setFilterBy}
           labelMap={{
             all: t('common.all', 'All'),
-            freshwater: '🏞️',
-            saltwater: '🌊',
-            brackish: '🏝️',
+            freshwater: { icon: 'treePine' },
+            saltwater: { icon: 'waves' },
+            brackish: { icon: 'leaf' },
           }}
           styles={styles}
+          colors={colors}
         />
         <TouchableOpacity
           style={styles.sortBtn}
@@ -243,9 +243,11 @@ export default function CatchesScreen({ navigation }) {
             setSortBy(SORT_OPTIONS[(idx + 1) % SORT_OPTIONS.length]);
           }}
         >
-          <Text style={styles.sortText}>
-            {sortBy === 'date' ? '📅' : sortBy === 'weight' ? '⚖️' : '🐟'}
-          </Text>
+          <AppIcon
+            name={sortBy === 'date' ? 'calendar' : sortBy === 'weight' ? 'scale' : 'fish'}
+            size={18}
+            color={colors.text}
+          />
         </TouchableOpacity>
       </View>
 
@@ -288,22 +290,33 @@ export default function CatchesScreen({ navigation }) {
   );
 }
 
-function ScrollableChips({ options, selected, onSelect, labelMap, styles }) {
+function ScrollableChips({ options, selected, onSelect, labelMap, styles, colors }) {
   return (
     <View style={styles.chips}>
-      {options.map(opt => (
-        <TouchableOpacity
-          key={opt}
-          style={[styles.chip, selected === opt && styles.chipActive]}
-          onPress={() => onSelect(opt)}
-        >
-          <Text
-            style={[styles.chipText, selected === opt && styles.chipTextActive]}
+      {options.map(opt => {
+        const entry = labelMap[opt] || opt;
+        return (
+          <TouchableOpacity
+            key={opt}
+            style={[styles.chip, selected === opt && styles.chipActive]}
+            onPress={() => onSelect(opt)}
           >
-            {labelMap[opt] || opt}
-          </Text>
-        </TouchableOpacity>
-      ))}
+            {typeof entry === 'object' && entry.icon ? (
+              <AppIcon
+                name={entry.icon}
+                size={16}
+                color={selected === opt ? colors.primary : colors.textTertiary}
+              />
+            ) : (
+              <Text
+                style={[styles.chipText, selected === opt && styles.chipTextActive]}
+              >
+                {entry}
+              </Text>
+            )}
+          </TouchableOpacity>
+        );
+      })}
     </View>
   );
 }

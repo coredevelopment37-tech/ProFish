@@ -27,7 +27,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'channel_catfish',
     name: 'Channel Catfish',
-    emoji: '🐱',
+    emoji: 'fish',
     nightRating: 95,
     peakHours: '10:00 PM – 2:00 AM',
     bestMoonPhase: 'new_moon',
@@ -45,7 +45,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'blue_catfish',
     name: 'Blue Catfish',
-    emoji: '🐱',
+    emoji: 'fish',
     nightRating: 93,
     peakHours: '9:00 PM – 3:00 AM',
     bestMoonPhase: 'new_moon',
@@ -63,7 +63,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'flathead_catfish',
     name: 'Flathead Catfish',
-    emoji: '🐱',
+    emoji: 'fish',
     nightRating: 98,
     peakHours: '11:00 PM – 4:00 AM',
     bestMoonPhase: 'new_moon',
@@ -81,7 +81,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'walleye',
     name: 'Walleye',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 96,
     peakHours: '9:00 PM – 1:00 AM',
     bestMoonPhase: 'quarter_moon',
@@ -99,7 +99,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'crappie',
     name: 'Crappie',
-    emoji: '🐠',
+    emoji: 'fish',
     nightRating: 88,
     peakHours: '8:00 PM – 12:00 AM',
     bestMoonPhase: 'any',
@@ -117,7 +117,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'largemouth_bass',
     name: 'Largemouth Bass',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 85,
     peakHours: '9:00 PM – 12:00 AM',
     bestMoonPhase: 'full_moon',
@@ -140,7 +140,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'striped_bass',
     name: 'Striped Bass',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 92,
     peakHours: '10:00 PM – 2:00 AM',
     bestMoonPhase: 'new_moon',
@@ -158,7 +158,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'snook',
     name: 'Snook',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 94,
     peakHours: '9:00 PM – 1:00 AM',
     bestMoonPhase: 'new_moon',
@@ -181,7 +181,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'flounder',
     name: 'Flounder (Gigging)',
-    emoji: '🫓',
+    emoji: 'fish',
     nightRating: 90,
     peakHours: '9:00 PM – 2:00 AM',
     bestMoonPhase: 'new_moon',
@@ -200,7 +200,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'swordfish',
     name: 'Swordfish',
-    emoji: '⚔️',
+    emoji: 'fish',
     nightRating: 99,
     peakHours: '8:00 PM – 4:00 AM',
     bestMoonPhase: 'new_moon',
@@ -218,7 +218,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'squid',
     name: 'Squid',
-    emoji: '🦑',
+    emoji: 'fish',
     nightRating: 97,
     peakHours: '8:00 PM – 12:00 AM',
     bestMoonPhase: 'new_moon',
@@ -236,7 +236,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'brown_trout',
     name: 'Brown Trout',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 88,
     peakHours: '10:00 PM – 2:00 AM',
     bestMoonPhase: 'new_moon',
@@ -259,7 +259,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'tarpon',
     name: 'Tarpon',
-    emoji: '👑',
+    emoji: 'crown',
     nightRating: 91,
     peakHours: '10:00 PM – 3:00 AM',
     bestMoonPhase: 'new_moon',
@@ -277,7 +277,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'redfish',
     name: 'Redfish / Red Drum',
-    emoji: '🔴',
+    emoji: 'circleDot',
     nightRating: 82,
     peakHours: '8:00 PM – 12:00 AM',
     bestMoonPhase: 'full_moon',
@@ -295,7 +295,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'carp',
     name: 'Carp',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 86,
     peakHours: '9:00 PM – 3:00 AM',
     bestMoonPhase: 'any',
@@ -313,7 +313,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'bowfin',
     name: 'Bowfin',
-    emoji: '🐲',
+    emoji: 'fish',
     nightRating: 80,
     peakHours: '9:00 PM – 1:00 AM',
     bestMoonPhase: 'any',
@@ -331,7 +331,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'eel',
     name: 'Freshwater Eel',
-    emoji: '🐍',
+    emoji: 'fish',
     nightRating: 95,
     peakHours: '10:00 PM – 4:00 AM',
     bestMoonPhase: 'new_moon',
@@ -349,7 +349,7 @@ export const NIGHT_SPECIES = [
   {
     id: 'zander',
     name: 'Zander (Pikeperch)',
-    emoji: '🐟',
+    emoji: 'fish',
     nightRating: 94,
     peakHours: '9:00 PM – 1:00 AM',
     bestMoonPhase: 'quarter_moon',
@@ -388,7 +388,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_green_submersible',
     name: 'Green Submersible LED Light',
-    emoji: '💚',
+    emoji: 'lightbulb',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'essential',
@@ -403,7 +403,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_uv_blacklight',
     name: 'UV/Blacklight Rod Tip Light',
-    emoji: '🟣',
+    emoji: 'lightbulb',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'essential',
@@ -418,7 +418,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_headlamp_red',
     name: 'Red-Light Headlamp',
-    emoji: '🔴',
+    emoji: 'circleDot',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'essential',
@@ -433,7 +433,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_dock_light',
     name: 'Portable Dock/Pier Light',
-    emoji: '💡',
+    emoji: 'lightbulb',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -448,7 +448,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_glowsticks',
     name: 'Chemical Glow Sticks (Rod Tip)',
-    emoji: '✨',
+    emoji: 'sparkles',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'essential',
@@ -463,7 +463,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_boat_nav_lights',
     name: 'Navigation Lights (Boat)',
-    emoji: '🚢',
+    emoji: 'ship',
     category: 'lighting',
     connectivity: 'NONE',
     priority: 'legal_required',
@@ -480,7 +480,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_bluetooth_sonar',
     name: 'Bluetooth Cast Sonar',
-    emoji: '📡',
+    emoji: 'satellite',
     category: 'electronics',
     connectivity: 'BLE',
     priority: 'recommended',
@@ -498,7 +498,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_bluetooth_bite_alarm',
     name: 'Bluetooth Bite Alarm',
-    emoji: '🔔',
+    emoji: 'bell',
     category: 'electronics',
     connectivity: 'BLE',
     priority: 'essential',
@@ -521,7 +521,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_smart_bobber',
     name: 'Smart Bluetooth Bobber',
-    emoji: '🔵',
+    emoji: 'circle',
     category: 'electronics',
     connectivity: 'BLE',
     priority: 'optional',
@@ -539,7 +539,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_wifi_camera',
     name: 'Underwater WiFi Camera',
-    emoji: '📹',
+    emoji: 'video',
     category: 'electronics',
     connectivity: 'WiFi',
     priority: 'optional',
@@ -557,7 +557,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_gps_tracker',
     name: 'Personal GPS Tracker (SOS)',
-    emoji: '🆘',
+    emoji: 'shieldAlert',
     category: 'electronics',
     connectivity: 'SIM',
     priority: 'essential',
@@ -575,7 +575,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_smart_watch',
     name: 'Fishing Smartwatch',
-    emoji: '⌚',
+    emoji: 'watch',
     category: 'electronics',
     connectivity: 'BLE',
     priority: 'recommended',
@@ -593,7 +593,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_trolling_motor',
     name: 'GPS Trolling Motor (Spot-Lock)',
-    emoji: '⚙️',
+    emoji: 'settings',
     category: 'electronics',
     connectivity: 'BLE',
     priority: 'optional',
@@ -611,7 +611,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_power_bank',
     name: 'High-Capacity Power Bank',
-    emoji: '🔋',
+    emoji: 'battery',
     category: 'electronics',
     connectivity: 'USB',
     priority: 'essential',
@@ -628,7 +628,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_life_jacket_auto',
     name: 'Auto-Inflate Life Jacket',
-    emoji: '🦺',
+    emoji: 'shieldCheck',
     category: 'safety',
     connectivity: 'NONE',
     priority: 'essential',
@@ -643,7 +643,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_strobe_light',
     name: 'Emergency Strobe / Signal Light',
-    emoji: '🔦',
+    emoji: 'flashlight',
     category: 'safety',
     connectivity: 'NONE',
     priority: 'essential',
@@ -658,7 +658,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_whistle',
     name: 'Safety Whistle',
-    emoji: '📢',
+    emoji: 'megaphone',
     category: 'safety',
     connectivity: 'NONE',
     priority: 'essential',
@@ -672,7 +672,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_first_aid',
     name: 'Waterproof First Aid Kit',
-    emoji: '🏥',
+    emoji: 'heartPulse',
     category: 'safety',
     connectivity: 'NONE',
     priority: 'essential',
@@ -691,7 +691,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_waterproof_phone_case',
     name: 'Waterproof Phone Case (IP68+)',
-    emoji: '📱',
+    emoji: 'smartphone',
     category: 'safety',
     connectivity: 'NONE',
     priority: 'essential',
@@ -706,7 +706,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_buddy_radio',
     name: 'Walkie-Talkie / VHF Radio',
-    emoji: '📻',
+    emoji: 'radio',
     category: 'safety',
     connectivity: 'SIM',
     priority: 'recommended',
@@ -723,7 +723,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_reflective_jacket',
     name: 'Reflective/Hi-Vis Fishing Jacket',
-    emoji: '🧥',
+    emoji: 'shirt',
     category: 'clothing',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -737,7 +737,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_insulated_gloves',
     name: 'Insulated Fishing Gloves',
-    emoji: '🧤',
+    emoji: 'hand',
     category: 'clothing',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -752,7 +752,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_wading_boots_studded',
     name: 'Studded Wading Boots (Gigging)',
-    emoji: '👢',
+    emoji: 'footprints',
     category: 'clothing',
     connectivity: 'NONE',
     priority: 'essential',
@@ -769,7 +769,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_glow_lures',
     name: 'Glow-in-Dark / UV Lures',
-    emoji: '🌟',
+    emoji: 'star',
     category: 'lures_bait',
     connectivity: 'NONE',
     priority: 'essential',
@@ -784,7 +784,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_dark_topwater',
     name: 'Dark-Colored Topwater Lures',
-    emoji: '⬛',
+    emoji: 'square',
     category: 'lures_bait',
     connectivity: 'NONE',
     priority: 'essential',
@@ -803,7 +803,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_rattle_lures',
     name: 'Rattle / Vibrating Lures',
-    emoji: '🔊',
+    emoji: 'volume2',
     category: 'lures_bait',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -818,7 +818,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_scented_bait',
     name: 'Scented/Stink Baits',
-    emoji: '👃',
+    emoji: 'wind',
     category: 'lures_bait',
     connectivity: 'NONE',
     priority: 'essential',
@@ -840,7 +840,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_camp_chair',
     name: 'Reclining Bank Fishing Chair',
-    emoji: '🪑',
+    emoji: 'armchair',
     category: 'comfort',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -859,7 +859,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_thermos',
     name: 'Insulated Thermos (Hot Drinks)',
-    emoji: '☕',
+    emoji: 'coffee',
     category: 'comfort',
     connectivity: 'NONE',
     priority: 'recommended',
@@ -874,7 +874,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_bug_repellent',
     name: 'Bug Repellent (Deet/Thermacell)',
-    emoji: '🦟',
+    emoji: 'bug',
     category: 'comfort',
     connectivity: 'NONE',
     priority: 'essential',
@@ -891,7 +891,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_fishing_license',
     name: 'Fishing License (Night Valid)',
-    emoji: '📄',
+    emoji: 'fileText',
     category: 'legal',
     connectivity: 'APP',
     priority: 'legal_required',
@@ -906,7 +906,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_gig_license',
     name: 'Gigging/Spearing Permit',
-    emoji: '📜',
+    emoji: 'scroll',
     category: 'legal',
     connectivity: 'APP',
     priority: 'legal_required',
@@ -923,7 +923,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_gigging_light',
     name: 'High-Power Gigging LED Light',
-    emoji: '🔆',
+    emoji: 'lightbulb',
     category: 'gigging',
     connectivity: 'NONE',
     priority: 'essential',
@@ -938,7 +938,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_gig_spear',
     name: 'Flounder Gig (Multi-Prong Spear)',
-    emoji: '🔱',
+    emoji: 'trident',
     category: 'gigging',
     connectivity: 'NONE',
     priority: 'essential',
@@ -953,7 +953,7 @@ export const NIGHT_GEAR = [
   {
     id: 'ng_stringer_basket',
     name: 'Fish Stringer / Mesh Basket',
-    emoji: '🧺',
+    emoji: 'basket',
     category: 'gigging',
     connectivity: 'NONE',
     priority: 'essential',
@@ -1443,7 +1443,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🌙',
+    emoji: 'moon',
     topics: [
       'Why fish at night',
       'Essential gear overview',
@@ -1457,7 +1457,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '💚',
+    emoji: 'lightbulb',
     topics: [
       'Green vs white vs blue',
       'Food chain reaction',
@@ -1471,7 +1471,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '7 min',
-    emoji: '🌑',
+    emoji: 'moon',
     topics: [
       'New moon vs full moon tactics',
       'Species preferences',
@@ -1485,7 +1485,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '12 min',
-    emoji: '🐱',
+    emoji: 'fish',
     topics: [
       'Channel vs Blue vs Flathead at night',
       'Best baits',
@@ -1499,7 +1499,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'advanced',
     duration: '10 min',
-    emoji: '💥',
+    emoji: 'zap',
     topics: [
       'Black buzzbait technique',
       'Silhouette principle',
@@ -1513,7 +1513,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '9 min',
-    emoji: '👁️',
+    emoji: 'eye',
     topics: [
       'Tapetum lucidum advantage',
       'Rocky point patterns',
@@ -1527,7 +1527,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🏗️',
+    emoji: 'building',
     topics: [
       'The shadow line theory',
       'Target species',
@@ -1541,7 +1541,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'advanced',
     duration: '15 min',
-    emoji: '🔱',
+    emoji: 'trident',
     topics: [
       'Equipment checklist',
       'Tide timing',
@@ -1556,7 +1556,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '📡',
+    emoji: 'satellite',
     topics: [
       'Bluetooth sonar at night',
       'Underwater cameras with IR',
@@ -1570,7 +1570,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'beginner',
     duration: '12 min',
-    emoji: '🆘',
+    emoji: 'shieldAlert',
     topics: [
       'PFD requirements',
       'Check-in systems',
@@ -1585,7 +1585,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🦑',
+    emoji: 'fish',
     topics: [
       'Japanese eging technique',
       'Light setup for squid',
@@ -1599,7 +1599,7 @@ export const NIGHT_LESSONS = [
     category: 'night_fishing',
     difficulty: 'advanced',
     duration: '14 min',
-    emoji: '🎣',
+    emoji: 'fish',
     topics: [
       'Bivvy setup',
       'Hair rig technique',

@@ -23,16 +23,17 @@ import {
 import { useTranslation } from 'react-i18next';
 import communityService, { POST_TYPES } from '../../services/communityService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // ── Post Card Component ──────────────────────────────────
 function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, colors }) {
   const isLiked = post._isLiked || false;
-  const typeIcon =
+  const typeIconName =
     post.type === POST_TYPES.CATCH_SHARE
-      ? '🐟'
+      ? 'fish'
       : post.type === POST_TYPES.TIP
-      ? '💡'
-      : '❓';
+      ? 'lightbulb'
+      : 'helpCircle';
 
   return (
     <View style={styles.postCard}>
@@ -49,16 +50,19 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, col
             />
           ) : (
             <View style={styles.authorAvatarPlaceholder}>
-              <Text style={styles.authorAvatarText}>🎣</Text>
+              <AppIcon name="fish" size={20} color={colors.primary} />
             </View>
           )}
           <View style={styles.authorInfo}>
             <Text style={styles.authorName}>
               {post.author?.displayName || 'Angler'}
             </Text>
-            <Text style={styles.postTime}>
-              {typeIcon} {formatTimeAgo(post.createdAt)}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <AppIcon name={typeIconName} size={12} color={colors.textTertiary} />
+              <Text style={styles.postTime}>
+                {formatTimeAgo(post.createdAt)}
+              </Text>
+            </View>
           </View>
         </TouchableOpacity>
         <TouchableOpacity
@@ -90,23 +94,35 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, col
             </Text>
             <View style={styles.catchStats}>
               {post.catchData.weight && (
-                <Text style={styles.catchStat}>
-                  ⚖️ {post.catchData.weight.toFixed(1)} kg
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                  <AppIcon name="scale" size={13} color={colors.primary} />
+                  <Text style={styles.catchStat}>
+                    {post.catchData.weight.toFixed(1)} kg
+                  </Text>
+                </View>
               )}
               {post.catchData.length && (
-                <Text style={styles.catchStat}>
-                  📏 {post.catchData.length.toFixed(0)} cm
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                  <AppIcon name="ruler" size={13} color={colors.primary} />
+                  <Text style={styles.catchStat}>
+                    {post.catchData.length.toFixed(0)} cm
+                  </Text>
+                </View>
               )}
               {post.catchData.bait && (
-                <Text style={styles.catchStat}>🪝 {post.catchData.bait}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+                  <AppIcon name="anchor" size={13} color={colors.primary} />
+                  <Text style={styles.catchStat}>{post.catchData.bait}</Text>
+                </View>
               )}
             </View>
             {post.catchData.released && (
-              <Text style={styles.releasedTag}>
-                🏷️ {t('community.released', 'Catch & Release')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <AppIcon name="fish" size={12} color={colors.success} />
+                <Text style={styles.releasedTag}>
+                  {t('community.released', 'Catch & Release')}
+                </Text>
+              </View>
             )}
           </View>
         </View>
@@ -126,7 +142,10 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, col
 
       {/* Location */}
       {post.location?.name ? (
-        <Text style={styles.postLocation}>📍 {post.location.name}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 8 }}>
+          <AppIcon name="mapPin" size={14} color={colors.textTertiary} />
+          <Text style={styles.postLocation}>{post.location.name}</Text>
+        </View>
       ) : null}
 
       {/* Actions */}
@@ -135,9 +154,12 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, col
           style={styles.actionBtn}
           onPress={() => onLike(post.id)}
         >
-          <Text style={[styles.actionIcon, isLiked && styles.actionLiked]}>
-            {isLiked ? '❤️' : '🤍'}
-          </Text>
+          <AppIcon
+            name="heart"
+            size={18}
+            color={isLiked ? colors.error : colors.textTertiary}
+            fill={isLiked ? colors.error : 'none'}
+          />
           <Text style={[styles.actionText, isLiked && styles.actionLiked]}>
             {post.likeCount || 0}
           </Text>
@@ -146,7 +168,7 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, col
           style={styles.actionBtn}
           onPress={() => onComment(post)}
         >
-          <Text style={styles.actionIcon}>💬</Text>
+          <AppIcon name="messageCircle" size={18} color={colors.textTertiary} />
           <Text style={styles.actionText}>{post.commentCount || 0}</Text>
         </TouchableOpacity>
       </View>
@@ -340,7 +362,7 @@ export default function CommunityScreen({ navigation }) {
     () =>
       !loading ? (
         <View style={styles.emptyState}>
-          <Text style={styles.emptyIcon}>🎣</Text>
+          <AppIcon name="fish" size={48} color={colors.textTertiary} />
           <Text style={styles.emptyTitle}>
             {t('community.emptyTitle', 'No Posts Yet')}
           </Text>
@@ -377,7 +399,7 @@ export default function CommunityScreen({ navigation }) {
             accessibilityLabel="Notifications"
             accessibilityRole="button"
           >
-            <Text style={styles.composeBtnText}>🔔</Text>
+            <AppIcon name="bell" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.composeBtn}
@@ -385,7 +407,7 @@ export default function CommunityScreen({ navigation }) {
             accessibilityLabel={t('leaderboard.title', 'Leaderboard')}
             accessibilityRole="button"
           >
-            <Text style={styles.composeBtnText}>🏆</Text>
+            <AppIcon name="trophy" size={20} color="#fff" />
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.composeBtn}
@@ -393,31 +415,35 @@ export default function CommunityScreen({ navigation }) {
             accessibilityLabel={t('community.newPost', 'New post')}
             accessibilityRole="button"
           >
-            <Text style={styles.composeBtnText}>✏️</Text>
+            <AppIcon name="edit" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
 
       {/* Post type filters */}
       <View style={styles.typeRow}>
-        <TouchableOpacity style={styles.typeChip}>
+        <TouchableOpacity style={[styles.typeChip, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+          <AppIcon name="waves" size={14} color={colors.textSecondary} />
           <Text style={styles.typeChipText}>
-            {t('community.all', '🌊 All')}
+            {t('community.all', 'All')}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.typeChip}>
+        <TouchableOpacity style={[styles.typeChip, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+          <AppIcon name="fish" size={14} color={colors.textSecondary} />
           <Text style={styles.typeChipText}>
-            {t('community.catches', '🐟 Catches')}
+            {t('community.catches', 'Catches')}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.typeChip}>
+        <TouchableOpacity style={[styles.typeChip, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+          <AppIcon name="lightbulb" size={14} color={colors.textSecondary} />
           <Text style={styles.typeChipText}>
-            {t('community.tips', '💡 Tips')}
+            {t('community.tips', 'Tips')}
           </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.typeChip}>
+        <TouchableOpacity style={[styles.typeChip, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+          <AppIcon name="helpCircle" size={14} color={colors.textSecondary} />
           <Text style={styles.typeChipText}>
-            {t('community.questions', '❓ Q&A')}
+            {t('community.questions', 'Q&A')}
           </Text>
         </TouchableOpacity>
       </View>
@@ -474,9 +500,12 @@ export default function CommunityScreen({ navigation }) {
                 ]}
                 onPress={() => setComposeType(POST_TYPES.TIP)}
               >
-                <Text style={styles.composeTypeText}>
-                  💡 {t('community.tip', 'Tip')}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <AppIcon name="lightbulb" size={16} color={colors.textSecondary} />
+                  <Text style={styles.composeTypeText}>
+                    {t('community.tip', 'Tip')}
+                  </Text>
+                </View>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[
@@ -486,9 +515,12 @@ export default function CommunityScreen({ navigation }) {
                 ]}
                 onPress={() => setComposeType(POST_TYPES.QUESTION)}
               >
-                <Text style={styles.composeTypeText}>
-                  ❓ {t('community.question', 'Question')}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <AppIcon name="helpCircle" size={16} color={colors.textSecondary} />
+                  <Text style={styles.composeTypeText}>
+                    {t('community.question', 'Question')}
+                  </Text>
+                </View>
               </TouchableOpacity>
             </View>
 
@@ -632,7 +664,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderRadius: 12,
     marginBottom: 12,
   },
-  postLocation: { color: colors.textTertiary, fontSize: 12, marginBottom: 8 },
+  postLocation: { color: colors.textTertiary, fontSize: 12 },
   actionsRow: {
     flexDirection: 'row',
     gap: 20,

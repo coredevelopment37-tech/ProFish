@@ -17,6 +17,7 @@ import {
   dismissCoachMark,
 } from '../services/coachMarkService';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -87,14 +88,17 @@ export default function CoachMark({ markId, anchorStyle, children }) {
           ]}
         >
           <View style={styles.tooltipContent}>
-            <Text style={styles.tooltipEmoji}>{mark.emoji}</Text>
+            <AppIcon name={mark.emoji} size={28} color={colors.primary} />
             <View style={styles.tooltipTextWrap}>
               <Text style={styles.tooltipTitle}>{mark.title}</Text>
               <Text style={styles.tooltipMessage}>{mark.message}</Text>
             </View>
           </View>
           <TouchableOpacity onPress={handleDismiss} style={styles.dismissBtn}>
-            <Text style={styles.dismissText}>Got it ✓</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.dismissText}>Got it </Text>
+              <AppIcon name="check" size={14} color={colors.text} />
+            </View>
           </TouchableOpacity>
           {/* Arrow */}
           <View

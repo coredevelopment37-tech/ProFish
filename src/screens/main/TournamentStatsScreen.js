@@ -17,6 +17,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import tournamentService from '../../services/tournamentService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function TournamentStatsScreen({ navigation }) {
   const { t } = useTranslation();
@@ -81,7 +82,17 @@ export default function TournamentStatsScreen({ navigation }) {
               <Text style={[styles.statValue, { color: colors.accent }]}>
                 {stats.wins}
               </Text>
-              <Text style={styles.statLabel}>Wins 🥇</Text>
+              <View
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}
+              >
+                <Text style={styles.statLabel}>Wins</Text>
+                <AppIcon name="medal" size={12} color="#FFD700" />
+              </View>
             </View>
             <View style={styles.statCard}>
               <Text style={styles.statValue}>{stats.topThree}</Text>
@@ -111,7 +122,7 @@ export default function TournamentStatsScreen({ navigation }) {
 
         {history.length === 0 ? (
           <View style={styles.emptyState}>
-            <Text style={styles.emptyIcon}>🏆</Text>
+            <AppIcon name="trophy" size={48} color={colors.textTertiary} />
             <Text style={styles.emptyText}>
               No tournament history yet. Join your first tournament!
             </Text>
@@ -128,15 +139,15 @@ export default function TournamentStatsScreen({ navigation }) {
               }
             >
               <View style={styles.historyLeft}>
-                <Text style={styles.historyMedal}>
-                  {item.rank === 1
-                    ? '🥇'
-                    : item.rank === 2
-                    ? '🥈'
-                    : item.rank === 3
-                    ? '🥉'
-                    : '🏆'}
-                </Text>
+                {item.rank === 1 ? (
+                  <AppIcon name="medal" size={24} color="#FFD700" />
+                ) : item.rank === 2 ? (
+                  <AppIcon name="medal" size={24} color="#C0C0C0" />
+                ) : item.rank === 3 ? (
+                  <AppIcon name="medal" size={24} color="#CD7F32" />
+                ) : (
+                  <AppIcon name="trophy" size={24} color={colors.accent} />
+                )}
               </View>
               <View style={styles.historyInfo}>
                 <Text style={styles.historyName}>{item.name}</Text>
@@ -159,73 +170,83 @@ export default function TournamentStatsScreen({ navigation }) {
   );
 }
 
-const createStyles = (colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: colors.background,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    loadingContainer: {
+      flex: 1,
+      backgroundColor: colors.background,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
 
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 56 : 16,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: colors.text },
-  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: Platform.OS === 'ios' ? 56 : 16,
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+    },
+    backBtn: { width: 44, height: 44, justifyContent: 'center' },
+    backText: { fontSize: 28, color: colors.text },
+    title: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text,
+      marginLeft: 8,
+    },
 
-  scroll: { flex: 1, paddingHorizontal: 16 },
+    scroll: { flex: 1, paddingHorizontal: 16 },
 
-  statsGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 24,
-  },
-  statCard: {
-    width: '31%',
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 14,
-    alignItems: 'center',
-  },
-  statValue: {
-    color: colors.text,
-    fontSize: 24,
-    fontWeight: '800',
-    marginBottom: 4,
-  },
-  statLabel: { color: colors.textTertiary, fontSize: 11 },
+    statsGrid: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: 10,
+      marginBottom: 24,
+    },
+    statCard: {
+      width: '31%',
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 14,
+      alignItems: 'center',
+    },
+    statValue: {
+      color: colors.text,
+      fontSize: 24,
+      fontWeight: '800',
+      marginBottom: 4,
+    },
+    statLabel: { color: colors.textTertiary, fontSize: 11 },
 
-  sectionTitle: {
-    color: colors.text,
-    fontSize: 17,
-    fontWeight: '700',
-    marginBottom: 12,
-  },
+    sectionTitle: {
+      color: colors.text,
+      fontSize: 17,
+      fontWeight: '700',
+      marginBottom: 12,
+    },
 
-  historyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: colors.surface,
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
-  },
-  historyLeft: { width: 40, alignItems: 'center' },
-  historyMedal: { fontSize: 24 },
-  historyInfo: { flex: 1, marginLeft: 10 },
-  historyName: { color: colors.text, fontSize: 15, fontWeight: '600' },
-  historyMeta: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
-  historyDate: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
-  historyScore: { color: colors.accent, fontSize: 18, fontWeight: '800' },
+    historyCard: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.surface,
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 10,
+    },
+    historyLeft: { width: 40, alignItems: 'center' },
+    historyMedal: { fontSize: 24 },
+    historyInfo: { flex: 1, marginLeft: 10 },
+    historyName: { color: colors.text, fontSize: 15, fontWeight: '600' },
+    historyMeta: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
+    historyDate: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
+    historyScore: { color: colors.accent, fontSize: 18, fontWeight: '800' },
 
-  emptyState: { alignItems: 'center', paddingVertical: 40 },
-  emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: colors.textTertiary, fontSize: 15, textAlign: 'center' },
-});
+    emptyState: { alignItems: 'center', paddingVertical: 40 },
+    emptyIcon: { fontSize: 48, marginBottom: 12 },
+    emptyText: {
+      color: colors.textTertiary,
+      fontSize: 15,
+      textAlign: 'center',
+    },
+  });

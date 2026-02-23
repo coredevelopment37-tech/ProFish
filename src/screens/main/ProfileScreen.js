@@ -26,6 +26,7 @@ import catchService from '../../services/catchService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PaywallModal from '../../components/PaywallModal';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -340,7 +341,7 @@ export default function ProfileScreen({ navigation }) {
           {photoURL ? (
             <Image source={{ uri: photoURL }} style={styles.avatarImage} />
           ) : (
-            <Text style={styles.avatarText}>🎣</Text>
+            <AppIcon name="fish" size={32} color={colors.primary} />
           )}
         </View>
         <Text style={styles.name}>
@@ -361,9 +362,12 @@ export default function ProfileScreen({ navigation }) {
       {/* Account linking banner for anonymous users */}
       {isAnonymous && (
         <View style={styles.linkBanner}>
-          <Text style={styles.linkBannerTitle}>
-            ⚠️ {t('profile.guestMode', 'Guest Mode')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AppIcon name="alertTriangle" size={14} color={colors.warning} />
+            <Text style={styles.linkBannerTitle}>
+              {t('profile.guestMode', 'Guest Mode')}
+            </Text>
+          </View>
           <Text style={styles.linkBannerText}>
             {t(
               'profile.guestWarning',
@@ -448,9 +452,14 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.rowLabel}>{t('profile.theme', 'Theme')}</Text>
           <Text style={styles.rowValue}>
             {(state.theme || 'dark') === 'dark'
-              ? t('profile.darkMode', '🌙 Dark')
-              : t('profile.lightMode', '☀️ Light')}
+              ? t('profile.darkMode', 'Dark')
+              : t('profile.lightMode', 'Light')}
           </Text>
+          <AppIcon
+            name={(state.theme || 'dark') === 'dark' ? 'moon' : 'sun'}
+            size={18}
+            color={colors.textTertiary}
+          />
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -473,9 +482,12 @@ export default function ProfileScreen({ navigation }) {
           accessibilityLabel={t('profile.catchStats', 'Catch Statistics')}
           accessibilityRole="button"
         >
-          <Text style={styles.rowLabel}>
-            📊 {t('profile.catchStats', 'Catch Statistics')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AppIcon name="barChart" size={20} color={colors.text} />
+            <Text style={styles.rowLabel}>
+              {t('profile.catchStats', 'Catch Statistics')}
+            </Text>
+          </View>
           <Text style={styles.rowArrow}>→</Text>
         </TouchableOpacity>
 
@@ -488,9 +500,12 @@ export default function ProfileScreen({ navigation }) {
           )}
           accessibilityRole="button"
         >
-          <Text style={styles.rowLabel}>
-            ⚙️ {t('profile.advancedSettings', 'Advanced Settings')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AppIcon name="settings" size={20} color={colors.text} />
+            <Text style={styles.rowLabel}>
+              {t('profile.advancedSettings', 'Advanced Settings')}
+            </Text>
+          </View>
           <Text style={styles.rowArrow}>→</Text>
         </TouchableOpacity>
 
@@ -500,9 +515,12 @@ export default function ProfileScreen({ navigation }) {
           accessibilityLabel={t('profile.favoriteSpecies', 'Favorite Species')}
           accessibilityRole="button"
         >
-          <Text style={styles.rowLabel}>
-            ⭐ {t('profile.favoriteSpecies', 'Favorite Species')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <AppIcon name="star" size={18} color="#FFD700" />
+            <Text style={styles.rowLabel}>
+              {t('profile.favoriteSpecies', 'Favorite Species')}
+            </Text>
+          </View>
           <Text style={styles.rowValue}>
             {favoriteSpecies.length
               ? `${favoriteSpecies.length} ${t('profile.selected', 'selected')}`
@@ -517,9 +535,12 @@ export default function ProfileScreen({ navigation }) {
           accessibilityLabel={t('profile.exportData', 'Export My Data')}
           accessibilityRole="button"
         >
-          <Text style={styles.rowLabel}>
-            📥 {t('profile.exportData', 'Export My Data')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+            <AppIcon name="download" size={20} color={colors.text} />
+            <Text style={styles.rowLabel}>
+              {t('profile.exportData', 'Export My Data')}
+            </Text>
+          </View>
           <Text style={styles.rowValue}>{exporting ? '...' : 'JSON'}</Text>
         </TouchableOpacity>
       </View>
@@ -542,20 +563,25 @@ export default function ProfileScreen({ navigation }) {
               </Text>
             </View>
             {subInfo.tier !== 'free' && subInfo.days != null && (
-              <Text
-                style={[
-                  styles.subDays,
-                  subInfo.expiring && { color: colors.warning },
-                ]}
-              >
-                {subInfo.expiring
-                  ? t('profile.expiringSoon', '⚠️ Expires in {{days}} days', {
-                      days: subInfo.days,
-                    })
-                  : t('profile.daysRemaining', '{{days}} days remaining', {
-                      days: subInfo.days,
-                    })}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                {subInfo.expiring && (
+                  <AppIcon name="alertTriangle" size={16} color={colors.warning} />
+                )}
+                <Text
+                  style={[
+                    styles.subDays,
+                    subInfo.expiring && { color: colors.warning },
+                  ]}
+                >
+                  {subInfo.expiring
+                    ? t('profile.expiringSoon', 'Expires in {{days}} days', {
+                        days: subInfo.days,
+                      })
+                    : t('profile.daysRemaining', '{{days}} days remaining', {
+                        days: subInfo.days,
+                      })}
+                </Text>
+              </View>
             )}
           </View>
           {subInfo.tier === 'free' ? (

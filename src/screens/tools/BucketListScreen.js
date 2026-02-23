@@ -14,126 +14,127 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const SUGGESTED_BUCKET_LIST = [
   {
     species: 'Largemouth Bass',
     region: 'North America',
-    emoji: '🐟',
+    icon: 'fish',
     difficulty: 'Easy',
   },
   {
     species: 'Rainbow Trout',
     region: 'Global',
-    emoji: '🌈',
+    icon: 'sparkles',
     difficulty: 'Easy',
   },
   {
     species: 'Tarpon',
     region: 'Florida / Caribbean',
-    emoji: '⚡',
+    icon: 'zap',
     difficulty: 'Medium',
   },
   {
     species: 'Peacock Bass',
     region: 'Amazon / Florida',
-    emoji: '🌴',
+    icon: 'treePine',
     difficulty: 'Medium',
   },
   {
     species: 'Blue Marlin',
     region: 'Atlantic / Pacific',
-    emoji: '🏆',
+    icon: 'trophy',
     difficulty: 'Hard',
   },
   {
     species: 'Giant Trevally',
     region: 'Indo-Pacific',
-    emoji: '💪',
+    icon: 'zap',
     difficulty: 'Hard',
   },
   {
     species: 'Atlantic Salmon',
     region: 'Scandinavia / Canada',
-    emoji: '🏔️',
+    icon: 'mountain',
     difficulty: 'Medium',
   },
   {
     species: 'Permit',
     region: 'Florida Keys / Belize',
-    emoji: '🎯',
+    icon: 'target',
     difficulty: 'Very Hard',
   },
   {
     species: 'Golden Dorado',
     region: 'South America',
-    emoji: '✨',
+    icon: 'sparkles',
     difficulty: 'Medium',
   },
   {
     species: 'Arapaima',
     region: 'Amazon Basin',
-    emoji: '🐊',
+    icon: 'fish',
     difficulty: 'Hard',
   },
   {
     species: 'Bonefish',
     region: 'Tropical Flats',
-    emoji: '👻',
+    icon: 'moon',
     difficulty: 'Medium',
   },
   {
     species: 'Muskie',
     region: 'Great Lakes / Canada',
-    emoji: '🦈',
+    icon: 'fish',
     difficulty: 'Hard',
   },
   {
     species: 'Yellowfin Tuna',
     region: 'Offshore Global',
-    emoji: '🔥',
+    icon: 'flame',
     difficulty: 'Medium',
   },
   {
     species: 'Barramundi',
     region: 'Australia / SE Asia',
-    emoji: '🦘',
+    icon: 'zap',
     difficulty: 'Medium',
   },
   {
     species: 'Sailfish',
     region: 'Tropical Oceans',
-    emoji: '⛵',
+    icon: 'sailboat',
     difficulty: 'Medium',
   },
   {
     species: 'Alligator Gar',
     region: 'Southern USA',
-    emoji: '🐊',
+    icon: 'fish',
     difficulty: 'Medium',
   },
   {
     species: 'Wels Catfish',
     region: 'Europe',
-    emoji: '🐱',
+    icon: 'fish',
     difficulty: 'Medium',
   },
   {
     species: 'Mahseer',
     region: 'India / SE Asia',
-    emoji: '🏔️',
+    icon: 'mountain',
     difficulty: 'Hard',
   },
   {
     species: 'Roosterfish',
     region: 'Central America',
-    emoji: '🌅',
+    icon: 'sunrise',
     difficulty: 'Medium',
   },
   {
     species: 'Swordfish',
     region: 'Deep Ocean',
-    emoji: '⚔️',
+    icon: 'swords',
     difficulty: 'Very Hard',
   },
 ];
@@ -182,7 +183,7 @@ export default function BucketListScreen({ navigation }) {
       {
         species: customSpecies.trim(),
         region: 'Custom',
-        emoji: '🐟',
+        icon: 'fish',
         difficulty: 'Unknown',
         caught: false,
         caughtDate: null,
@@ -225,7 +226,7 @@ export default function BucketListScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🏆 Bucket List</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="trophy" size={20} color={colors.text} /><Text style={styles.headerTitle}>Bucket List</Text></View>
         <Text style={styles.headerDesc}>Your dream catches</Text>
       </View>
 
@@ -274,7 +275,7 @@ export default function BucketListScreen({ navigation }) {
           style={styles.suggestBtn}
           onPress={() => setShowSuggestions(!showSuggestions)}
         >
-          <Text style={styles.suggestBtnText}>💡</Text>
+          <AppIcon name="lightbulb" size={20} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -298,11 +299,11 @@ export default function BucketListScreen({ navigation }) {
                   onPress={() => !alreadyAdded && addFromSuggestion(item)}
                   disabled={!!alreadyAdded}
                 >
-                  <Text style={styles.suggestEmoji}>{item.emoji}</Text>
+                  <Text style={styles.suggestEmoji}><AppIcon name={item.icon} size={18} color={colors.text} /></Text>
                   <Text style={styles.suggestSpecies}>{item.species}</Text>
                   <Text style={styles.suggestRegion}>{item.region}</Text>
                   <Text style={styles.suggestDiff}>
-                    {alreadyAdded ? '✅' : '+'}
+                    {alreadyAdded ? <AppIcon name="checkCircle" size={16} color={colors.accent} /> : '+'}
                   </Text>
                 </TouchableOpacity>
               );
@@ -323,8 +324,8 @@ export default function BucketListScreen({ navigation }) {
             onPress={() => toggleCaught(item.id)}
             onLongPress={() => removeItem(item.id)}
           >
-            <Text style={styles.bucketCheck}>{item.caught ? '✅' : '⬜'}</Text>
-            <Text style={styles.bucketEmoji}>{item.emoji}</Text>
+            <Text style={styles.bucketCheck}>{item.caught ? <AppIcon name="checkCircle" size={20} color={colors.accent} /> : <AppIcon name="circle" size={20} color={colors.textTertiary} />}</Text>
+            <Text style={styles.bucketEmoji}><AppIcon name={item.icon || 'fish'} size={24} color={colors.text} /></Text>
             <View style={styles.bucketContent}>
               <Text
                 style={[

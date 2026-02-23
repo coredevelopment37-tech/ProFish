@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import crashReporter from '../services/crashReporter';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 class ErrorBoundaryClass extends React.Component {
   state = { hasError: false, error: null };
@@ -34,7 +35,7 @@ class ErrorBoundaryClass extends React.Component {
       const styles = createStyles(this.props.colors);
       return (
         <View style={styles.container}>
-          <Text style={styles.icon}>⚠️</Text>
+          <AppIcon name="alertTriangle" size={48} color={this.props.colors?.error || '#FF5252'} style={{ marginBottom: 20 }} />
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.message}>
             {this.state.error?.message || 'An unexpected error occurred'}

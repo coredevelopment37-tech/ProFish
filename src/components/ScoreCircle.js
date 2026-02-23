@@ -6,6 +6,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon, getScoreIcon } from '../constants/icons';
 
 function getScoreColor(score, colors) {
   if (score >= 85) return colors.success;
@@ -15,21 +16,13 @@ function getScoreColor(score, colors) {
   return colors.error;
 }
 
-function getScoreEmoji(score) {
-  if (score >= 85) return '🔥';
-  if (score >= 70) return '🎣';
-  if (score >= 55) return '👍';
-  if (score >= 40) return '🤷';
-  return '😴';
-}
-
 export default function ScoreCircle({ score = 0, label = '', size = 180 }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   const animValue = useRef(new Animated.Value(0)).current;
   const scaleValue = useRef(new Animated.Value(0.8)).current;
   const color = getScoreColor(score, colors);
-  const emoji = getScoreEmoji(score);
+  const scoreIconName = getScoreIcon(score);
 
   useEffect(() => {
     Animated.parallel([
@@ -71,7 +64,7 @@ export default function ScoreCircle({ score = 0, label = '', size = 180 }) {
       ]}
     >
       <View style={styles.inner}>
-        <Text style={styles.emoji}>{emoji}</Text>
+        <AppIcon name={scoreIconName} size={24} color={color} />
         <AnimatedNumber value={displayScore} color={color} size={size * 0.28} />
         <Text style={[styles.label, { color, fontSize: size * 0.09 }]}>
           {label}

@@ -21,6 +21,7 @@ import {
   Dimensions,
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 import marketplaceService, {
   LISTING_TYPE,
   GEAR_CATEGORY,
@@ -32,10 +33,10 @@ const { width } = Dimensions.get('window');
 // ── Tabs ─────────────────────────────────────────────────
 
 const TABS = [
-  { key: 'gear', label: '🎣 Gear', type: LISTING_TYPE.GEAR },
-  { key: 'guides', label: '🧭 Guides', type: LISTING_TYPE.GUIDE },
-  { key: 'charters', label: '⛵ Charters', type: LISTING_TYPE.CHARTER },
-  { key: 'affiliate', label: '🛒 Shop', type: 'affiliate' },
+  { key: 'gear', label: 'Gear', icon: 'fish', type: LISTING_TYPE.GEAR },
+  { key: 'guides', label: 'Guides', icon: 'compass', type: LISTING_TYPE.GUIDE },
+  { key: 'charters', label: 'Charters', icon: 'sailboat', type: LISTING_TYPE.CHARTER },
+  { key: 'affiliate', label: 'Shop', icon: 'shoppingCart', type: 'affiliate' },
 ];
 
 const GEAR_CATEGORIES = [
@@ -142,7 +143,7 @@ const MOCK_CHARTERS = [
 
 // ── Components ───────────────────────────────────────────
 
-function GearCard({ item, styles }) {
+function GearCard({ item, styles, colors }) {
   const condition =
     GEAR_CONDITION[item.condition?.toUpperCase()] || GEAR_CONDITION.GOOD;
   const timeAgo = Math.floor((Date.now() - (item.createdAt || 0)) / 86400000);
@@ -153,7 +154,7 @@ function GearCard({ item, styles }) {
         {item.photos?.[0] ? (
           <Image source={{ uri: item.photos[0] }} style={styles.gearImage} />
         ) : (
-          <Text style={styles.gearImageEmoji}>🎣</Text>
+          <AppIcon name="fish" size={32} color={colors.textTertiary} />
         )}
       </View>
       <View style={styles.gearInfo}>
@@ -185,7 +186,7 @@ function GearCard({ item, styles }) {
   );
 }
 
-function GuideCard({ item, styles }) {
+function GuideCard({ item, styles, colors }) {
   return (
     <TouchableOpacity style={styles.guideCard}>
       <View style={styles.guideHeader}>
@@ -196,12 +197,18 @@ function GuideCard({ item, styles }) {
         </View>
         <View style={{ flex: 1 }}>
           <Text style={styles.guideName}>{item.displayName}</Text>
-          <Text style={styles.guideLocation}>
-            📍 {item.location?.city}, {item.location?.state}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+            <AppIcon name="mapPin" size={14} color={colors.textTertiary} />
+            <Text style={[styles.guideLocation, { marginTop: 0, marginLeft: 4 }]}>
+              {item.location?.city}, {item.location?.state}
+            </Text>
+          </View>
         </View>
         <View style={styles.ratingBox}>
-          <Text style={styles.ratingText}>⭐ {item.avgRating}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="star" size={14} color="#FFD700" />
+            <Text style={styles.ratingText}>{item.avgRating}</Text>
+          </View>
           <Text style={styles.reviewCount}>{item.reviewCount} reviews</Text>
         </View>
       </View>
@@ -229,27 +236,36 @@ function GuideCard({ item, styles }) {
   );
 }
 
-function CharterCard({ item, styles }) {
+function CharterCard({ item, styles, colors }) {
   return (
     <TouchableOpacity style={styles.charterCard}>
       <View style={styles.charterHeader}>
         <Text style={styles.charterName}>{item.businessName}</Text>
         <View style={styles.ratingBox}>
-          <Text style={styles.ratingText}>⭐ {item.avgRating}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="star" size={14} color="#FFD700" />
+            <Text style={styles.ratingText}>{item.avgRating}</Text>
+          </View>
           <Text style={styles.reviewCount}>{item.reviewCount} reviews</Text>
         </View>
       </View>
       <Text style={styles.charterCaptain}>Capt. {item.captainName}</Text>
       {item.vessel && (
-        <Text style={styles.charterVessel}>
-          ⛵ {item.vessel.name} — {item.vessel.length}ft{' '}
-          {item.vessel.type?.replace(/_/g, ' ')} (up to {item.vessel.capacity}{' '}
-          guests)
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 6 }}>
+          <AppIcon name="sailboat" size={14} color={colors.textSecondary} />
+          <Text style={[styles.charterVessel, { marginTop: 0, marginLeft: 4 }]}>
+            {item.vessel.name} — {item.vessel.length}ft{' '}
+            {item.vessel.type?.replace(/_/g, ' ')} (up to {item.vessel.capacity}{' '}
+            guests)
+          </Text>
+        </View>
       )}
-      <Text style={styles.charterPort}>
-        📍 {item.location?.port || item.location?.city}, {item.location?.state}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 4 }}>
+        <AppIcon name="mapPin" size={14} color={colors.textTertiary} />
+        <Text style={[styles.charterPort, { marginTop: 0, marginLeft: 4 }]}>
+          {item.location?.port || item.location?.city}, {item.location?.state}
+        </Text>
+      </View>
       <View style={styles.tripTypes}>
         {item.tripTypes?.map((t, i) => (
           <View key={i} style={styles.tripTypeBadge}>
@@ -263,13 +279,16 @@ function CharterCard({ item, styles }) {
   );
 }
 
-function AffiliateSection({ styles }) {
+function AffiliateSection({ styles, colors }) {
   const gear =
     marketplaceService.affiliate.getRecommendedGear('largemouth_bass');
 
   return (
     <View style={styles.affiliateSection}>
-      <Text style={styles.sectionTitle}>🛒 Recommended Gear</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <AppIcon name="shoppingCart" size={18} color={colors.text} />
+        <Text style={styles.sectionTitle}>Recommended Gear</Text>
+      </View>
       <Text style={styles.sectionSubtitle}>
         Curated picks for your target species
       </Text>
@@ -358,7 +377,7 @@ export default function MarketplaceScreen({ navigation }) {
             <FlatList
               data={filteredGear}
               keyExtractor={item => item.id}
-              renderItem={({ item }) => <GearCard item={item} styles={styles} />}
+              renderItem={({ item }) => <GearCard item={item} styles={styles} colors={colors} />}
               contentContainerStyle={styles.listContent}
               ListEmptyComponent={
                 <Text style={styles.emptyText}>No gear found</Text>
@@ -379,7 +398,7 @@ export default function MarketplaceScreen({ navigation }) {
           <FlatList
             data={guides}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => <GuideCard item={item} styles={styles} />}
+            renderItem={({ item }) => <GuideCard item={item} styles={styles} colors={colors} />}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No guides found nearby</Text>
@@ -399,7 +418,7 @@ export default function MarketplaceScreen({ navigation }) {
           <FlatList
             data={charters}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => <CharterCard item={item} styles={styles} />}
+            renderItem={({ item }) => <CharterCard item={item} styles={styles} colors={colors} />}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No charters found nearby</Text>
@@ -426,7 +445,7 @@ export default function MarketplaceScreen({ navigation }) {
               />
             }
           >
-            <AffiliateSection styles={styles} />
+            <AffiliateSection styles={styles} colors={colors} />
           </ScrollView>
         );
 
@@ -465,14 +484,17 @@ export default function MarketplaceScreen({ navigation }) {
             style={[styles.tab, activeTab === tab.key && styles.tabActive]}
             onPress={() => setActiveTab(tab.key)}
           >
-            <Text
-              style={[
-                styles.tabText,
-                activeTab === tab.key && styles.tabTextActive,
-              ]}
-            >
-              {tab.label}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <AppIcon name={tab.icon} size={14} color={activeTab === tab.key ? '#fff' : colors.textTertiary} />
+              <Text
+                style={[
+                  styles.tabText,
+                  activeTab === tab.key && styles.tabTextActive,
+                ]}
+              >
+                {tab.label}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>

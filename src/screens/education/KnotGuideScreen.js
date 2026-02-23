@@ -13,6 +13,7 @@ import {
   Dimensions,
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -287,6 +288,20 @@ const KNOT_STEPS = {
   },
 };
 
+function DiagramText({ text, styles }) {
+  // Split on {hook} and {cut} markers and render AppIcon inline
+  const parts = text.split(/(\{hook\}|\{cut\})/g);
+  return (
+    <Text style={styles.diagramText}>
+      {parts.map((part, i) => {
+        if (part === '{hook}') return <AppIcon key={i} name="anchor" size={14} color="#00D4AA" />;
+        if (part === '{cut}') return <AppIcon key={i} name="scissors" size={14} color="#FF6666" />;
+        return part;
+      })}
+    </Text>
+  );
+}
+
 function KnotStepCard({ step, total, data, styles }) {
   return (
     <View style={styles.stepCard}>
@@ -298,7 +313,7 @@ function KnotStepCard({ step, total, data, styles }) {
       </View>
       <Text style={styles.stepInstruction}>{data.instruction}</Text>
       <View style={styles.diagramBox}>
-        <Text style={styles.diagramText}>{data.diagram}</Text>
+        <DiagramText text={data.diagram} styles={styles} />
       </View>
     </View>
   );
@@ -326,7 +341,9 @@ export default function KnotGuideScreen({ route, navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🪢 {knot.name}</Text>
+        <Text style={styles.headerTitle}>
+          <AppIcon name="anchor" size={22} color="#fff" /> {knot.name}
+        </Text>
       </View>
 
       {/* Knot info */}
@@ -396,105 +413,110 @@ export default function KnotGuideScreen({ route, navigation }) {
 
 export { KNOT_STEPS };
 
-const createStyles = (colors) => StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 24, fontWeight: '800', color: colors.text },
-  infoRow: {
-    flexDirection: 'row',
-    paddingHorizontal: 16,
-    gap: 12,
-    marginBottom: 12,
-  },
-  infoPill: {
-    flex: 1,
-    backgroundColor: colors.surface,
-    padding: 12,
-    borderRadius: 10,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  infoLabel: { fontSize: 11, color: colors.textTertiary, marginBottom: 4 },
-  infoValue: { fontSize: 14, fontWeight: '700', color: colors.accent },
-  bestForRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    marginBottom: 16,
-    flexWrap: 'wrap',
-  },
-  bestForLabel: { fontSize: 13, color: colors.textTertiary },
-  bestForChip: {
-    backgroundColor: colors.primary + '20',
-    paddingHorizontal: 10,
-    paddingVertical: 4,
-    borderRadius: 12,
-    marginLeft: 6,
-    marginBottom: 4,
-  },
-  bestForText: { fontSize: 12, color: colors.primary },
-  stepsContainer: { flex: 1 },
-  stepsContent: { padding: 16, paddingBottom: 100 },
-  stepCard: {
-    backgroundColor: colors.surface,
-    borderRadius: 12,
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  stepHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
-  stepBadge: {
-    width: 28,
-    height: 28,
-    borderRadius: 14,
-    backgroundColor: colors.primary,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  stepBadgeText: { fontSize: 14, fontWeight: '700', color: '#FFF' },
-  stepOf: { fontSize: 12, color: colors.textTertiary, marginLeft: 8 },
-  stepInstruction: {
-    fontSize: 15,
-    color: colors.text,
-    lineHeight: 22,
-    marginBottom: 12,
-  },
-  diagramBox: {
-    backgroundColor: colors.background,
-    borderRadius: 8,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  diagramText: {
-    fontFamily: 'monospace',
-    fontSize: 14,
-    color: colors.accent,
-    lineHeight: 20,
-  },
-  nav: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingBottom: 32,
-    paddingTop: 12,
-  },
-  navBtn: {
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    backgroundColor: colors.primary,
-    borderRadius: 20,
-  },
-  navBtnDisabled: { opacity: 0.3 },
-  navBtnText: { fontSize: 14, fontWeight: '600', color: '#FFF' },
-  navStep: { fontSize: 14, color: colors.textTertiary },
-  errorText: {
-    fontSize: 18,
-    color: colors.textTertiary,
-    textAlign: 'center',
-    marginTop: 100,
-  },
-});
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
+    backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+    headerTitle: { fontSize: 24, fontWeight: '800', color: colors.text },
+    infoRow: {
+      flexDirection: 'row',
+      paddingHorizontal: 16,
+      gap: 12,
+      marginBottom: 12,
+    },
+    infoPill: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      padding: 12,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    infoLabel: { fontSize: 11, color: colors.textTertiary, marginBottom: 4 },
+    infoValue: { fontSize: 14, fontWeight: '700', color: colors.accent },
+    bestForRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      marginBottom: 16,
+      flexWrap: 'wrap',
+    },
+    bestForLabel: { fontSize: 13, color: colors.textTertiary },
+    bestForChip: {
+      backgroundColor: colors.primary + '20',
+      paddingHorizontal: 10,
+      paddingVertical: 4,
+      borderRadius: 12,
+      marginLeft: 6,
+      marginBottom: 4,
+    },
+    bestForText: { fontSize: 12, color: colors.primary },
+    stepsContainer: { flex: 1 },
+    stepsContent: { padding: 16, paddingBottom: 100 },
+    stepCard: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 16,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    stepHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 12,
+    },
+    stepBadge: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      backgroundColor: colors.primary,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    stepBadgeText: { fontSize: 14, fontWeight: '700', color: '#FFF' },
+    stepOf: { fontSize: 12, color: colors.textTertiary, marginLeft: 8 },
+    stepInstruction: {
+      fontSize: 15,
+      color: colors.text,
+      lineHeight: 22,
+      marginBottom: 12,
+    },
+    diagramBox: {
+      backgroundColor: colors.background,
+      borderRadius: 8,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    diagramText: {
+      fontFamily: 'monospace',
+      fontSize: 14,
+      color: colors.accent,
+      lineHeight: 20,
+    },
+    nav: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingBottom: 32,
+      paddingTop: 12,
+    },
+    navBtn: {
+      paddingVertical: 10,
+      paddingHorizontal: 20,
+      backgroundColor: colors.primary,
+      borderRadius: 20,
+    },
+    navBtnDisabled: { opacity: 0.3 },
+    navBtnText: { fontSize: 14, fontWeight: '600', color: '#FFF' },
+    navStep: { fontSize: 14, color: colors.textTertiary },
+    errorText: {
+      fontSize: 18,
+      color: colors.textTertiary,
+      textAlign: 'center',
+      marginTop: 100,
+    },
+  });

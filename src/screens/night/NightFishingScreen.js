@@ -26,6 +26,7 @@ import {
   NIGHT_LESSONS,
 } from '../../services/nightFishingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -152,7 +153,7 @@ export default function NightFishingScreen({ navigation }) {
         >
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>🌙 Night Fishing</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="moon" size={20} color={colors.text} /><Text style={styles.title}>Night Fishing</Text></View>
         <Text style={styles.subtitle}>World's First Night Mode</Text>
       </View>
 
@@ -224,7 +225,7 @@ export default function NightFishingScreen({ navigation }) {
           {/* Best Species Tonight */}
           {nightData.bestSpecies.length > 0 && (
             <View style={styles.bestSpeciesBox}>
-              <Text style={styles.bestSpeciesTitle}>🎯 Best Tonight</Text>
+              <Text style={styles.bestSpeciesTitle}><AppIcon name="target" size={14} color="#00FF88" /> Best Tonight</Text>
               <Text style={styles.bestSpeciesList}>
                 {nightData.bestSpecies.join(' • ')}
               </Text>
@@ -239,7 +240,7 @@ export default function NightFishingScreen({ navigation }) {
           style={[styles.actionBtn, styles.actionStart]}
           onPress={handleStartSession}
         >
-          <Text style={styles.actionEmoji}>🎣</Text>
+          <Text style={styles.actionEmoji}><AppIcon name="fish" size={28} color="#00FF88" /></Text>
           <Text style={styles.actionLabel}>Start Night Session</Text>
         </TouchableOpacity>
 
@@ -247,7 +248,7 @@ export default function NightFishingScreen({ navigation }) {
           style={[styles.actionBtn, styles.actionGear]}
           onPress={() => navigation.navigate('NightGear')}
         >
-          <Text style={styles.actionEmoji}>⚙️</Text>
+          <Text style={styles.actionEmoji}><AppIcon name="settings" size={28} color="#FFD700" /></Text>
           <Text style={styles.actionLabel}>Night Gear Guide</Text>
         </TouchableOpacity>
 
@@ -262,7 +263,7 @@ export default function NightFishingScreen({ navigation }) {
 
       {/* ── Top Night Species ── */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>🐟 Top Night Species</Text>
+        <Text style={styles.sectionTitle}><AppIcon name="fish" size={18} color={colors.text} /> Top Night Species</Text>
         <Text style={styles.sectionSubtitle}>
           18 species with night-specific data
         </Text>
@@ -343,7 +344,7 @@ export default function NightFishingScreen({ navigation }) {
 
       {/* ── Light Attraction Guide ── */}
       <View style={styles.section}>
-        <Text style={styles.sectionTitle}>💚 Light Attraction Science</Text>
+        <Text style={styles.sectionTitle}><AppIcon name="lightbulb" size={18} color={colors.success || '#00FF88'} /> Light Attraction Science</Text>
         <Text style={styles.scienceText}>{LIGHT_GUIDE.scienceExplainer}</Text>
 
         <FlatList
@@ -359,8 +360,8 @@ export default function NightFishingScreen({ navigation }) {
               />
               <Text style={styles.lightName}>{item.name}</Text>
               <Text style={styles.lightChain}>{item.chainReaction}</Text>
-              <Text style={styles.lightSetup}>⏱ {item.setupTime}</Text>
-              <Text style={styles.lightPlacement}>📍 {item.placement}</Text>
+              <Text style={styles.lightSetup}><AppIcon name="timer" size={11} color={colors.textTertiary} /> {item.setupTime}</Text>
+              <Text style={styles.lightPlacement}><AppIcon name="mapPin" size={11} color={colors.textTertiary} /> {item.placement}</Text>
             </View>
           )}
         />
@@ -369,7 +370,7 @@ export default function NightFishingScreen({ navigation }) {
       {/* ── Night Lessons ── */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>
-          📚 Night School ({NIGHT_LESSONS.length} Lessons)
+          <AppIcon name="bookOpen" size={18} color={colors.text} /> Night School ({NIGHT_LESSONS.length} Lessons)
         </Text>
         {NIGHT_LESSONS.map(lesson => (
           <TouchableOpacity
@@ -396,7 +397,7 @@ export default function NightFishingScreen({ navigation }) {
         style={styles.giggingBanner}
         onPress={() => navigation.navigate('NightGear', { tab: 'gigging' })}
       >
-        <Text style={styles.giggingEmoji}>🔱</Text>
+        <Text style={styles.giggingEmoji}><AppIcon name="crosshair" size={36} color="#FFD700" /></Text>
         <View style={styles.giggingInfo}>
           <Text style={styles.giggingTitle}>Flounder Gigging Mode</Text>
           <Text style={styles.giggingDesc}>
@@ -409,7 +410,7 @@ export default function NightFishingScreen({ navigation }) {
       {/* ── Recent Night Sessions ── */}
       {sessions.length > 0 && (
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>🕐 Recent Night Sessions</Text>
+          <Text style={styles.sectionTitle}><AppIcon name="clock" size={18} color={colors.text} /> Recent Night Sessions</Text>
           {sessions.map(s => (
             <View key={s.id} style={styles.sessionRow}>
               <Text style={styles.sessionDate}>
@@ -426,20 +427,20 @@ export default function NightFishingScreen({ navigation }) {
 
       {/* ── Connectivity Banner ── */}
       <View style={styles.connectBanner}>
-        <Text style={styles.connectTitle}>📡 Smart Gear Integration</Text>
+        <Text style={styles.connectTitle}><AppIcon name="satellite" size={15} color={colors.text} /> Smart Gear Integration</Text>
         <View style={styles.connectRow}>
           <View style={styles.connectChip}>
-            <Text style={styles.connectIcon}>🔵</Text>
+            <Text style={styles.connectIcon}><AppIcon name="bluetooth" size={20} color="#0082FC" /></Text>
             <Text style={styles.connectLabel}>Bluetooth</Text>
             <Text style={styles.connectCount}>5 devices</Text>
           </View>
           <View style={styles.connectChip}>
-            <Text style={styles.connectIcon}>📶</Text>
+            <Text style={styles.connectIcon}><AppIcon name="wifi" size={20} color="#00CC66" /></Text>
             <Text style={styles.connectLabel}>WiFi</Text>
             <Text style={styles.connectCount}>1 device</Text>
           </View>
           <View style={styles.connectChip}>
-            <Text style={styles.connectIcon}>📡</Text>
+            <Text style={styles.connectIcon}><AppIcon name="satellite" size={20} color="#FF6600" /></Text>
             <Text style={styles.connectLabel}>Satellite</Text>
             <Text style={styles.connectCount}>1 device</Text>
           </View>

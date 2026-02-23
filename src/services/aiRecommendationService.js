@@ -23,8 +23,8 @@ export const REC_TYPE = {
 };
 
 export const REC_PRIORITY = {
-  HIGH: { value: 3, label: 'Top Pick', color: '#FFD700', icon: '⭐' },
-  MEDIUM: { value: 2, label: 'Suggested', color: '#0a84ff', icon: '💡' },
+  HIGH: { value: 3, label: 'Top Pick', color: '#FFD700', icon: 'star' },
+  MEDIUM: { value: 2, label: 'Suggested', color: '#0a84ff', icon: 'lightbulb' },
   LOW: { value: 1, label: 'Tip', color: '#8BC34A', icon: '📌' },
 };
 

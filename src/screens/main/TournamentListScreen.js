@@ -24,6 +24,7 @@ import tournamentService, {
 } from '../../services/tournamentService';
 import { canAccess, requireFeature } from '../../services/featureGate';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const TABS = [
   { key: 'active', label: 'Active' },
@@ -80,28 +81,28 @@ export default function TournamentListScreen({ navigation }) {
   function getStatusBadge(status) {
     switch (status) {
       case TOURNAMENT_STATUS.ACTIVE:
-        return { text: '● LIVE', color: colors.success };
+        return { text: 'LIVE', icon: 'circleDot', color: colors.success };
       case TOURNAMENT_STATUS.UPCOMING:
-        return { text: '◷ Upcoming', color: colors.accent };
+        return { text: 'Upcoming', icon: 'clock', color: colors.accent };
       case TOURNAMENT_STATUS.ENDED:
-        return { text: '✓ Ended', color: colors.textTertiary };
+        return { text: 'Ended', icon: 'check', color: colors.textTertiary };
       default:
-        return { text: status, color: colors.textTertiary };
+        return { text: status, icon: null, color: colors.textTertiary };
     }
   }
 
   function getScoringLabel(scoring) {
     switch (scoring) {
       case TOURNAMENT_SCORING.TOTAL_WEIGHT:
-        return '⚖️ Total Weight';
+        return { icon: 'scale', text: 'Total Weight' };
       case TOURNAMENT_SCORING.BIGGEST_CATCH:
-        return '🏆 Biggest Catch';
+        return { icon: 'trophy', text: 'Biggest Catch' };
       case TOURNAMENT_SCORING.TOTAL_CATCHES:
-        return '🎣 Total Catches';
+        return { icon: 'fish', text: 'Total Catches' };
       case TOURNAMENT_SCORING.SPECIES_COUNT:
-        return '🐟 Species Count';
+        return { icon: 'fish', text: 'Species Count' };
       default:
-        return scoring;
+        return { icon: null, text: scoring };
     }
   }
 
@@ -138,7 +139,7 @@ export default function TournamentListScreen({ navigation }) {
           style={styles.statsBtn}
           onPress={() => navigation.navigate('TournamentStats')}
         >
-          <Text style={styles.statsBtnText}>📊</Text>
+          <AppIcon name="barChart" size={22} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -184,7 +185,10 @@ export default function TournamentListScreen({ navigation }) {
           {/* Weekly spotlight */}
           {tab === 'active' && tournaments.length > 0 && (
             <View style={styles.spotlightCard}>
-              <Text style={styles.spotlightLabel}>🏆 This Week</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+                <AppIcon name="trophy" size={14} color={colors.accent} />
+                <Text style={styles.spotlightLabel}>This Week</Text>
+              </View>
               <Text style={styles.spotlightName}>{tournaments[0].name}</Text>
               <Text style={styles.spotlightTime}>
                 {getTimeRemaining(tournaments[0].endDate)}
@@ -194,7 +198,7 @@ export default function TournamentListScreen({ navigation }) {
 
           {tournaments.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🏆</Text>
+              <AppIcon name="trophy" size={48} color={colors.textTertiary} />
               <Text style={styles.emptyText}>
                 {tab === 'active'
                   ? t('tournaments.noActive', 'No active tournaments right now')
@@ -206,6 +210,7 @@ export default function TournamentListScreen({ navigation }) {
           ) : (
             tournaments.map(tournament => {
               const badge = getStatusBadge(tournament.status);
+              const scoring = getScoringLabel(tournament.scoring);
               return (
                 <TouchableOpacity
                   key={tournament.id}
@@ -224,13 +229,17 @@ export default function TournamentListScreen({ navigation }) {
                         { backgroundColor: badge.color + '22' },
                       ]}
                     >
-                      <Text style={[styles.statusText, { color: badge.color }]}>
-                        {badge.text}
-                      </Text>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                        {badge.icon && <AppIcon name={badge.icon} size={12} color={badge.color} />}
+                        <Text style={[styles.statusText, { color: badge.color }]}>
+                          {badge.text}
+                        </Text>
+                      </View>
                     </View>
-                    <Text style={styles.scoring}>
-                      {getScoringLabel(tournament.scoring)}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      {scoring.icon && <AppIcon name={scoring.icon} size={12} color={colors.textTertiary} />}
+                      <Text style={styles.scoring}>{scoring.text}</Text>
+                    </View>
                   </View>
 
                   <Text style={styles.cardName}>{tournament.name}</Text>
@@ -239,17 +248,22 @@ export default function TournamentListScreen({ navigation }) {
                   </Text>
 
                   <View style={styles.cardMeta}>
-                    <Text style={styles.metaText}>
-                      👥 {tournament.participantCount || 0}/
-                      {tournament.maxParticipants || '∞'}
-                    </Text>
-                    <Text style={styles.metaText}>
-                      📅{' '}
-                      {formatDateRange(
-                        tournament.startDate,
-                        tournament.endDate,
-                      )}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <AppIcon name="users" size={12} color={colors.textTertiary} />
+                      <Text style={styles.metaText}>
+                        {tournament.participantCount || 0}/
+                        {tournament.maxParticipants || '∞'}
+                      </Text>
+                    </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <AppIcon name="calendar" size={12} color={colors.textTertiary} />
+                      <Text style={styles.metaText}>
+                        {formatDateRange(
+                          tournament.startDate,
+                          tournament.endDate,
+                        )}
+                      </Text>
+                    </View>
                   </View>
 
                   {tournament.targetSpecies?.length > 0 && (
@@ -263,9 +277,10 @@ export default function TournamentListScreen({ navigation }) {
                   )}
 
                   {tournament.prizes?.length > 0 && (
-                    <Text style={styles.prizeText}>
-                      🎁 {tournament.prizes[0]}
-                    </Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <AppIcon name="gift" size={12} color={colors.accent} />
+                      <Text style={styles.prizeText}>{tournament.prizes[0]}</Text>
+                    </View>
                   )}
                 </TouchableOpacity>
               );

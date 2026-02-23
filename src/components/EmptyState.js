@@ -6,9 +6,10 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function EmptyState({
-  icon = '🎣',
+  iconName = 'fish',
   title = 'Nothing here yet',
   subtitle = '',
   actionLabel = '',
@@ -19,7 +20,7 @@ export default function EmptyState({
 
   return (
     <View style={styles.container}>
-      <Text style={styles.icon}>{icon}</Text>
+      <AppIcon name={iconName} size={64} color={colors.textTertiary} style={{ marginBottom: 20 }} />
       <Text style={styles.title}>{title}</Text>
       {subtitle ? <Text style={styles.subtitle}>{subtitle}</Text> : null}
       {actionLabel && onAction ? (

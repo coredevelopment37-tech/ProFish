@@ -284,7 +284,7 @@ export async function calculate7DayOutlook(latitude, longitude) {
         highTemp: Math.round(daily.temperature_2m_max?.[i] || 0),
         lowTemp: Math.round(daily.temperature_2m_min?.[i] || 0),
         weatherCode: daily.weather_code?.[i] || 0,
-        icon: getWeatherEmoji(daily.weather_code?.[i] || 0),
+        icon: getWeatherIcon(daily.weather_code?.[i] || 0),
       };
     });
 
@@ -296,15 +296,15 @@ export async function calculate7DayOutlook(latitude, longitude) {
   }
 }
 
-function getWeatherEmoji(code) {
-  if (code === 0) return '☀️';
-  if (code <= 3) return '⛅';
-  if (code <= 48) return '🌫️';
-  if (code <= 55) return '🌦️';
-  if (code <= 65) return '🌧️';
-  if (code <= 77) return '🌨️';
-  if (code <= 82) return '🌧️';
-  return '⛈️';
+function getWeatherIcon(code) {
+  if (code === 0) return 'sun';
+  if (code <= 3) return 'cloudSun';
+  if (code <= 48) return 'cloudFog';
+  if (code <= 55) return 'cloudDrizzle';
+  if (code <= 65) return 'cloudRain';
+  if (code <= 77) return 'cloudSnow';
+  if (code <= 82) return 'cloudRain';
+  return 'cloudLightning';
 }
 
 // ── Species-Specific Adjustments ─────────────────────

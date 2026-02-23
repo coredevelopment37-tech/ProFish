@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { getBannerConfig } from '../services/adService';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 /**
  * AdBanner wraps the Google AdMob BannerAd component
@@ -51,9 +52,12 @@ export default function AdBanner({ screen, style }) {
         ) : (
           // Fallback — no ad available
           <View style={styles.fallback}>
-            <Text style={styles.fallbackText}>
-              🎣 Upgrade to Pro for ad-free fishing
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <AppIcon name="fish" size={16} color={colors.textTertiary} />
+              <Text style={[styles.fallbackText, { marginLeft: 6 }]}>
+                Upgrade to Pro for ad-free fishing
+              </Text>
+            </View>
           </View>
         )}
       </View>
@@ -62,9 +66,12 @@ export default function AdBanner({ screen, style }) {
     // AdMob SDK not installed — show subtle upgrade prompt
     return (
       <View style={[styles.container, styles.fallback, style]}>
-        <Text style={styles.fallbackText}>
-          🎣 Go Pro — No ads, all features
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <AppIcon name="fish" size={16} color={colors.textTertiary} />
+          <Text style={[styles.fallbackText, { marginLeft: 6 }]}>
+            Go Pro — No ads, all features
+          </Text>
+        </View>
       </View>
     );
   }

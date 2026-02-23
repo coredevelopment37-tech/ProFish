@@ -44,7 +44,7 @@ const spotService = {
     longitude,
     waterType = 'freshwater',
     notes = '',
-    icon = '📍',
+    icon = 'mapPin',
   }) {
     await this.init();
     const spot = {

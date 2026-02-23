@@ -24,6 +24,7 @@ import tournamentService, {
 } from '../../services/tournamentService';
 import { canAccess, requireFeature } from '../../services/featureGate';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function TournamentDetailScreen({ route, navigation }) {
   const { tournamentId } = route.params;
@@ -75,7 +76,7 @@ export default function TournamentDetailScreen({ route, navigation }) {
     const result = await tournamentService.joinTournament(tournamentId);
     if (result.success) {
       setIsJoined(true);
-      Alert.alert('🎉 Joined!', `You're in! Good luck in ${tournament.name}`);
+      Alert.alert('Joined!', `You're in! Good luck in ${tournament.name}`);
     } else {
       Alert.alert('Cannot Join', result.error);
     }
@@ -189,20 +190,23 @@ export default function TournamentDetailScreen({ route, navigation }) {
           },
         ]}
       >
-        <Text
-          style={[
-            styles.statusText,
-            {
-              color: isActive ? colors.success : isUpcoming ? colors.accent : colors.textTertiary,
-            },
-          ]}
-        >
-          {isActive
-            ? `● LIVE — ${getTimeRemaining()}`
-            : isUpcoming
-            ? `Starts ${new Date(tournament.startDate).toLocaleDateString()}`
-            : 'Tournament Ended'}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 4 }}>
+          {isActive && <AppIcon name="circleDot" size={10} color={colors.error} />}
+          <Text
+            style={[
+              styles.statusText,
+              {
+                color: isActive ? colors.success : isUpcoming ? colors.accent : colors.textTertiary,
+              },
+            ]}
+          >
+            {isActive
+              ? `LIVE — ${getTimeRemaining()}`
+              : isUpcoming
+              ? `Starts ${new Date(tournament.startDate).toLocaleDateString()}`
+              : 'Tournament Ended'}
+          </Text>
+        </View>
       </View>
 
       {/* My rank card (if joined) */}
@@ -231,13 +235,16 @@ export default function TournamentDetailScreen({ route, navigation }) {
             style={[styles.tabBtn, tab === t && styles.tabBtnActive]}
             onPress={() => setTab(t)}
           >
-            <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
-              {t === 'info'
-                ? '📋 Info'
-                : t === 'leaderboard'
-                ? '🏆 Rankings'
-                : '📜 Rules'}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <AppIcon
+                name={t === 'info' ? 'clipboard' : t === 'leaderboard' ? 'trophy' : 'scrollText'}
+                size={14}
+                color={tab === t ? '#fff' : colors.textTertiary}
+              />
+              <Text style={[styles.tabText, tab === t && styles.tabTextActive]}>
+                {t === 'info' ? 'Info' : t === 'leaderboard' ? 'Rankings' : 'Rules'}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </View>
@@ -283,18 +290,23 @@ export default function TournamentDetailScreen({ route, navigation }) {
 
             {tournament.prizes?.length > 0 && (
               <View style={styles.section}>
-                <Text style={styles.sectionTitle}>🎁 Prizes</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                  <AppIcon name="gift" size={16} color={colors.text} />
+                  <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>Prizes</Text>
+                </View>
                 {tournament.prizes.map((prize, i) => (
                   <View key={i} style={styles.prizeRow}>
-                    <Text style={styles.prizeMedal}>
-                      {i === 0
-                        ? '🥇'
-                        : i === 1
-                        ? '🥈'
-                        : i === 2
-                        ? '🥉'
-                        : `#${i + 1}`}
-                    </Text>
+                    <View style={{ width: 30, alignItems: 'center', justifyContent: 'center' }}>
+                      {i === 0 ? (
+                        <AppIcon name="medal" size={18} color="#FFD700" />
+                      ) : i === 1 ? (
+                        <AppIcon name="medal" size={18} color="#C0C0C0" />
+                      ) : i === 2 ? (
+                        <AppIcon name="medal" size={18} color="#CD7F32" />
+                      ) : (
+                        <Text style={{ color: colors.textTertiary, fontSize: 14, fontWeight: '700' }}>#{i + 1}</Text>
+                      )}
+                    </View>
                     <Text style={styles.prizeText}>{prize}</Text>
                   </View>
                 ))}
@@ -317,7 +329,7 @@ export default function TournamentDetailScreen({ route, navigation }) {
           <>
             {leaderboard.length === 0 ? (
               <View style={styles.emptyState}>
-                <Text style={styles.emptyIcon}>🏆</Text>
+                <AppIcon name="trophy" size={48} color={colors.textTertiary} />
                 <Text style={styles.emptyText}>
                   No entries yet — be the first!
                 </Text>
@@ -329,11 +341,15 @@ export default function TournamentDetailScreen({ route, navigation }) {
                   style={[styles.rankRow, entry.isMe && styles.rankRowMe]}
                 >
                   <View style={styles.rankBadge}>
-                    <Text style={styles.rankNumber}>
-                      {entry.rank <= 3
-                        ? ['🥇', '🥈', '🥉'][entry.rank - 1]
-                        : `#${entry.rank}`}
-                    </Text>
+                    {entry.rank === 1 ? (
+                      <AppIcon name="medal" size={20} color="#FFD700" />
+                    ) : entry.rank === 2 ? (
+                      <AppIcon name="medal" size={20} color="#C0C0C0" />
+                    ) : entry.rank === 3 ? (
+                      <AppIcon name="medal" size={20} color="#CD7F32" />
+                    ) : (
+                      <Text style={styles.rankNumber}>#{entry.rank}</Text>
+                    )}
                   </View>
                   <View style={styles.rankInfo}>
                     <Text
@@ -388,7 +404,10 @@ export default function TournamentDetailScreen({ route, navigation }) {
                 style={styles.submitBtn}
                 onPress={handleSubmitCatch}
               >
-                <Text style={styles.submitBtnText}>🎣 Submit Catch</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <AppIcon name="fish" size={16} color="#fff" />
+                  <Text style={styles.submitBtnText}>Submit Catch</Text>
+                </View>
               </TouchableOpacity>
             )}
             <TouchableOpacity style={styles.leaveBtn} onPress={handleLeave}>
@@ -404,7 +423,10 @@ export default function TournamentDetailScreen({ route, navigation }) {
             {joining ? (
               <ActivityIndicator color="#fff" size="small" />
             ) : (
-              <Text style={styles.joinBtnText}>🏆 Join Tournament</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <AppIcon name="trophy" size={16} color="#fff" />
+                <Text style={styles.joinBtnText}>Join Tournament</Text>
+              </View>
             )}
           </TouchableOpacity>
         ) : null}

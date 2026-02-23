@@ -23,6 +23,7 @@ import {
   State,
   GestureHandlerRootView,
 } from 'react-native-gesture-handler';
+import { AppIcon } from '../../constants/icons';
 import Svg, {
   Path,
   Circle,
@@ -591,7 +592,10 @@ export default function CastingGameScreen({ navigation, route }) {
           {/* Tip */}
           {showTip && phase === PHASE.READY && (
             <View style={styles.tipBox}>
-              <Text style={styles.tipText}>💡 {technique.tip}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                <AppIcon name="lightbulb" size={16} color={colors.accent} />
+                <Text style={styles.tipText}>{technique.tip}</Text>
+              </View>
             </View>
           )}
 
@@ -637,15 +641,12 @@ export default function CastingGameScreen({ navigation, route }) {
                 <View>
                   <View style={styles.resultStarsRow}>
                     {[1, 2, 3].map(i => (
-                      <Text
+                      <AppIcon
                         key={i}
-                        style={[
-                          styles.resultStar,
-                          castResult.stars >= i && styles.resultStarEarned,
-                        ]}
-                      >
-                        ★
-                      </Text>
+                        name="star"
+                        size={24}
+                        color={castResult.stars >= i ? '#FFD700' : '#2a3550'}
+                      />
                     ))}
                   </View>
                   <Text style={styles.resultDist}>
@@ -654,7 +655,10 @@ export default function CastingGameScreen({ navigation, route }) {
                 </View>
               </View>
               {castResult.inZone && (
-                <Text style={styles.zoneText}>🎯 In the zone!</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppIcon name="target" size={16} color={colors.success} />
+                  <Text style={styles.zoneText}>In the zone!</Text>
+                </View>
               )}
               {wind.speed > 0.35 && castResult.drift !== 0 && (
                 <Text style={styles.driftText}>
@@ -675,7 +679,7 @@ export default function CastingGameScreen({ navigation, route }) {
                   onPressIn={startCharge}
                   onPressOut={releaseCast}
                 >
-                  <Text style={styles.castBtnEmoji}>🎣</Text>
+                  <AppIcon name="fish" size={28} color="#fff" />
                   <Text style={styles.castBtnText}>HOLD TO CAST</Text>
                 </TouchableOpacity>
               </Animated.View>
@@ -687,14 +691,17 @@ export default function CastingGameScreen({ navigation, route }) {
                 activeOpacity={1}
                 onPressOut={releaseCast}
               >
-                <Text style={styles.castBtnEmoji}>💪</Text>
+                <AppIcon name="zap" size={28} color="#fff" />
                 <Text style={styles.castBtnText}>LOADING POWER...</Text>
               </TouchableOpacity>
             )}
 
             {phase === PHASE.CASTING && (
               <View style={styles.castingPlaceholder}>
-                <Text style={styles.castingText}>✨ Casting...</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppIcon name="sparkles" size={16} color={colors.primary} />
+                  <Text style={styles.castingText}>Casting...</Text>
+                </View>
               </View>
             )}
 
@@ -708,21 +715,21 @@ export default function CastingGameScreen({ navigation, route }) {
 
             {isFinished && bestResult && (
               <View style={styles.finalCard}>
-                <Text style={styles.finalTitle}>🏁 Round Complete!</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <AppIcon name="flag" size={20} color={colors.text} />
+                  <Text style={styles.finalTitle}>Round Complete!</Text>
+                </View>
                 <Text style={styles.finalScore}>
                   Best Score: {bestResult.score}
                 </Text>
                 <View style={styles.resultStarsRow}>
                   {[1, 2, 3].map(i => (
-                    <Text
+                    <AppIcon
                       key={i}
-                      style={[
-                        styles.finalStar,
-                        bestResult.stars >= i && styles.resultStarEarned,
-                      ]}
-                    >
-                      ★
-                    </Text>
+                      name="star"
+                      size={24}
+                      color={bestResult.stars >= i ? '#FFD700' : '#2a3550'}
+                    />
                   ))}
                 </View>
                 <Text style={styles.finalDetail}>
@@ -731,13 +738,19 @@ export default function CastingGameScreen({ navigation, route }) {
                 </Text>
                 <View style={styles.finalButtons}>
                   <TouchableOpacity style={styles.retryBtn} onPress={restart}>
-                    <Text style={styles.retryText}>🔄 Try Again</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <AppIcon name="refresh" size={16} color={colors.text} />
+                      <Text style={styles.retryText}>Try Again</Text>
+                    </View>
                   </TouchableOpacity>
                   <TouchableOpacity
                     style={styles.doneBtn}
                     onPress={() => navigation.goBack()}
                   >
-                    <Text style={styles.doneText}>✅ Done</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                      <AppIcon name="checkCircle" size={16} color={colors.success} />
+                      <Text style={styles.doneText}>Done</Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
               </View>

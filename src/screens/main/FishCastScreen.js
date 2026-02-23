@@ -29,6 +29,7 @@ import SolunarTimeline from '../../components/SolunarTimeline';
 import TideChart from '../../components/TideChart';
 import FactorBreakdown from '../../components/FactorBreakdown';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function FishCastScreen() {
   const { t } = useTranslation();
@@ -124,7 +125,9 @@ export default function FishCastScreen() {
   if (!forecast) {
     return (
       <View style={styles.centerContainer}>
-        <Text style={styles.errorIcon}>🌧️</Text>
+        <View style={{ marginBottom: 16 }}>
+          <AppIcon name="cloudRain" size={48} color={colors.textTertiary} />
+        </View>
         <Text style={styles.errorText}>
           {t('fishcast.error', 'Could not load forecast')}
         </Text>
@@ -137,6 +140,8 @@ export default function FishCastScreen() {
       </View>
     );
   }
+
+  const summary = getSummaryText(forecast.score, t);
 
   return (
     <ScrollView
@@ -157,7 +162,10 @@ export default function FishCastScreen() {
           {t('fishcast.title', 'FishCast')}
         </Text>
         {locationName ? (
-          <Text style={styles.location}>📍 {locationName}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="mapPin" size={16} color={colors.textSecondary} />
+            <Text style={styles.location}>{locationName}</Text>
+          </View>
         ) : null}
         <Text style={styles.timestamp}>
           {new Date(forecast.calculatedAt).toLocaleTimeString([], {
@@ -173,18 +181,24 @@ export default function FishCastScreen() {
       </View>
 
       {/* Quick summary */}
-      <Text style={styles.summary}>{getSummaryText(forecast.score, t)}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 24 }}>
+        <AppIcon name={summary.icon} size={20} color={colors.textSecondary} />
+        <Text style={[styles.summary, { marginBottom: 0 }]}>{summary.text}</Text>
+      </View>
 
       {/* Best Times Today */}
       {forecast.solunar && (
         <View style={styles.bestTimesCard}>
-          <Text style={styles.bestTimesTitle}>
-            {t('fishcast.bestTimes', '🕐 Best Times Today')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <AppIcon name="clock" size={20} color={colors.text} />
+            <Text style={styles.bestTimesTitle}>
+              {t('fishcast.bestTimes', 'Best Times Today')}
+            </Text>
+          </View>
           <View style={styles.bestTimesRow}>
             {(forecast.solunar.majorPeriods || []).map((period, i) => (
               <View key={`major-${i}`} style={styles.timeSlot}>
-                <Text style={styles.timeSlotIcon}>🔥</Text>
+                <AppIcon name="flame" size={16} color={colors.accent} />
                 <Text style={styles.timeSlotText}>
                   {period.start} – {period.end}
                 </Text>
@@ -195,7 +209,7 @@ export default function FishCastScreen() {
             ))}
             {(forecast.solunar.minorPeriods || []).map((period, i) => (
               <View key={`minor-${i}`} style={styles.timeSlot}>
-                <Text style={styles.timeSlotIcon}>⭐</Text>
+                <AppIcon name="star" size={16} color="#FFD700" />
                 <Text style={styles.timeSlotText}>
                   {period.start} – {period.end}
                 </Text>
@@ -211,9 +225,12 @@ export default function FishCastScreen() {
       {/* Hourly Forecast Timeline */}
       {forecast.hourly && forecast.hourly.length > 0 && (
         <View style={styles.hourlyCard}>
-          <Text style={styles.hourlyTitle}>
-            {t('fishcast.hourlyForecast', '📊 Hourly Forecast')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <AppIcon name="barChart" size={20} color={colors.text} />
+            <Text style={styles.hourlyTitle}>
+              {t('fishcast.hourlyForecast', 'Hourly Forecast')}
+            </Text>
+          </View>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {forecast.hourly.map((h, i) => (
               <View key={i} style={styles.hourlySlot}>
@@ -242,9 +259,12 @@ export default function FishCastScreen() {
       {/* 7-Day Outlook (Pro) */}
       {outlook.length > 0 && (
         <View style={styles.outlookCard}>
-          <Text style={styles.outlookTitle}>
-            {t('fishcast.weekOutlook', '📅 7-Day Outlook')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <AppIcon name="calendar" size={20} color={colors.text} />
+            <Text style={styles.outlookTitle}>
+              {t('fishcast.weekOutlook', '7-Day Outlook')}
+            </Text>
+          </View>
           {!isPro && (
             <View style={styles.outlookProBadge}>
               <Text style={styles.outlookProText}>PRO</Text>
@@ -259,7 +279,7 @@ export default function FishCastScreen() {
                 <Text style={styles.outlookDay}>
                   {i === 0 ? t('fishcast.today', 'Today') : day.dayName}
                 </Text>
-                <Text style={styles.outlookIcon}>{day.icon}</Text>
+                <AppIcon name={day.icon || 'sun'} size={20} color={colors.text} />
                 <View style={styles.outlookScoreBar}>
                   <View
                     style={[
@@ -339,23 +359,38 @@ export default function FishCastScreen() {
 
 function getSummaryText(score, t) {
   if (score >= 85)
-    return t(
-      'fishcast.summaryExcellent',
-      '🔥 Outstanding conditions! Get out there now!',
-    );
+    return {
+      icon: 'flame',
+      text: t(
+        'fishcast.summaryExcellent',
+        'Outstanding conditions! Get out there now!',
+      ),
+    };
   if (score >= 70)
-    return t(
-      'fishcast.summaryVeryGood',
-      '🎣 Very good fishing conditions today.',
-    );
+    return {
+      icon: 'fish',
+      text: t(
+        'fishcast.summaryVeryGood',
+        'Very good fishing conditions today.',
+      ),
+    };
   if (score >= 55)
-    return t('fishcast.summaryGood', '👍 Decent conditions — worth a trip.');
+    return {
+      icon: 'thumbsUp',
+      text: t('fishcast.summaryGood', 'Decent conditions — worth a trip.'),
+    };
   if (score >= 40)
-    return t(
-      'fishcast.summaryFair',
-      '🤷 Fair conditions — patience will be key.',
-    );
-  return t('fishcast.summaryPoor', '😴 Tough conditions — maybe try tomorrow.');
+    return {
+      icon: 'minus',
+      text: t(
+        'fishcast.summaryFair',
+        'Fair conditions — patience will be key.',
+      ),
+    };
+  return {
+    icon: 'moon',
+    text: t('fishcast.summaryPoor', 'Tough conditions — maybe try tomorrow.'),
+  };
 }
 
 const createStyles = (colors) => StyleSheet.create({

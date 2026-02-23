@@ -35,40 +35,41 @@ import leaderboardService, {
 } from '../../services/leaderboardService';
 import regionGatingService from '../../services/regionGatingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const LEADERBOARD_TABS = [
-  { key: 'global', label: 'Global', icon: '🌍' },
-  { key: 'regional', label: 'Regional', icon: '📍' },
-  { key: 'species', label: 'Species', icon: '🐟' },
-  { key: 'friends', label: 'Friends', icon: '👥' },
-  { key: 'badges', label: 'Badges', icon: '🏅' },
+  { key: 'global', label: 'Global', icon: 'globe' },
+  { key: 'regional', label: 'Regional', icon: 'mapPin' },
+  { key: 'species', label: 'Species', icon: 'fish' },
+  { key: 'friends', label: 'Friends', icon: 'users' },
+  { key: 'badges', label: 'Badges', icon: 'medal' },
 ];
 
 const LEADERBOARD_CATEGORIES = [
   {
     key: 'catches',
     label: 'Total Catches',
-    icon: '🎣',
+    icon: 'fish',
     metric: LEADERBOARD_METRIC.TOTAL_CATCHES,
   },
   {
     key: 'weight',
     label: 'Biggest Catch',
-    icon: '⚖️',
+    icon: 'scale',
     metric: LEADERBOARD_METRIC.BIGGEST_WEIGHT,
   },
   {
     key: 'species',
     label: 'Species Count',
-    icon: '🐟',
+    icon: 'fish',
     metric: LEADERBOARD_METRIC.SPECIES_COUNT,
   },
 ];
 
 const TIME_FILTERS = [
-  { key: TIME_FILTER.WEEKLY, label: 'This Week', icon: '📅' },
-  { key: TIME_FILTER.MONTHLY, label: 'This Month', icon: '🗓️' },
-  { key: TIME_FILTER.ALL_TIME, label: 'All Time', icon: '♾️' },
+  { key: TIME_FILTER.WEEKLY, label: 'This Week', icon: 'calendar' },
+  { key: TIME_FILTER.MONTHLY, label: 'This Month', icon: 'calendarDays' },
+  { key: TIME_FILTER.ALL_TIME, label: 'All Time', icon: 'infinity' },
 ];
 
 export default function LeaderboardScreen({ navigation }) {
@@ -227,11 +228,14 @@ export default function LeaderboardScreen({ navigation }) {
             onPress={() => setTab(item.key)}
             accessibilityRole="tab"
           >
-            <Text
-              style={[styles.tabText, tab === item.key && styles.tabTextActive]}
-            >
-              {item.icon} {t(`leaderboard.tab_${item.key}`, item.label)}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <AppIcon name={item.icon} size={14} color={tab === item.key ? '#fff' : colors.textTertiary} />
+              <Text
+                style={[styles.tabText, tab === item.key && styles.tabTextActive]}
+              >
+                {t(`leaderboard.tab_${item.key}`, item.label)}
+              </Text>
+            </View>
           </TouchableOpacity>
         ))}
       </ScrollView>
@@ -359,14 +363,17 @@ export default function LeaderboardScreen({ navigation }) {
                 ]}
                 onPress={() => setCategory(cat.key)}
               >
-                <Text
-                  style={[
-                    styles.categoryText,
-                    category === cat.key && styles.categoryTextActive,
-                  ]}
-                >
-                  {cat.icon} {t(`leaderboard.${cat.key}`, cat.label)}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppIcon name={cat.icon} size={14} color={category === cat.key ? colors.primary : colors.textTertiary} />
+                  <Text
+                    style={[
+                      styles.categoryText,
+                      category === cat.key && styles.categoryTextActive,
+                    ]}
+                  >
+                    {t(`leaderboard.${cat.key}`, cat.label)}
+                  </Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -374,7 +381,7 @@ export default function LeaderboardScreen({ navigation }) {
           {/* Leaderboard list */}
           {sortedLeaderboard.length === 0 ? (
             <View style={styles.emptyState}>
-              <Text style={styles.emptyIcon}>🏆</Text>
+              <AppIcon name="trophy" size={48} color={colors.textTertiary} />
               <Text style={styles.emptyText}>
                 {t(
                   'leaderboard.empty',
@@ -391,8 +398,6 @@ export default function LeaderboardScreen({ navigation }) {
                   : category === 'weight'
                   ? `${user.weight.toFixed(1)} kg`
                   : user.species;
-              const medal =
-                rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : '';
 
               return (
                 <View
@@ -400,8 +405,12 @@ export default function LeaderboardScreen({ navigation }) {
                   style={[styles.rankRow, user.isMe && styles.rankRowMe]}
                 >
                   <View style={styles.rankBadge}>
-                    {medal ? (
-                      <Text style={styles.rankMedal}>{medal}</Text>
+                    {rank === 1 ? (
+                      <AppIcon name="medal" size={24} color="#FFD700" />
+                    ) : rank === 2 ? (
+                      <AppIcon name="medal" size={24} color="#C0C0C0" />
+                    ) : rank === 3 ? (
+                      <AppIcon name="medal" size={24} color="#CD7F32" />
                     ) : (
                       <Text style={styles.rankNumber}>{rank}</Text>
                     )}
@@ -468,14 +477,11 @@ export default function LeaderboardScreen({ navigation }) {
                             !isEarned && styles.badgeCardLocked,
                           ]}
                         >
-                          <Text
-                            style={[
-                              styles.badgeIcon,
-                              !isEarned && styles.badgeIconLocked,
-                            ]}
-                          >
-                            {isEarned ? badge.icon : '🔒'}
-                          </Text>
+                          {isEarned ? (
+                            <AppIcon name={badge.icon} size={32} color={colors.primary} />
+                          ) : (
+                            <AppIcon name="lock" size={32} color={colors.textTertiary} />
+                          )}
                           <Text
                             style={[
                               styles.badgeName,
@@ -501,12 +507,13 @@ export default function LeaderboardScreen({ navigation }) {
           {badges?.new?.length > 0 && (
             <View style={styles.newBadgeBanner}>
               <Text style={styles.newBadgeTitle}>
-                🎉 {t('leaderboard.newBadges', 'New Badges Earned!')}
+                {t('leaderboard.newBadges', 'New Badges Earned!')}
               </Text>
               {badges.new.map(b => (
-                <Text key={b.id} style={styles.newBadgeItem}>
-                  {b.icon} {b.name} — {b.description}
-                </Text>
+                <View key={b.id} style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <AppIcon name={b.icon} size={16} color={colors.text} />
+                  <Text style={styles.newBadgeItem}>{b.name} — {b.description}</Text>
+                </View>
               ))}
             </View>
           )}

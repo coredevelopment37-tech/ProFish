@@ -15,6 +15,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import speciesDatabase from '../services/speciesDatabase';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function SpeciesPicker({ value, onSelect, placeholder }) {
   const { t } = useTranslation();
@@ -81,9 +82,7 @@ export default function SpeciesPicker({ value, onSelect, placeholder }) {
                   <Text style={styles.resultScientific}>{item.scientific}</Text>
                 </View>
                 <View style={styles.resultBadges}>
-                  <Text style={styles.habitatBadge}>
-                    {getHabitatEmoji(item.habitat)}
-                  </Text>
+                  <AppIcon name={getHabitatIcon(item.habitat)} size={16} color={colors.textSecondary} />
                 </View>
               </TouchableOpacity>
             )}
@@ -94,16 +93,16 @@ export default function SpeciesPicker({ value, onSelect, placeholder }) {
   );
 }
 
-function getHabitatEmoji(habitat) {
+function getHabitatIcon(habitat) {
   switch (habitat) {
     case 'freshwater':
-      return '🏞️';
+      return 'treePine';
     case 'saltwater':
-      return '🌊';
+      return 'waves';
     case 'brackish':
-      return '🏝️';
+      return 'leaf';
     default:
-      return '🐟';
+      return 'fish';
   }
 }
 

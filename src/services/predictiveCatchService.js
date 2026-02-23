@@ -213,16 +213,16 @@ const predictiveCatchService = {
     let rating, emoji;
     if (probability >= 75) {
       rating = 'Excellent';
-      emoji = '🔥';
+      emoji = 'flame';
     } else if (probability >= 55) {
       rating = 'Good';
-      emoji = '👍';
+      emoji = 'thumbsUp';
     } else if (probability >= 40) {
       rating = 'Fair';
-      emoji = '🤷';
+      emoji = 'helpCircle';
     } else {
       rating = 'Low';
-      emoji = '❄️';
+      emoji = 'snowflake';
     }
 
     // Tips

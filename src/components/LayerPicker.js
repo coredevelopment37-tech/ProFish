@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 import { useApp } from '../store/AppContext';
 import {
   LAYERS,
@@ -58,11 +59,14 @@ export default function LayerPicker({
           <View style={styles.header}>
             <View style={styles.handle} />
             <View style={styles.headerRow}>
-              <Text style={styles.title}>
-                🗺️ {t('map.layers', 'Map Layers')}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, flex: 1 }}>
+                <AppIcon name="map" size={20} color={colors.text} />
+                <Text style={styles.title}>
+                  {t('map.layers', 'Map Layers')}
+                </Text>
+              </View>
               <TouchableOpacity onPress={onClose}>
-                <Text style={styles.close}>✕</Text>
+                <AppIcon name="x" size={22} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
@@ -128,7 +132,7 @@ export default function LayerPicker({
                       >
                         {t(layer.label, layer.id.replace(/_/g, ' '))}
                       </Text>
-                      {locked && <Text style={styles.lockIcon}>🔒</Text>}
+                      {locked && <AppIcon name="lock" size={14} color={colors.textTertiary} />}
                     </View>
                     <View style={styles.layerMeta}>
                       <Text style={styles.layerSource}>{layer.source}</Text>

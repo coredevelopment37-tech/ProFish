@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function SolunarTimeline({ solunar, sunTimes }) {
   const { t } = useTranslation();
@@ -22,7 +23,10 @@ export default function SolunarTimeline({ solunar, sunTimes }) {
   return (
     <View style={styles.card}>
       <View style={styles.header}>
-        <Text style={styles.title}>🌙 {t('fishcast.solunar', 'Solunar')}</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <AppIcon name="moon" size={16} color={colors.text} />
+          <Text style={[styles.title, { marginLeft: 6 }]}>{t('fishcast.solunar', 'Solunar')}</Text>
+        </View>
         <View style={styles.moonInfo}>
           <Text style={styles.moonPhase}>
             {getMoonEmoji(solunar.moonPhase)}

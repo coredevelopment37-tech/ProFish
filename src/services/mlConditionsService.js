@@ -290,23 +290,23 @@ const mlConditionsService = {
     let rating, emoji, color;
     if (score >= 80) {
       rating = 'Excellent';
-      emoji = '🎣';
+      emoji = 'fish';
       color = COLORS.success;
     } else if (score >= 65) {
       rating = 'Good';
-      emoji = '👍';
+      emoji = 'thumbsUp';
       color = '#8BC34A';
     } else if (score >= 50) {
       rating = 'Fair';
-      emoji = '🤔';
+      emoji = 'helpCircle';
       color = COLORS.accent;
     } else if (score >= 35) {
       rating = 'Poor';
-      emoji = '👎';
+      emoji = 'thumbsDown';
       color = COLORS.error;
     } else {
       rating = 'Bad';
-      emoji = '⛈️';
+      emoji = 'cloudLightning';
       color = '#D32F2F';
     }
 

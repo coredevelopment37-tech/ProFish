@@ -12,6 +12,7 @@ import {
   Animated,
 } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 export default function LoadingScreen({ message = 'Loading…' }) {
   const { colors } = useTheme();
@@ -43,7 +44,7 @@ export default function LoadingScreen({ message = 'Loading…' }) {
           { opacity: fadeAnim, transform: [{ scale: scaleAnim }] },
         ]}
       >
-        <Text style={styles.logo}>🐟</Text>
+        <AppIcon name="fish" size={48} color={colors.primary} />
         <Text style={styles.brandName}>ProFish</Text>
       </Animated.View>
       <ActivityIndicator size="large" color={colors.primary} style={styles.spinner} />

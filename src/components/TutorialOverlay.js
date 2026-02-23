@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -25,31 +26,31 @@ const TUTORIALS = {
     key: '@profish_tut_first_catch',
     steps: [
       {
-        emoji: '📸',
+        icon: 'camera',
         title: 'Snap a Photo',
         message:
           'Take a photo of your catch — our AI will auto-identify the species and suggest the weight.',
       },
       {
-        emoji: '🐟',
+        icon: 'fish',
         title: 'Fill in the Details',
         message:
           'Confirm species, enter weight/length, and choose your bait or lure.',
       },
       {
-        emoji: '📍',
+        icon: 'mapPin',
         title: 'Tag the Location',
         message:
           'Your GPS location is auto-captured. You can also pick a spot from the map.',
       },
       {
-        emoji: '🌤️',
+        icon: 'cloudSun',
         title: 'Conditions Auto-Logged',
         message:
           'We automatically record weather, tide, moon phase, and barometric pressure.',
       },
       {
-        emoji: '✅',
+        icon: 'checkCircle',
         title: 'Save & Share',
         message:
           'Hit save! Your catch is logged and synced. Share it with the community to earn points.',
@@ -62,31 +63,31 @@ const TUTORIALS = {
     key: '@profish_tut_fishcast',
     steps: [
       {
-        emoji: '🎯',
+        icon: 'target',
         title: 'Your FishCast Score',
         message:
           'A number from 0-100 that predicts how active fish will be. 80+ is prime time!',
       },
       {
-        emoji: '📊',
+        icon: 'barChart',
         title: '8 Weighted Factors',
         message:
           'We analyze barometric pressure, moon phase, solunar periods, wind, tide, temperature, cloud cover, and precipitation.',
       },
       {
-        emoji: '🐟',
+        icon: 'fish',
         title: 'Species Adjustment',
         message:
           'Each species responds differently. Select a target species to get a personalized score.',
       },
       {
-        emoji: '📅',
+        icon: 'calendar',
         title: '7-Day Outlook',
         message:
           'Swipe to see the next 7 days — plan your trip for the highest score day.',
       },
       {
-        emoji: '🔔',
+        icon: 'bell',
         title: 'Bite Alerts',
         message:
           "Enable alerts and we'll notify you when FishCast hits 90+ at your saved spots.",
@@ -99,31 +100,31 @@ const TUTORIALS = {
     key: '@profish_tut_map',
     steps: [
       {
-        emoji: '🗺️',
+        icon: 'map',
         title: '18 Map Layers',
         message:
           'Tap the layers button to toggle bathymetry, SST, weather, tide stations, and more.',
       },
       {
-        emoji: '📍',
+        icon: 'mapPin',
         title: 'Save Spots',
         message:
           "Long-press anywhere to save a fishing spot. Name it and it's bookmarked forever.",
       },
       {
-        emoji: '🌡️',
+        icon: 'thermometer',
         title: 'Live Conditions',
         message:
           'Weather and wind layers update in real-time. Tap any tide station for the full chart.',
       },
       {
-        emoji: '🔥',
+        icon: 'flame',
         title: 'Fish Hotspots',
         message:
           'The heatmap layer shows where catches are happening. Red = hot zone!',
       },
       {
-        emoji: '🎯',
+        icon: 'target',
         title: 'FishCast on Map',
         message:
           'Your current location marker shows the live FishCast score. Blue badge = go fish!',
@@ -197,7 +198,7 @@ export default function TutorialOverlay({ tutorialId, visible, onClose }) {
             ))}
           </View>
 
-          <Text style={styles.emoji}>{current.emoji}</Text>
+          <AppIcon name={current.icon} size={56} color={colors.primary} />
           <Text style={styles.title}>{current.title}</Text>
           <Text style={styles.message}>{current.message}</Text>
 
@@ -206,9 +207,12 @@ export default function TutorialOverlay({ tutorialId, visible, onClose }) {
               <Text style={styles.skipText}>Skip</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleNext} style={styles.nextBtn}>
-              <Text style={styles.nextText}>
-                {isLast ? 'Done ✓' : 'Next →'}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text style={styles.nextText}>
+                  {isLast ? 'Done ' : 'Next '}
+                </Text>
+                <AppIcon name={isLast ? 'check' : 'arrowRight'} size={16} color={colors.text} />
+              </View>
             </TouchableOpacity>
           </View>
 

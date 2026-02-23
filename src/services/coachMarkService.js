@@ -17,7 +17,7 @@ const COACH_MARKS = {
     message:
       'Tap here to toggle 18 map layers — bathymetry, SST, weather, and more.',
     position: 'bottom',
-    emoji: '🗺️',
+    emoji: 'map',
   },
   FISHCAST_SCORE: {
     id: 'fishcast_score',
@@ -25,7 +25,7 @@ const COACH_MARKS = {
     message:
       'This number (0-100) predicts how good fishing will be right now. 80+ means get out there!',
     position: 'bottom',
-    emoji: '🎯',
+    emoji: 'target',
   },
   LOG_CATCH: {
     id: 'log_catch',
@@ -33,14 +33,14 @@ const COACH_MARKS = {
     message:
       'Tap + to record a catch. Add a photo and our AI will identify the species.',
     position: 'top',
-    emoji: '📸',
+    emoji: 'camera',
   },
   SAVE_SPOT: {
     id: 'save_spot',
     title: 'Save This Spot',
     message: 'Long-press anywhere on the map to bookmark a fishing spot.',
     position: 'bottom',
-    emoji: '📍',
+    emoji: 'mapPin',
   },
   TIDE_CHART: {
     id: 'tide_chart',
@@ -48,7 +48,7 @@ const COACH_MARKS = {
     message:
       'Tap a tide marker to see the full tide chart with high/low predictions.',
     position: 'top',
-    emoji: '🌊',
+    emoji: 'waves',
   },
   SPECIES_DETAIL: {
     id: 'species_detail',
@@ -56,7 +56,7 @@ const COACH_MARKS = {
     message:
       'Tap any species to see best baits, seasons, regulations, and a species-tuned FishCast.',
     position: 'top',
-    emoji: '🐟',
+    emoji: 'fish',
   },
   COMMUNITY_POST: {
     id: 'community_post',
@@ -64,7 +64,7 @@ const COACH_MARKS = {
     message:
       'Post your catch to the community feed. Get likes, comments, and climb leaderboards.',
     position: 'bottom',
-    emoji: '🏆',
+    emoji: 'trophy',
   },
   WEATHER_LAYER: {
     id: 'weather_layer',
@@ -72,7 +72,7 @@ const COACH_MARKS = {
     message:
       'Enable the weather layer to see real-time conditions directly on the map.',
     position: 'bottom',
-    emoji: '⛅',
+    emoji: 'cloudSun',
   },
   TRIP_PLANNER: {
     id: 'trip_planner',
@@ -80,7 +80,7 @@ const COACH_MARKS = {
     message:
       "Pick a date, species, and we'll find the perfect spot, time, and bait for you.",
     position: 'top',
-    emoji: '📅',
+    emoji: 'calendar',
   },
   MOON_CALENDAR: {
     id: 'moon_calendar',
@@ -88,7 +88,7 @@ const COACH_MARKS = {
     message:
       'Check moon phases and solunar periods. New and full moons = best feeding times.',
     position: 'top',
-    emoji: '🌙',
+    emoji: 'moon',
   },
 };
 

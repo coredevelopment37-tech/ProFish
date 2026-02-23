@@ -59,19 +59,19 @@ export const CONFIDENCE_LEVEL = {
   HIGH: {
     label: 'High Confidence',
     color: COLORS.success,
-    icon: '✅',
+    icon: 'checkCircle',
     minScore: AI_CONFIG.HIGH_CONFIDENCE,
   },
   MEDIUM: {
     label: 'Likely Match',
     color: COLORS.accent,
-    icon: '🟡',
+    icon: 'alertCircle',
     minScore: AI_CONFIG.MEDIUM_CONFIDENCE,
   },
   LOW: {
     label: 'Possible Match',
     color: COLORS.error,
-    icon: '❓',
+    icon: 'helpCircle',
     minScore: AI_CONFIG.LOW_CONFIDENCE,
   },
   UNKNOWN: {

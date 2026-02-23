@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 import { TIER_META } from '../services/subscriptionService';
 
 const { width } = Dimensions.get('window');
@@ -123,27 +124,42 @@ export default function PurchaseSuccessModal({
           </Text>
 
           <View style={styles.features}>
-            <Text style={styles.featureItem}>
-              ✅ {t('purchase.unlimited', 'Unlimited catch logging')}
-            </Text>
-            <Text style={styles.featureItem}>
-              ✅ {t('purchase.allLayers', 'All map layers unlocked')}
-            </Text>
-            <Text style={styles.featureItem}>
-              ✅ {t('purchase.offline', 'Offline maps available')}
-            </Text>
-            <Text style={styles.featureItem}>
-              ✅ {t('purchase.stats', 'Advanced catch statistics')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <AppIcon name="checkCircle" size={18} color={colors.success} />
+              <Text style={[styles.featureItem, { marginBottom: 0, marginLeft: 8 }]}>
+                {t('purchase.unlimited', 'Unlimited catch logging')}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <AppIcon name="checkCircle" size={18} color={colors.success} />
+              <Text style={[styles.featureItem, { marginBottom: 0, marginLeft: 8 }]}>
+                {t('purchase.allLayers', 'All map layers unlocked')}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <AppIcon name="checkCircle" size={18} color={colors.success} />
+              <Text style={[styles.featureItem, { marginBottom: 0, marginLeft: 8 }]}>
+                {t('purchase.offline', 'Offline maps available')}
+              </Text>
+            </View>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8 }}>
+              <AppIcon name="checkCircle" size={18} color={colors.success} />
+              <Text style={[styles.featureItem, { marginBottom: 0, marginLeft: 8 }]}>
+                {t('purchase.stats', 'Advanced catch statistics')}
+              </Text>
+            </View>
           </View>
 
           <TouchableOpacity
             style={[styles.button, { backgroundColor: tierMeta.color }]}
             onPress={onClose}
           >
-            <Text style={styles.buttonText}>
-              {t('purchase.getStarted', 'Get Started')} 🎣
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.buttonText}>
+                {t('purchase.getStarted', 'Get Started')}
+              </Text>
+              <AppIcon name="fish" size={20} color={colors.text} style={{ marginLeft: 8 }} />
+            </View>
           </TouchableOpacity>
         </Animated.View>
       </View>

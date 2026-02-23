@@ -13,16 +13,17 @@ import {
   ScrollView,
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const CATEGORIES = [
-  { id: 'all', label: 'All', emoji: '📚' },
-  { id: 'knots', label: 'Knots', emoji: '🪢' },
-  { id: 'techniques', label: 'Techniques', emoji: '🎣' },
-  { id: 'bait', label: 'Bait & Lures', emoji: '🪱' },
-  { id: 'species', label: 'Species', emoji: '🐟' },
-  { id: 'seasonal', label: 'Seasonal', emoji: '🍂' },
-  { id: 'gear', label: 'Gear', emoji: '🎒' },
-  { id: 'safety', label: 'Safety', emoji: '⛑️' },
+  { id: 'all', label: 'All', icon: 'bookOpen' },
+  { id: 'knots', label: 'Knots', icon: 'anchor' },
+  { id: 'techniques', label: 'Techniques', icon: 'fish' },
+  { id: 'bait', label: 'Bait & Lures', icon: 'anchor' },
+  { id: 'species', label: 'Species', icon: 'fish' },
+  { id: 'seasonal', label: 'Seasonal', icon: 'leaf' },
+  { id: 'gear', label: 'Gear', icon: 'package' },
+  { id: 'safety', label: 'Safety', icon: 'shieldAlert' },
 ];
 
 // #526 — Bait & Lure encyclopedia, #527 — Technique library, #528 — Seasonal guides
@@ -35,7 +36,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_improved_clinch',
@@ -44,7 +45,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '2 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_uni',
@@ -53,7 +54,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_loop',
@@ -62,7 +63,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_blood',
@@ -71,7 +72,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '4 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_alberto',
@@ -80,7 +81,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '4 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_fg',
@@ -89,7 +90,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'advanced',
     duration: '6 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_snell',
@@ -98,7 +99,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '4 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_dropper',
@@ -107,7 +108,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_bimini',
@@ -116,7 +117,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'advanced',
     duration: '5 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_surgeon',
@@ -125,7 +126,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '2 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_nail',
@@ -134,7 +135,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'advanced',
     duration: '5 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_rapala',
@@ -143,7 +144,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_perfection',
@@ -152,7 +153,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_davy',
@@ -161,7 +162,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '1 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_crazy_alberto',
@@ -170,7 +171,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '4 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_spider_hitch',
@@ -179,7 +180,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_trilene',
@@ -188,7 +189,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '2 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_double_uni',
@@ -197,7 +198,7 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'beginner',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
   {
     id: 'knot_san_diego_jam',
@@ -206,18 +207,18 @@ const LESSONS = [
     category: 'knots',
     difficulty: 'intermediate',
     duration: '3 min',
-    emoji: '🪢',
+    icon: 'anchor',
   },
 
   // Casting Simulator — special interactive entry (#casting-sim)
   {
     id: 'casting_simulator',
-    title: '🎮 Casting Simulator',
+    title: 'Casting Simulator',
     desc: 'Practice 10 real casting techniques! Overhead, fly, surf, skipping & more.',
     category: 'techniques',
     difficulty: 'beginner',
     duration: 'Interactive',
-    emoji: '🎯',
+    icon: 'gamepad',
     isSimulator: true,
   },
 
@@ -229,7 +230,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_carolina_rig',
@@ -238,7 +239,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_drop_shot',
@@ -247,7 +248,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_topwater',
@@ -256,7 +257,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_jigging',
@@ -265,7 +266,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_fly_casting',
@@ -274,7 +275,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '15 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_trolling',
@@ -283,7 +284,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_live_bait',
@@ -292,7 +293,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'beginner',
     duration: '6 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_neko_rig',
@@ -301,7 +302,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'intermediate',
     duration: '6 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_bottom_fishing',
@@ -310,7 +311,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_slow_pitch',
@@ -319,7 +320,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'advanced',
     duration: '12 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
   {
     id: 'tech_sight_fishing',
@@ -328,7 +329,7 @@ const LESSONS = [
     category: 'techniques',
     difficulty: 'advanced',
     duration: '10 min',
-    emoji: '🎣',
+    icon: 'fish',
   },
 
   // Bait & Lure section (#526)
@@ -339,7 +340,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'beginner',
     duration: '10 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_crankbaits',
@@ -348,7 +349,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_spinnerbaits',
@@ -357,7 +358,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_jigs',
@@ -366,7 +367,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_topwater_lures',
@@ -375,7 +376,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_live_bait_types',
@@ -384,7 +385,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_fly_patterns',
@@ -393,7 +394,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'intermediate',
     duration: '12 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
   {
     id: 'bait_color_selection',
@@ -402,7 +403,7 @@ const LESSONS = [
     category: 'bait',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🪱',
+    icon: 'anchor',
   },
 
   // Seasonal section (#528)
@@ -413,7 +414,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🌸',
+    icon: 'flower',
   },
   {
     id: 'season_summer_offshore',
@@ -422,7 +423,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '☀️',
+    icon: 'sun',
   },
   {
     id: 'season_fall_fishing',
@@ -431,7 +432,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🍂',
+    icon: 'leaf',
   },
   {
     id: 'season_winter_fishing',
@@ -440,7 +441,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '❄️',
+    icon: 'snowflake',
   },
   {
     id: 'season_ice_fishing',
@@ -449,7 +450,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'beginner',
     duration: '12 min',
-    emoji: '🧊',
+    icon: 'snowflake',
   },
   {
     id: 'season_night_fishing',
@@ -458,7 +459,7 @@ const LESSONS = [
     category: 'seasonal',
     difficulty: 'intermediate',
     duration: '8 min',
-    emoji: '🌙',
+    icon: 'moon',
   },
 
   // Species guides
@@ -469,7 +470,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'beginner',
     duration: '10 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
   {
     id: 'species_trout_guide',
@@ -478,7 +479,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'intermediate',
     duration: '12 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
   {
     id: 'species_walleye',
@@ -487,7 +488,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
   {
     id: 'species_catfish',
@@ -496,7 +497,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
   {
     id: 'species_redfish',
@@ -505,7 +506,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'intermediate',
     duration: '10 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
   {
     id: 'species_tuna',
@@ -514,7 +515,7 @@ const LESSONS = [
     category: 'species',
     difficulty: 'advanced',
     duration: '12 min',
-    emoji: '🐟',
+    icon: 'fish',
   },
 
   // Gear section
@@ -525,7 +526,7 @@ const LESSONS = [
     category: 'gear',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🎒',
+    icon: 'package',
   },
   {
     id: 'gear_reels_101',
@@ -534,7 +535,7 @@ const LESSONS = [
     category: 'gear',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '🎒',
+    icon: 'package',
   },
   {
     id: 'gear_line_types',
@@ -543,7 +544,7 @@ const LESSONS = [
     category: 'gear',
     difficulty: 'beginner',
     duration: '6 min',
-    emoji: '🎒',
+    icon: 'package',
   },
   {
     id: 'gear_electronics',
@@ -552,7 +553,7 @@ const LESSONS = [
     category: 'gear',
     difficulty: 'intermediate',
     duration: '12 min',
-    emoji: '🎒',
+    icon: 'package',
   },
 
   // Safety
@@ -563,7 +564,7 @@ const LESSONS = [
     category: 'safety',
     difficulty: 'beginner',
     duration: '8 min',
-    emoji: '⛑️',
+    icon: 'shieldAlert',
   },
   {
     id: 'safety_hook_removal',
@@ -572,7 +573,7 @@ const LESSONS = [
     category: 'safety',
     difficulty: 'beginner',
     duration: '4 min',
-    emoji: '⛑️',
+    icon: 'shieldAlert',
   },
   {
     id: 'safety_fish_handling',
@@ -581,7 +582,7 @@ const LESSONS = [
     category: 'safety',
     difficulty: 'beginner',
     duration: '5 min',
-    emoji: '⛑️',
+    icon: 'shieldAlert',
   },
   {
     id: 'safety_wading',
@@ -590,7 +591,7 @@ const LESSONS = [
     category: 'safety',
     difficulty: 'beginner',
     duration: '5 min',
-    emoji: '⛑️',
+    icon: 'shieldAlert',
   },
 ];
 
@@ -600,42 +601,42 @@ const SKILL_LEVELS = [
     level: 1,
     name: 'Beginner',
     requirement: 0,
-    badge: '🎣',
+    badge: 'fish',
     desc: 'Just getting started',
   },
   {
     level: 2,
     name: 'Novice',
     requirement: 5,
-    badge: '🐟',
+    badge: 'fish',
     desc: 'Learning the basics',
   },
   {
     level: 3,
     name: 'Intermediate',
     requirement: 15,
-    badge: '🎯',
+    badge: 'target',
     desc: 'Solid fundamentals',
   },
   {
     level: 4,
     name: 'Advanced',
     requirement: 30,
-    badge: '🏆',
+    badge: 'trophy',
     desc: 'Skilled angler',
   },
   {
     level: 5,
     name: 'Expert',
     requirement: 50,
-    badge: '👑',
+    badge: 'crown',
     desc: 'Master of the craft',
   },
   {
     level: 6,
     name: 'Pro Angler',
     requirement: 75,
-    badge: '⭐',
+    badge: 'star',
     desc: 'Elite level',
   },
 ];
@@ -646,9 +647,10 @@ function CategoryPill({ cat, selected, onPress, styles }) {
       style={[styles.pill, selected && styles.pillActive]}
       onPress={onPress}
     >
-      <Text style={styles.pillText}>
-        {cat.emoji} {cat.label}
-      </Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+        <AppIcon name={cat.icon} size={14} color="#ccc" />
+        <Text style={styles.pillText}>{cat.label}</Text>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -663,7 +665,9 @@ function LessonCard({ lesson, onPress, styles }) {
 
   return (
     <TouchableOpacity style={styles.lessonCard} onPress={onPress}>
-      <Text style={styles.lessonEmoji}>{lesson.emoji}</Text>
+      <View style={styles.lessonEmoji}>
+        <AppIcon name={lesson.icon} size={28} color="#00D4AA" />
+      </View>
       <View style={styles.lessonContent}>
         <Text style={styles.lessonTitle}>{lesson.title}</Text>
         <Text style={styles.lessonDesc} numberOfLines={2}>
@@ -677,7 +681,10 @@ function LessonCard({ lesson, onPress, styles }) {
               {lesson.difficulty}
             </Text>
           </View>
-          <Text style={styles.duration}>⏱ {lesson.duration}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="timer" size={12} color="#8899aa" />
+            <Text style={styles.duration}>{lesson.duration}</Text>
+          </View>
         </View>
       </View>
     </TouchableOpacity>
@@ -701,7 +708,9 @@ export default function FishingSchoolScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>📚 Fishing School</Text>
+        <Text style={styles.headerTitle}>
+          <AppIcon name="bookOpen" size={24} color="#fff" /> Fishing School
+        </Text>
         <Text style={styles.lessonCount}>{filtered.length} lessons</Text>
       </View>
 
@@ -778,7 +787,7 @@ const createStyles = (colors) => StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.border,
   },
-  lessonEmoji: { fontSize: 32, marginRight: 12, marginTop: 4 },
+  lessonEmoji: { width: 40, marginRight: 12, marginTop: 4, alignItems: 'center', justifyContent: 'center' },
   lessonContent: { flex: 1 },
   lessonTitle: {
     fontSize: 16,

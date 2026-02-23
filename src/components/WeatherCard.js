@@ -7,30 +7,7 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../hooks/useTheme';
-
-const WMO_ICONS = {
-  0: '☀️',
-  1: '🌤️',
-  2: '⛅',
-  3: '☁️',
-  45: '🌫️',
-  48: '🌫️',
-  51: '🌦️',
-  53: '🌧️',
-  55: '🌧️',
-  61: '🌧️',
-  63: '🌧️',
-  65: '🌧️',
-  71: '❄️',
-  73: '❄️',
-  75: '❄️',
-  80: '🌦️',
-  81: '🌧️',
-  82: '⛈️',
-  95: '⛈️',
-  96: '⛈️',
-  99: '⛈️',
-};
+import { AppIcon, WEATHER_ICON_MAP } from '../constants/icons';
 
 function windDirectionArrow(deg) {
   const arrows = ['↓', '↙', '←', '↖', '↑', '↗', '→', '↘'];
@@ -57,12 +34,12 @@ export default function WeatherCard({
 
   if (!weather) return null;
 
-  const icon = WMO_ICONS[weather.weatherCode] || '🌡️';
+  const iconName = WEATHER_ICON_MAP[weather.weatherCode] || 'thermometer';
 
   if (compact) {
     return (
       <View style={styles.compact}>
-        <Text style={styles.compactIcon}>{icon}</Text>
+        <AppIcon name={iconName} size={18} color={colors.text} />
         <Text style={styles.compactTemp}>
           {weather.temp ?? weather.temperature}°
         </Text>
@@ -77,7 +54,7 @@ export default function WeatherCard({
   return (
     <View style={styles.card}>
       <View style={styles.row}>
-        <Text style={styles.icon}>{icon}</Text>
+        <AppIcon name={iconName} size={48} color={colors.text} />
         <View style={styles.mainInfo}>
           <Text style={styles.temp}>
             {weather.temp ?? weather.temperature}°C
@@ -109,9 +86,10 @@ export default function WeatherCard({
 
       {marine && (
         <View style={styles.marineRow}>
-          <Text style={styles.marineLabel}>
-            🌊 {t('fishcast.waves', 'Waves')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <AppIcon name="waves" size={14} color={colors.textTertiary} />
+            <Text style={[styles.marineLabel, { marginLeft: 4 }]}>{t('fishcast.waves', 'Waves')}</Text>
+          </View>
           <Text style={styles.marineValue}>
             {marine.waveHeight ? `${marine.waveHeight}m` : '—'}
             {marine.swellHeight ? ` (swell ${marine.swellHeight}m)` : ''}

@@ -6,6 +6,7 @@
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
 import useTheme from '../hooks/useTheme';
+import { AppIcon } from '../constants/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -88,7 +89,7 @@ export default function AnimatedSplash({ onFinish }) {
           },
         ]}
       >
-        <Text style={styles.logoEmoji}>🐟</Text>
+        <AppIcon name="fish" size={64} color={colors.primary} />
       </Animated.View>
 
       {/* App name */}

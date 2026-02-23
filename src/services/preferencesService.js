@@ -45,7 +45,7 @@ export function createSpot({
   longitude,
   waterType = 'saltwater',
   notes = '',
-  icon = '📍',
+  icon = 'mapPin',
   isPrivate = true,
 } = {}) {
   return {

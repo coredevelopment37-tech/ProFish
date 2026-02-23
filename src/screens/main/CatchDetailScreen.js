@@ -27,6 +27,7 @@ import {
 } from '../../utils/units';
 import PhotoViewer from '../../components/PhotoViewer';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -66,12 +67,12 @@ export default function CatchDetailScreen({ route, navigation }) {
   const handleShare = async () => {
     try {
       const lines = [
-        `🐟 ${item.species || 'Catch'}`,
-        item.weight ? `⚖️ ${formatWeight(item.weight, units)}` : '',
-        item.length ? `📏 ${formatLength(item.length, units)}` : '',
-        item.bait ? `🪱 ${item.bait}` : '',
+        `${item.species || 'Catch'}`,
+        item.weight ? `${formatWeight(item.weight, units)}` : '',
+        item.length ? `${formatLength(item.length, units)}` : '',
+        item.bait ? `${item.bait}` : '',
         '',
-        'Caught with ProFish 🎣',
+        'Caught with ProFish',
       ].filter(Boolean);
       await Share.share({
         message: lines.join('\n'),
@@ -105,10 +106,10 @@ export default function CatchDetailScreen({ route, navigation }) {
           {item.species || t('catches.unknownSpecies', 'Unknown Species')}
         </Text>
         <TouchableOpacity onPress={handleDelete} style={styles.deleteBtn}>
-          <Text style={styles.deleteText}>🗑️</Text>
+          <AppIcon name="trash" size={20} color={colors.error} />
         </TouchableOpacity>
         <TouchableOpacity onPress={handleShare} style={styles.shareBtn}>
-          <Text style={styles.shareText}>📤</Text>
+          <AppIcon name="share" size={20} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -123,34 +124,36 @@ export default function CatchDetailScreen({ route, navigation }) {
           </TouchableOpacity>
         ) : (
           <View style={styles.photoPlaceholder}>
-            <Text style={styles.photoEmoji}>🐟</Text>
+            <AppIcon name="fish" size={48} color={colors.textTertiary} />
           </View>
         )}
 
         {/* Badges */}
         <View style={styles.badges}>
           {item.released && (
-            <View style={styles.badge}>
+            <View style={[styles.badge, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+              <AppIcon name="refresh" size={14} color={colors.success} />
               <Text style={styles.badgeText}>
-                🔄 {t('catch.released', 'Released')}
+                {t('catch.released', 'Released')}
               </Text>
             </View>
           )}
           {item.waterType && (
-            <View style={[styles.badge, styles.badgeBlue]}>
+            <View style={[styles.badge, styles.badgeBlue, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+              <AppIcon
+                name={item.waterType === 'freshwater' ? 'treePine' : item.waterType === 'saltwater' ? 'waves' : 'leaf'}
+                size={14}
+                color={colors.primary}
+              />
               <Text style={styles.badgeText}>
-                {item.waterType === 'freshwater'
-                  ? '🏞️'
-                  : item.waterType === 'saltwater'
-                  ? '🌊'
-                  : '🏝️'}{' '}
                 {t(`species.${item.waterType}`, item.waterType)}
               </Text>
             </View>
           )}
           {item.method && (
-            <View style={[styles.badge, styles.badgeGray]}>
-              <Text style={styles.badgeText}>🎣 {item.method}</Text>
+            <View style={[styles.badge, styles.badgeGray, { flexDirection: 'row', alignItems: 'center', gap: 4 }]}>
+              <AppIcon name="fish" size={14} color={colors.text} />
+              <Text style={styles.badgeText}>{item.method}</Text>
             </View>
           )}
         </View>
@@ -159,28 +162,32 @@ export default function CatchDetailScreen({ route, navigation }) {
         <View style={styles.statsGrid}>
           {item.weight != null && (
             <StatCard
-              icon="⚖️"
+              iconName="scale"
+              iconColor={colors.textSecondary}
               label={t('catch.weight', 'Weight')}
               value={formatWeight(item.weight, units)}
             />
           )}
           {item.length != null && (
             <StatCard
-              icon="📏"
+              iconName="ruler"
+              iconColor={colors.textSecondary}
               label={t('catch.length', 'Length')}
               value={formatLength(item.length, units)}
             />
           )}
           {item.bait && (
             <StatCard
-              icon="🪱"
+              iconName="anchor"
+              iconColor={colors.textSecondary}
               label={t('catch.bait', 'Bait')}
               value={item.bait}
             />
           )}
           {item.method && (
             <StatCard
-              icon="🎣"
+              iconName="fish"
+              iconColor={colors.textSecondary}
               label={t('catch.method', 'Method')}
               value={item.method}
             />
@@ -212,27 +219,30 @@ export default function CatchDetailScreen({ route, navigation }) {
             <View style={styles.conditionsGrid}>
               {item.conditions.temperature != null && (
                 <ConditionPill
-                  icon="🌡️"
+                  iconName="thermometer"
+                  iconColor={colors.textSecondary}
                   value={formatTemp(item.conditions.temperature, units)}
                 />
               )}
               {item.conditions.windSpeed != null && (
                 <ConditionPill
-                  icon="💨"
+                  iconName="wind"
+                  iconColor={colors.textSecondary}
                   value={formatWind(item.conditions.windSpeed, units)}
                 />
               )}
               {item.conditions.pressure != null && (
                 <ConditionPill
-                  icon="🔽"
+                  iconName="chevronDown"
+                  iconColor={colors.textSecondary}
                   value={`${Math.round(item.conditions.pressure)} hPa`}
                 />
               )}
               {item.conditions.moonPhase && (
-                <ConditionPill icon="🌙" value={item.conditions.moonPhase} />
+                <ConditionPill iconName="moon" iconColor={colors.textSecondary} value={item.conditions.moonPhase} />
               )}
               {item.conditions.tideState && (
-                <ConditionPill icon="🌊" value={item.conditions.tideState} />
+                <ConditionPill iconName="waves" iconColor={colors.textSecondary} value={item.conditions.tideState} />
               )}
             </View>
           </View>
@@ -258,24 +268,24 @@ export default function CatchDetailScreen({ route, navigation }) {
   );
 }
 
-function StatCard({ icon, label, value }) {
+function StatCard({ iconName, iconColor, label, value }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return (
     <View style={styles.statCard}>
-      <Text style={styles.statIcon}>{icon}</Text>
+      <AppIcon name={iconName} size={24} color={iconColor || colors.textSecondary} />
       <Text style={styles.statLabel}>{label}</Text>
       <Text style={styles.statValue}>{value}</Text>
     </View>
   );
 }
 
-function ConditionPill({ icon, value }) {
+function ConditionPill({ iconName, iconColor, value }) {
   const { colors } = useTheme();
   const styles = createStyles(colors);
   return (
     <View style={styles.conditionPill}>
-      <Text style={styles.conditionIcon}>{icon}</Text>
+      <AppIcon name={iconName} size={14} color={iconColor || colors.textSecondary} />
       <Text style={styles.conditionValue}>{value}</Text>
     </View>
   );

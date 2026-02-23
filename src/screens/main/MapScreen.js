@@ -37,6 +37,7 @@ import WeatherCard from '../../components/WeatherCard';
 import tideService from '../../services/tideService';
 import { calculateFishCast } from '../../services/fishCastService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // Mapbox will be initialized once native modules are linked
 let MapboxGL = null;
@@ -211,12 +212,12 @@ export default function MapScreen({ navigation }) {
       if (!coords || coords.length < 2) return;
       const [lng, lat] = coords;
       Alert.alert(
-        '📍 Location Selected',
+        'Location Selected',
         `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
         [
           { text: 'Cancel', style: 'cancel' },
           {
-            text: '📌 Save Spot',
+            text: 'Save Spot',
             onPress: () => {
               Alert.prompt
                 ? Alert.prompt('Spot Name', 'Give this spot a name:', name => {
@@ -241,7 +242,7 @@ export default function MapScreen({ navigation }) {
             },
           },
           {
-            text: '🎣 Log Catch Here',
+            text: 'Log Catch Here',
             onPress: () =>
               navigation.navigate('LogCatch', {
                 latitude: lat,
@@ -407,7 +408,7 @@ export default function MapScreen({ navigation }) {
       properties: {
         id: s.id,
         name: s.name,
-        icon: s.icon || '📌',
+        icon: s.icon || 'pin',
       },
     })),
   };
@@ -416,7 +417,7 @@ export default function MapScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.placeholder}>
-          <Text style={styles.placeholderIcon}>🗺️</Text>
+          <AppIcon name="map" size={48} color={colors.textTertiary} />
           <Text style={styles.placeholderTitle}>{t('map.title', 'Map')}</Text>
           <Text style={styles.placeholderText}>
             {t(
@@ -823,18 +824,18 @@ export default function MapScreen({ navigation }) {
               {selectedCatch.species || 'Unknown'}
             </Text>
             <TouchableOpacity onPress={() => setSelectedCatch(null)}>
-              <Text style={styles.popupClose}>✕</Text>
+              <AppIcon name="x" size={20} color={colors.textTertiary} />
             </TouchableOpacity>
           </View>
           <View style={styles.popupStats}>
             {selectedCatch.weight && (
-              <Text style={styles.popupStat}>⚖️ {selectedCatch.weight} kg</Text>
+              <Text style={styles.popupStat}><AppIcon name="scale" size={14} color={colors.textSecondary} /> {selectedCatch.weight} kg</Text>
             )}
             {selectedCatch.method && (
-              <Text style={styles.popupStat}>🎣 {selectedCatch.method}</Text>
+              <Text style={styles.popupStat}><AppIcon name="fish" size={14} color={colors.textSecondary} /> {selectedCatch.method}</Text>
             )}
             {selectedCatch.released && (
-              <Text style={styles.popupStat}>🔄 Released</Text>
+              <Text style={styles.popupStat}><AppIcon name="refresh" size={14} color={colors.textSecondary} /> Released</Text>
             )}
           </View>
           <Text style={styles.popupHint}>Tap for details →</Text>
@@ -873,7 +874,7 @@ export default function MapScreen({ navigation }) {
           onPress={() => setLayerPickerVisible(true)}
           accessibilityLabel={t('map.layers', 'Map layers')}
         >
-          <Text style={styles.controlIcon}>🗂️</Text>
+          <AppIcon name="layers" size={22} color={colors.textSecondary} />
           <Text style={styles.controlLabel}>Layers</Text>
         </TouchableOpacity>
 
@@ -883,7 +884,7 @@ export default function MapScreen({ navigation }) {
           onPress={centerOnUser}
           accessibilityLabel={t('map.centerOnMe', 'Center on my location')}
         >
-          <Text style={styles.controlIcon}>📍</Text>
+          <AppIcon name="mapPin" size={22} color={colors.textSecondary} />
           <Text style={styles.controlLabel}>Center</Text>
         </TouchableOpacity>
 
@@ -893,7 +894,7 @@ export default function MapScreen({ navigation }) {
           onPress={() => setFollowUser(!followUser)}
           accessibilityLabel={t('map.followMe', 'Follow my location')}
         >
-          <Text style={styles.controlIcon}>🧭</Text>
+          <AppIcon name="compass" size={22} color={colors.textSecondary} />
           <Text style={styles.controlLabel}>
             {followUser ? 'Follow' : 'Free'}
           </Text>
@@ -908,7 +909,7 @@ export default function MapScreen({ navigation }) {
           }}
           accessibilityLabel={t('map.measureDistance', 'Measure distance')}
         >
-          <Text style={styles.controlIcon}>📏</Text>
+          <AppIcon name="ruler" size={22} color={colors.textSecondary} />
           <Text style={styles.controlLabel}>Ruler</Text>
         </TouchableOpacity>
       </View>
@@ -920,7 +921,7 @@ export default function MapScreen({ navigation }) {
         accessibilityLabel={t('map.logCatch', 'Log a catch')}
         accessibilityRole="button"
       >
-        <Text style={styles.fabText}>🎣</Text>
+        <AppIcon name="fish" size={24} color="#fff" />
       </TouchableOpacity>
 
       {/* Distance measurement result */}
@@ -928,7 +929,7 @@ export default function MapScreen({ navigation }) {
         <View style={styles.distanceBanner}>
           {distancePoints.length === 2 ? (
             <Text style={styles.distanceText}>
-              📏{' '}
+              <AppIcon name="ruler" size={14} color={colors.text} />{' '}
               {measureDistance() < 1
                 ? `${Math.round(measureDistance() * 1000)} m`
                 : `${measureDistance().toFixed(2)} km`}
@@ -947,7 +948,7 @@ export default function MapScreen({ navigation }) {
               setDistancePoints([]);
             }}
           >
-            <Text style={styles.distanceClose}>✕</Text>
+            <AppIcon name="x" size={16} color={colors.text} />
           </TouchableOpacity>
         </View>
       )}
@@ -963,10 +964,10 @@ export default function MapScreen({ navigation }) {
           <View style={styles.hotspotSheet}>
             <View style={styles.hotspotHeader}>
               <Text style={styles.hotspotTitle}>
-                🔥 {t('map.hotspot', 'Catch Hotspot')}
+                <AppIcon name="flame" size={16} color={colors.text} /> {t('map.hotspot', 'Catch Hotspot')}
               </Text>
               <TouchableOpacity onPress={() => setHotspotModal(null)}>
-                <Text style={styles.hotspotClose}>✕</Text>
+                <AppIcon name="x" size={16} color={colors.textTertiary} />
               </TouchableOpacity>
             </View>
             <Text style={styles.hotspotCount}>
@@ -978,7 +979,7 @@ export default function MapScreen({ navigation }) {
             {hotspotModal?.species?.length > 0 && (
               <View style={styles.hotspotSection}>
                 <Text style={styles.hotspotSectionTitle}>
-                  🐟 {t('map.speciesBreakdown', 'Species Breakdown')}
+                  <AppIcon name="fish" size={18} color={colors.text} /> {t('map.speciesBreakdown', 'Species Breakdown')}
                 </Text>
                 {hotspotModal.species.map(([name, count], i) => {
                   const pct = hotspotModal.total
@@ -1010,7 +1011,7 @@ export default function MapScreen({ navigation }) {
             {hotspotModal?.bestTimes?.length > 0 && (
               <View style={styles.hotspotSection}>
                 <Text style={styles.hotspotSectionTitle}>
-                  ⏰ {t('map.bestTimes', 'Best Times')}
+                  <AppIcon name="alarmClock" size={18} color={colors.text} /> {t('map.bestTimes', 'Best Times')}
                 </Text>
                 {hotspotModal.bestTimes.map(([period, count], i) => (
                   <View key={i} style={styles.hotspotTimeRow}>
@@ -1038,7 +1039,7 @@ export default function MapScreen({ navigation }) {
                 }}
               >
                 <Text style={styles.hotspotZoomText}>
-                  🔍 {t('map.zoomIn', 'Zoom In')}
+                  <AppIcon name="search" size={18} color={colors.text} /> {t('map.zoomIn', 'Zoom In')}
                 </Text>
               </TouchableOpacity>
             )}
@@ -1066,11 +1067,11 @@ export default function MapScreen({ navigation }) {
           <View style={styles.tideModalSheet}>
             <View style={styles.tideModalHeader}>
               <Text style={styles.tideModalTitle}>
-                🌊{' '}
+                <AppIcon name="waves" size={20} color={colors.text} />{' '}
                 {tideData?.stationName || t('map.tideStation', 'Tide Station')}
               </Text>
               <TouchableOpacity onPress={() => setTideModalVisible(false)}>
-                <Text style={styles.tideModalClose}>✕</Text>
+                <AppIcon name="x" size={24} color={colors.textTertiary} />
               </TouchableOpacity>
             </View>
             {tideLoading ? (

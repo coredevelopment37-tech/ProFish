@@ -15,17 +15,17 @@ import { COLORS } from '../config/theme';
 // ── IUCN Conservation Status (#203) ─────────────────────
 
 export const IUCN_STATUS = {
-  LC: { code: 'LC', label: 'Least Concern', color: COLORS.success, icon: '🟢' },
-  NT: { code: 'NT', label: 'Near Threatened', color: '#CDDC39', icon: '🟡' },
+  LC: { code: 'LC', label: 'Least Concern', color: COLORS.success, icon: 'circleCheck' },
+  NT: { code: 'NT', label: 'Near Threatened', color: '#CDDC39', icon: 'alertCircle' },
   VU: { code: 'VU', label: 'Vulnerable', color: COLORS.accent, icon: '🟠' },
-  EN: { code: 'EN', label: 'Endangered', color: COLORS.error, icon: '🔴' },
+  EN: { code: 'EN', label: 'Endangered', color: COLORS.error, icon: 'circleDot' },
   CR: {
     code: 'CR',
     label: 'Critically Endangered',
     color: '#D32F2F',
     icon: '⛔',
   },
-  DD: { code: 'DD', label: 'Data Deficient', color: COLORS.textTertiary, icon: '❓' },
+  DD: { code: 'DD', label: 'Data Deficient', color: COLORS.textTertiary, icon: 'helpCircle' },
   NE: { code: 'NE', label: 'Not Evaluated', color: COLORS.textTertiary, icon: '—' },
 };
 

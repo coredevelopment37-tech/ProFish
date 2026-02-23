@@ -23,6 +23,7 @@ import {
   getUnlockedTechniques,
 } from '../../services/castingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width: W } = Dimensions.get('window');
 const CARD_W = (W - 48) / 2;
@@ -58,7 +59,7 @@ export default function CastingSimulatorScreen({ navigation }) {
   const handleTechPress = tech => {
     if (!unlocked.has(tech.id)) {
       Alert.alert(
-        '🔒 Locked',
+        'Locked',
         'Earn 2+ stars on any unlocked technique to unlock the next one!',
         [{ text: 'Got it' }],
       );
@@ -73,9 +74,13 @@ export default function CastingSimulatorScreen({ navigation }) {
     return (
       <View style={styles.starsRow}>
         {[1, 2, 3].map(i => (
-          <Text key={i} style={[styles.star, earned >= i && styles.starEarned]}>
-            ★
-          </Text>
+          <View key={i}>
+            <AppIcon
+              name="star"
+              size={18}
+              color={earned >= i ? '#FFD700' : '#2a3550'}
+            />
+          </View>
         ))}
       </View>
     );
@@ -93,7 +98,10 @@ export default function CastingSimulatorScreen({ navigation }) {
         >
           <Text style={styles.backText}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.title}>🎣 Casting Simulator</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+          <AppIcon name="fish" size={24} color="#fff" />
+          <Text style={styles.title}>Casting Simulator</Text>
+        </View>
         <Text style={styles.subtitle}>Master 10 real casting techniques</Text>
       </View>
 
@@ -119,8 +127,13 @@ export default function CastingSimulatorScreen({ navigation }) {
                 progress.masterCaster && styles.masterText,
               ]}
             >
-              {progress.masterCaster ? '🏆' : '🎯'}
+              {progress.masterCaster ? '' : ''}
             </Text>
+            {progress.masterCaster ? (
+              <AppIcon name="trophy" size={28} color="#FFD700" />
+            ) : (
+              <AppIcon name="target" size={28} color="#00D4AA" />
+            )}
             <Text style={styles.progressLabel}>
               {progress.masterCaster ? 'Master!' : 'In Training'}
             </Text>
@@ -142,9 +155,12 @@ export default function CastingSimulatorScreen({ navigation }) {
         style={styles.hintBar}
         onPress={() => setShowTutorial(!showTutorial)}
       >
-        <Text style={styles.hintText}>
-          📱 {showTutorial ? 'Hide instructions' : 'How to play — tap here'}
-        </Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+          <AppIcon name="smartphone" size={14} color="#88aacc" />
+          <Text style={styles.hintText}>
+            {showTutorial ? 'Hide instructions' : 'How to play \u2014 tap here'}
+          </Text>
+        </View>
       </TouchableOpacity>
 
       {showTutorial && (
@@ -154,8 +170,7 @@ export default function CastingSimulatorScreen({ navigation }) {
             2️⃣ Press & hold the CAST button to load power{'\n'}
             3️⃣ Flick/swipe UP to cast!{'\n'}
             4️⃣ Release timing affects accuracy{'\n'}
-            5️⃣ Watch the wind — it drifts your lure{'\n'}
-            {'\n'}⭐ 50+ = 1 star ⭐⭐ 75+ = 2 stars ⭐⭐⭐ 90+ = 3 stars
+            5️⃣ Watch the wind — it drifts your lure{'\n\n'}★ 50+ = 1 star ★★ 75+ = 2 stars ★★★ 90+ = 3 stars
           </Text>
         </View>
       )}
@@ -182,7 +197,7 @@ export default function CastingSimulatorScreen({ navigation }) {
               {/* Lock overlay */}
               {!isUnlocked && (
                 <View style={styles.lockOverlay}>
-                  <Text style={styles.lockIcon}>🔒</Text>
+                  <AppIcon name="lock" size={36} color="#8899aa" />
                 </View>
               )}
 
@@ -206,7 +221,9 @@ export default function CastingSimulatorScreen({ navigation }) {
               </View>
 
               {/* Icon + Name */}
-              <Text style={styles.techEmoji}>{tech.emoji}</Text>
+              <View style={styles.techEmoji}>
+                <AppIcon name={tech.icon || 'fish'} size={28} color="#00D4AA" />
+              </View>
               <Text style={styles.techName} numberOfLines={1}>
                 {tech.name}
               </Text>

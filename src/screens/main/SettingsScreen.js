@@ -19,6 +19,7 @@ import { useApp } from '../../store/AppContext';
 import cacheService from '../../services/cacheService';
 import offlineQueue from '../../services/offlineQueue';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const NOTIF_PREFS_KEY = '@profish_notification_prefs';
 
@@ -126,7 +127,8 @@ export default function SettingsScreen({ navigation }) {
         <View style={styles.switchRow}>
           <View style={styles.switchLabel}>
             <Text style={styles.rowText}>
-              🎯 {t('settings.fishCastAlerts', 'FishCast Alerts')}
+              <AppIcon name="target" size={18} color={colors.text} />{' '}
+              {t('settings.fishCastAlerts', 'FishCast Alerts')}
             </Text>
             <Text style={styles.rowDesc}>
               {t(
@@ -146,7 +148,8 @@ export default function SettingsScreen({ navigation }) {
         <View style={styles.switchRow}>
           <View style={styles.switchLabel}>
             <Text style={styles.rowText}>
-              🌊 {t('settings.tideAlerts', 'Tide Alerts')}
+              <AppIcon name="waves" size={18} color={colors.text} />{' '}
+              {t('settings.tideAlerts', 'Tide Alerts')}
             </Text>
             <Text style={styles.rowDesc}>
               {t('settings.tideAlertsDesc', 'Alerts before high and low tides')}
@@ -163,7 +166,8 @@ export default function SettingsScreen({ navigation }) {
         <View style={styles.switchRow}>
           <View style={styles.switchLabel}>
             <Text style={styles.rowText}>
-              👥 {t('settings.communityNotifs', 'Community')}
+              <AppIcon name="users" size={18} color={colors.text} />{' '}
+              {t('settings.communityNotifs', 'Community')}
             </Text>
             <Text style={styles.rowDesc}>
               {t(
@@ -183,7 +187,8 @@ export default function SettingsScreen({ navigation }) {
         <View style={styles.switchRow}>
           <View style={styles.switchLabel}>
             <Text style={styles.rowText}>
-              📊 {t('settings.weeklyReport', 'Weekly Report')}
+              <AppIcon name="barChart" size={18} color={colors.text} />{' '}
+              {t('settings.weeklyReport', 'Weekly Report')}
             </Text>
             <Text style={styles.rowDesc}>
               {t(
@@ -209,14 +214,16 @@ export default function SettingsScreen({ navigation }) {
 
         <TouchableOpacity style={styles.row} onPress={handleExportData}>
           <Text style={styles.rowText}>
-            📤 {t('settings.exportCatches', 'Export Catches (CSV)')}
+            <AppIcon name="share" size={18} color={colors.text} />{' '}
+            {t('settings.exportCatches', 'Export Catches (CSV)')}
           </Text>
           <Text style={styles.rowArrow}>→</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.row} onPress={handleClearCache}>
           <Text style={styles.rowText}>
-            🗑️ {t('settings.clearCache', 'Clear Cache')}
+            <AppIcon name="trash" size={18} color={colors.text} />{' '}
+            {t('settings.clearCache', 'Clear Cache')}
           </Text>
           <Text style={styles.rowValue}>
             {cacheStats ? `${cacheStats.estimatedSizeKB} KB` : '...'}
@@ -236,7 +243,13 @@ export default function SettingsScreen({ navigation }) {
                   'settings.pendingSync',
                   'operations pending',
                 )}`
-              : `✅ ${t('settings.allSynced', 'All data synced')}`}
+              : null}
+            {pendingSync === 0 && (
+              <AppIcon name="checkCircle" size={16} color={colors.success || colors.primary} />
+            )}
+            {pendingSync === 0
+              ? ` ${t('settings.allSynced', 'All data synced')}`
+              : null}
           </Text>
         </View>
         <View style={styles.row}>

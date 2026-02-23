@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // Quiz questions — species identification by description/characteristics
 const QUIZ_POOL = [
@@ -154,11 +155,11 @@ const QUIZ_POOL = [
 ];
 
 const BADGES = [
-  { threshold: 5, name: 'Fish Spotter', emoji: '🔍' },
-  { threshold: 15, name: 'ID Expert', emoji: '🎓' },
-  { threshold: 30, name: 'Species Scholar', emoji: '📖' },
-  { threshold: 50, name: 'Ichthyologist', emoji: '🧬' },
-  { threshold: 100, name: 'Master Identifier', emoji: '👑' },
+  { threshold: 5, name: 'Fish Spotter', icon: 'search' },
+  { threshold: 15, name: 'ID Expert', icon: 'graduationCap' },
+  { threshold: 30, name: 'Species Scholar', icon: 'bookOpen' },
+  { threshold: 50, name: 'Ichthyologist', icon: 'dna' },
+  { threshold: 100, name: 'Master Identifier', icon: 'crown' },
 ];
 
 export default function FishIdQuizScreen({ navigation }) {
@@ -246,9 +247,15 @@ export default function FishIdQuizScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.resultScreen}>
-          <Text style={styles.resultEmoji}>
-            {pct >= 80 ? '🏆' : pct >= 50 ? '👍' : '📚'}
-          </Text>
+          <View style={styles.resultEmoji}>
+            {pct >= 80 ? (
+              <AppIcon name="trophy" size={56} color="#FFD700" />
+            ) : pct >= 50 ? (
+              <AppIcon name="thumbsUp" size={56} color="#00D4AA" />
+            ) : (
+              <AppIcon name="bookOpen" size={56} color="#8899aa" />
+            )}
+          </View>
           <Text style={styles.resultTitle}>
             {pct >= 80
               ? 'Excellent!'
@@ -259,11 +266,16 @@ export default function FishIdQuizScreen({ navigation }) {
           <Text style={styles.resultScore}>
             {score} / {shuffledQuestions.length} correct ({pct}%)
           </Text>
-          <Text style={styles.resultStreak}>Best streak: {bestStreak} 🔥</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Text style={styles.resultStreak}>Best streak: {bestStreak}</Text>
+            <AppIcon name="flame" size={16} color="#FF6633" />
+          </View>
           {badge && (
-            <Text style={styles.resultBadge}>
-              Badge earned: {badge.emoji} {badge.name}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 24 }}>
+              <Text style={styles.resultBadge}>Badge earned:</Text>
+              <AppIcon name={badge.icon} size={18} color="#00D4AA" />
+              <Text style={styles.resultBadge}>{badge.name}</Text>
+            </View>
           )}
           <TouchableOpacity
             style={styles.retryBtn}
@@ -284,10 +296,14 @@ export default function FishIdQuizScreen({ navigation }) {
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
         <View style={styles.headerRow}>
-          <Text style={styles.headerTitle}>🐟 Fish ID Quiz</Text>
-          <Text style={styles.scoreText}>
-            Score: {score} | Streak: {streak} 🔥
-          </Text>
+          <AppIcon name="fish" size={20} color="#fff" />
+          <Text style={styles.headerTitle}> Fish ID Quiz</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <Text style={styles.scoreText}>
+              Score: {score} | Streak: {streak}
+            </Text>
+            <AppIcon name="flame" size={14} color="#FF6633" />
+          </View>
         </View>
         {/* Progress bar */}
         <View style={styles.progressBar}>
@@ -347,7 +363,10 @@ export default function FishIdQuizScreen({ navigation }) {
       {/* Fact + Next */}
       {showResult && (
         <View style={styles.factContainer}>
-          <Text style={styles.factText}>💡 {currentQ.fact}</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <AppIcon name="lightbulb" size={14} color="#FFD700" />
+            <Text style={styles.factText}>{currentQ.fact}</Text>
+          </View>
           <TouchableOpacity style={styles.nextBtn} onPress={handleNext}>
             <Text style={styles.nextText}>
               {questionIndex < shuffledQuestions.length - 1
@@ -438,7 +457,7 @@ const createStyles = (colors) => StyleSheet.create({
     alignItems: 'center',
     padding: 32,
   },
-  resultEmoji: { fontSize: 64, marginBottom: 16 },
+  resultEmoji: { marginBottom: 16, alignItems: 'center' },
   resultTitle: {
     fontSize: 28,
     fontWeight: '800',

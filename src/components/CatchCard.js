@@ -7,6 +7,7 @@ import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { formatWeight, formatLength } from '../utils/units';
 import useTheme from '../hooks/useTheme';
+import { AppIcon, WATER_TYPE_ICON_MAP } from '../constants/icons';
 
 export default function CatchCard({
   item,
@@ -31,7 +32,7 @@ export default function CatchCard({
           <Image source={{ uri: item.photo }} style={styles.photo} />
         ) : (
           <View style={styles.photoPlaceholder}>
-            <Text style={styles.photoEmoji}>🐟</Text>
+            <AppIcon name="fish" size={28} color={colors.textTertiary} />
           </View>
         )}
         {item.released && (
@@ -47,17 +48,17 @@ export default function CatchCard({
           <Text style={styles.species} numberOfLines={1}>
             {item.species || 'Unknown species'}
           </Text>
-          {item.synced === true && <Text style={styles.syncBadge}>✓</Text>}
+          {item.synced === true && <AppIcon name="check" size={12} color={colors.success} />}
           {item.synced === false && !item._syncError && (
             <Text style={styles.pendingBadge}>↻</Text>
           )}
-          {item._syncError && <Text style={styles.errorBadge}>✗</Text>}
+          {item._syncError && <AppIcon name="x" size={12} color={colors.error} />}
         </View>
 
         <View style={styles.stats}>
           {item.weight != null && (
             <View style={styles.stat}>
-              <Text style={styles.statIcon}>⚖️</Text>
+              <AppIcon name="scale" size={14} color={colors.textSecondary} />
               <Text style={styles.statValue}>
                 {formatWeight(item.weight, units)}
               </Text>
@@ -65,7 +66,7 @@ export default function CatchCard({
           )}
           {item.length != null && (
             <View style={styles.stat}>
-              <Text style={styles.statIcon}>📏</Text>
+              <AppIcon name="ruler" size={14} color={colors.textSecondary} />
               <Text style={styles.statValue}>
                 {formatLength(item.length, units)}
               </Text>
@@ -74,21 +75,22 @@ export default function CatchCard({
         </View>
 
         {item.bait ? (
-          <Text style={styles.bait} numberOfLines={1}>
-            🪝 {item.bait}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 4 }}>
+            <AppIcon name="anchor" size={14} color={colors.textTertiary} />
+            <Text style={[styles.bait, { marginBottom: 0, marginLeft: 4 }]} numberOfLines={1}>
+              {item.bait}
+            </Text>
+          </View>
         ) : null}
 
         <View style={styles.footer}>
           <Text style={styles.date}>{formatDate(item.createdAt)}</Text>
           {item.waterType && (
-            <Text style={styles.waterType}>
-              {item.waterType === 'freshwater'
-                ? '🏞️'
-                : item.waterType === 'saltwater'
-                ? '🌊'
-                : '🏝️'}
-            </Text>
+            <AppIcon
+              name={WATER_TYPE_ICON_MAP[item.waterType] || 'fish'}
+              size={14}
+              color={colors.textSecondary}
+            />
           )}
         </View>
       </View>

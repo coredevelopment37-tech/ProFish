@@ -17,6 +17,7 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '../../config/constants';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const { width, height } = Dimensions.get('window');
 
@@ -25,50 +26,50 @@ const FISHING_STYLES = [
   {
     id: 'freshwater',
     label: 'Freshwater',
-    emoji: '🏞️',
+    icon: 'treePine',
     desc: 'Lakes, rivers, ponds',
   },
   {
     id: 'saltwater',
     label: 'Saltwater',
-    emoji: '🌊',
+    icon: 'waves',
     desc: 'Ocean, surf, deep sea',
   },
   {
     id: 'fly',
     label: 'Fly Fishing',
-    emoji: '🪰',
+    icon: 'fish',
     desc: 'Streams, rivers, flats',
   },
   {
     id: 'ice',
     label: 'Ice Fishing',
-    emoji: '🧊',
+    icon: 'snowflake',
     desc: 'Frozen lakes & ponds',
   },
-  { id: 'kayak', label: 'Kayak/Shore', emoji: '🛶', desc: 'Bank, pier, kayak' },
+  { id: 'kayak', label: 'Kayak/Shore', icon: 'ship', desc: 'Bank, pier, kayak' },
   {
     id: 'boat',
     label: 'Boat/Offshore',
-    emoji: '🚤',
+    icon: 'ship',
     desc: 'Charter, trolling, bottom',
   },
 ];
 
 // ——— Step 2: Target species ———
 const POPULAR_SPECIES = [
-  { id: 'largemouth_bass', name: 'Largemouth Bass', emoji: '🐟' },
-  { id: 'rainbow_trout', name: 'Rainbow Trout', emoji: '🐟' },
-  { id: 'walleye', name: 'Walleye', emoji: '🐟' },
-  { id: 'redfish', name: 'Redfish', emoji: '🐟' },
-  { id: 'mahi_mahi', name: 'Mahi-Mahi', emoji: '🐠' },
-  { id: 'bluegill', name: 'Bluegill', emoji: '🐟' },
-  { id: 'pike', name: 'Northern Pike', emoji: '🐟' },
-  { id: 'catfish', name: 'Channel Catfish', emoji: '🐟' },
-  { id: 'atlantic_salmon', name: 'Atlantic Salmon', emoji: '🐟' },
-  { id: 'snook', name: 'Snook', emoji: '🐟' },
-  { id: 'crappie', name: 'Crappie', emoji: '🐟' },
-  { id: 'striped_bass', name: 'Striped Bass', emoji: '🐟' },
+  { id: 'largemouth_bass', name: 'Largemouth Bass', icon: 'fish' },
+  { id: 'rainbow_trout', name: 'Rainbow Trout', icon: 'fish' },
+  { id: 'walleye', name: 'Walleye', icon: 'fish' },
+  { id: 'redfish', name: 'Redfish', icon: 'fish' },
+  { id: 'mahi_mahi', name: 'Mahi-Mahi', icon: 'fish' },
+  { id: 'bluegill', name: 'Bluegill', icon: 'fish' },
+  { id: 'pike', name: 'Northern Pike', icon: 'fish' },
+  { id: 'catfish', name: 'Channel Catfish', icon: 'fish' },
+  { id: 'atlantic_salmon', name: 'Atlantic Salmon', icon: 'fish' },
+  { id: 'snook', name: 'Snook', icon: 'fish' },
+  { id: 'crappie', name: 'Crappie', icon: 'fish' },
+  { id: 'striped_bass', name: 'Striped Bass', icon: 'fish' },
 ];
 
 // ——— Step 3: Home region ———
@@ -85,7 +86,7 @@ const REGIONS = [
   { id: 'SA_ASIA', label: 'South Asia', emoji: '🇮🇳' },
 ];
 
-function Step1({ selections, setSelections, styles }) {
+function Step1({ selections, setSelections, styles, colors }) {
   const toggleStyle = id => {
     setSelections(prev => ({
       ...prev,
@@ -97,7 +98,9 @@ function Step1({ selections, setSelections, styles }) {
 
   return (
     <View style={styles.step}>
-      <Text style={styles.stepEmoji}>🎣</Text>
+      <View style={{ alignItems: 'center', marginBottom: 12 }}>
+        <AppIcon name="fish" size={48} color={colors.text} />
+      </View>
       <Text style={styles.stepTitle}>How do you fish?</Text>
       <Text style={styles.stepSubtitle}>
         Select all that apply — we'll customize your experience
@@ -111,7 +114,9 @@ function Step1({ selections, setSelections, styles }) {
               style={[styles.gridItem, selected && styles.gridItemSelected]}
               onPress={() => toggleStyle(s.id)}
             >
-              <Text style={styles.gridEmoji}>{s.emoji}</Text>
+              <View style={{ marginBottom: 8 }}>
+                <AppIcon name={s.icon} size={28} color={colors.text} />
+              </View>
               <Text
                 style={[styles.gridLabel, selected && styles.gridLabelSelected]}
               >
@@ -126,7 +131,7 @@ function Step1({ selections, setSelections, styles }) {
   );
 }
 
-function Step2({ selections, setSelections, styles }) {
+function Step2({ selections, setSelections, styles, colors }) {
   const toggleSpecies = id => {
     setSelections(prev => ({
       ...prev,
@@ -138,7 +143,9 @@ function Step2({ selections, setSelections, styles }) {
 
   return (
     <View style={styles.step}>
-      <Text style={styles.stepEmoji}>🐟</Text>
+      <View style={{ alignItems: 'center', marginBottom: 12 }}>
+        <AppIcon name="fish" size={48} color={colors.text} />
+      </View>
       <Text style={styles.stepTitle}>What do you target?</Text>
       <Text style={styles.stepSubtitle}>
         Pick your favorite species — you can always change later
@@ -152,9 +159,10 @@ function Step2({ selections, setSelections, styles }) {
               style={[styles.chipItem, selected && styles.chipSelected]}
               onPress={() => toggleSpecies(s.id)}
             >
-              <Text style={styles.chipText}>
-                {s.emoji} {s.name}
-              </Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <AppIcon name={s.icon} size={14} color={colors.text} />
+                <Text style={[styles.chipText, { marginLeft: 4 }]}>{s.name}</Text>
+              </View>
             </TouchableOpacity>
           );
         })}
@@ -163,10 +171,12 @@ function Step2({ selections, setSelections, styles }) {
   );
 }
 
-function Step3({ selections, setSelections, styles }) {
+function Step3({ selections, setSelections, styles, colors }) {
   return (
     <View style={styles.step}>
-      <Text style={styles.stepEmoji}>🌍</Text>
+      <View style={{ alignItems: 'center', marginBottom: 12 }}>
+        <AppIcon name="globe" size={48} color={colors.text} />
+      </View>
       <Text style={styles.stepTitle}>Where's home base?</Text>
       <Text style={styles.stepSubtitle}>
         We'll show local species, regulations, and tide data
@@ -189,7 +199,7 @@ function Step3({ selections, setSelections, styles }) {
               >
                 {r.label}
               </Text>
-              {selected && <Text style={styles.checkmark}>✓</Text>}
+              {selected && <AppIcon name="check" size={18} color={colors.primary} />}
             </TouchableOpacity>
           );
         })}
@@ -222,44 +232,48 @@ function Step4({ selections, setSelections, styles, colors }) {
       key: 'biteAlerts',
       label: 'Bite Alerts',
       desc: 'When FishCast hits 90+ at your spots',
-      emoji: '🔔',
+      icon: 'bell',
     },
     {
       key: 'tideAlerts',
       label: 'Tide Alerts',
       desc: 'Incoming high/low tide at saved spots',
-      emoji: '🌊',
+      icon: 'waves',
     },
     {
       key: 'weatherAlerts',
       label: 'Weather Warnings',
       desc: 'Storm approaching your location',
-      emoji: '⛈️',
+      icon: 'cloudLightning',
     },
     {
       key: 'communityUpdates',
       label: 'Community',
       desc: 'Likes, comments, new followers',
-      emoji: '👥',
+      icon: 'users',
     },
     {
       key: 'weeklyReport',
       label: 'Weekly Report',
       desc: 'Your fishing stats summary',
-      emoji: '📊',
+      icon: 'barChart',
     },
   ];
 
   return (
     <View style={styles.step}>
-      <Text style={styles.stepEmoji}>🔔</Text>
+      <View style={{ alignItems: 'center', marginBottom: 12 }}>
+        <AppIcon name="bell" size={48} color={colors.text} />
+      </View>
       <Text style={styles.stepTitle}>Stay in the loop</Text>
       <Text style={styles.stepSubtitle}>
         Choose what notifications matter to you
       </Text>
       {items.map(item => (
         <View key={item.key} style={styles.notifRow}>
-          <Text style={styles.notifEmoji}>{item.emoji}</Text>
+          <View style={{ marginRight: 12 }}>
+            <AppIcon name={item.icon} size={24} color={colors.text} />
+          </View>
           <View style={styles.notifText}>
             <Text style={styles.notifLabel}>{item.label}</Text>
             <Text style={styles.notifDesc}>{item.desc}</Text>
@@ -276,23 +290,27 @@ function Step4({ selections, setSelections, styles, colors }) {
   );
 }
 
-function Step5({ styles }) {
+function Step5({ styles, colors }) {
   return (
     <View style={styles.step}>
-      <Text style={styles.stepEmoji}>🚀</Text>
+      <View style={{ alignItems: 'center', marginBottom: 12 }}>
+        <AppIcon name="rocket" size={48} color={colors.text} />
+      </View>
       <Text style={styles.stepTitle}>You're all set!</Text>
       <Text style={styles.stepSubtitle}>Here's what ProFish gives you</Text>
       <View style={styles.featureList}>
         {[
-          { emoji: '🎯', text: 'FishCast — AI-powered bite prediction' },
-          { emoji: '🗺️', text: '18 map layers — bathymetry, SST, tides' },
-          { emoji: '📸', text: 'Smart catch logging with AI species ID' },
-          { emoji: '🏆', text: 'Tournaments, leaderboards, community' },
-          { emoji: '📚', text: 'Fishing school — knots, techniques, tips' },
-          { emoji: '🌙', text: 'Solunar calendar & tide alerts' },
+          { icon: 'target', text: 'FishCast — AI-powered bite prediction' },
+          { icon: 'map', text: '18 map layers — bathymetry, SST, tides' },
+          { icon: 'camera', text: 'Smart catch logging with AI species ID' },
+          { icon: 'trophy', text: 'Tournaments, leaderboards, community' },
+          { icon: 'bookOpen', text: 'Fishing school — knots, techniques, tips' },
+          { icon: 'moon', text: 'Solunar calendar & tide alerts' },
         ].map((f, i) => (
           <View key={i} style={styles.featureRow}>
-            <Text style={styles.featureEmoji}>{f.emoji}</Text>
+            <View style={{ marginRight: 14 }}>
+              <AppIcon name={f.icon} size={24} color={colors.text} />
+            </View>
             <Text style={styles.featureText}>{f.text}</Text>
           </View>
         ))}
@@ -426,9 +444,14 @@ export default function OnboardingScreen({ navigation }) {
         </Text>
 
         <TouchableOpacity onPress={goNext} style={styles.nextBtn}>
-          <Text style={styles.nextText}>
-            {currentStep === STEPS.length - 1 ? 'Finish ✓' : 'Next →'}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.nextText}>
+              {currentStep === STEPS.length - 1 ? 'Finish ' : 'Next '}
+            </Text>
+            {currentStep === STEPS.length - 1
+              ? <AppIcon name="check" size={16} color={colors.text} />
+              : <AppIcon name="arrowRight" size={16} color={colors.text} />}
+          </View>
         </TouchableOpacity>
       </View>
     </View>

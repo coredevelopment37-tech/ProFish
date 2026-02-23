@@ -12,6 +12,7 @@ import {
   FlatList,
 } from 'react-native';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 /**
  * Calculate moon phase for a given date
@@ -147,7 +148,7 @@ function DayCard({ day, colors, styles }) {
 
       <View style={styles.solunarRow}>
         <View style={styles.solunarBlock}>
-          <Text style={styles.solunarLabel}>🔴 Major Periods</Text>
+          <Text style={styles.solunarLabel}><AppIcon name="circleDot" size={12} color="#FF4444" /> Major Periods</Text>
           {day.solunar.major.map((p, i) => (
             <Text key={i} style={styles.solunarTime}>
               {p.start} — {p.end} ({p.duration})
@@ -155,7 +156,7 @@ function DayCard({ day, colors, styles }) {
           ))}
         </View>
         <View style={styles.solunarBlock}>
-          <Text style={styles.solunarLabel}>🟡 Minor Periods</Text>
+          <Text style={styles.solunarLabel}><AppIcon name="circleDot" size={12} color="#FFD700" /> Minor Periods</Text>
           {day.solunar.minor.map((p, i) => (
             <Text key={i} style={styles.solunarTime}>
               {p.start} — {p.end} ({p.duration})
@@ -185,13 +186,13 @@ export default function MoonCalendarScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🌙 Moon Calendar</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="moon" size={20} color={colors.text} /><Text style={styles.headerTitle}>Moon Calendar</Text></View>
         <Text style={styles.headerDesc}>Solunar fishing predictions</Text>
       </View>
 
       {/* Best days banner */}
       <View style={styles.bestDaysBanner}>
-        <Text style={styles.bestDaysTitle}>🏆 Best Days This Month</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}><AppIcon name="trophy" size={20} color={colors.accent} /><Text style={styles.bestDaysTitle}>Best Days This Month</Text></View>
         <View style={styles.bestDaysList}>
           {bestDays.map((d, i) => (
             <View key={i} style={styles.bestDayChip}>

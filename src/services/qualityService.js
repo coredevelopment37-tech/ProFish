@@ -8,6 +8,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { COLORS } from '../config/theme';
+import { AppIcon } from '../constants/icons';
 
 // ============================================
 // #558 — React Error Boundary
@@ -52,7 +53,7 @@ class ErrorBoundary extends Component {
     if (this.state.hasError) {
       return (
         <View style={errorStyles.container}>
-          <Text style={errorStyles.emoji}>🐟</Text>
+          <AppIcon name="fish" size={48} color="#0080FF" />
           <Text style={errorStyles.title}>Oops! Something went wrong</Text>
           <Text style={errorStyles.message}>
             {this.state.error?.message || 'An unexpected error occurred'}

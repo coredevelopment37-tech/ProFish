@@ -18,14 +18,15 @@ import {
 import { useTranslation } from 'react-i18next';
 import notificationService from '../../services/notificationService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const TYPE_CONFIG = {
-  follower: { icon: '👤', color: '#4A90D9' },
-  comment: { icon: '💬', color: '#50C878' },
-  like: { icon: '❤️', color: '#FF6B6B' },
-  fishcast: { icon: '🎯', color: '#FFB347' },
-  leaderboard: { icon: '🏆', color: '#FFD700' },
-  system: { icon: '🔔', color: '#888' },
+  follower: { icon: 'user', color: '#4A90D9' },
+  comment: { icon: 'messageCircle', color: '#50C878' },
+  like: { icon: 'heart', color: '#FF6B6B' },
+  fishcast: { icon: 'target', color: '#FFB347' },
+  leaderboard: { icon: 'trophy', color: '#FFD700' },
+  system: { icon: 'bell', color: '#888' },
 };
 
 function timeAgo(dateStr) {
@@ -123,7 +124,7 @@ export default function NotificationCenterScreen({ navigation }) {
               { backgroundColor: config.color + '22' },
             ]}
           >
-            <Text style={styles.icon}>{config.icon}</Text>
+            <AppIcon name={config.icon} size={20} color={config.color} />
           </View>
           <View style={styles.content}>
             <Text style={styles.title} numberOfLines={1}>
@@ -159,7 +160,7 @@ export default function NotificationCenterScreen({ navigation }) {
         <TouchableOpacity
           onPress={() => navigation.navigate('NotificationPrefs')}
         >
-          <Text style={styles.gearIcon}>⚙️</Text>
+          <AppIcon name="settings" size={22} color={colors.text} />
         </TouchableOpacity>
       </View>
 
@@ -192,7 +193,7 @@ export default function NotificationCenterScreen({ navigation }) {
         }
         ListEmptyComponent={
           <View style={styles.empty}>
-            <Text style={styles.emptyIcon}>🔔</Text>
+            <AppIcon name="bell" size={48} color={colors.textTertiary} />
             <Text style={styles.emptyTitle}>No Notifications</Text>
             <Text style={styles.emptyText}>
               You&apos;re all caught up! Notifications about followers,

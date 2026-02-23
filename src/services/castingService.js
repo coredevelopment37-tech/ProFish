@@ -16,7 +16,7 @@ export const TECHNIQUES = [
     difficulty: 'beginner',
     stars: 1,
     unlocked: true,
-    emoji: '🎣',
+    emoji: 'fish',
     scene: 'lake',
     description:
       'The foundation of all casting. Straight back, forward release.',
@@ -33,7 +33,7 @@ export const TECHNIQUES = [
     difficulty: 'beginner',
     stars: 1,
     unlocked: true,
-    emoji: '🌿',
+    emoji: 'leaf',
     scene: 'river',
     description: 'Low-profile cast under branches, docks, and overhangs.',
     tip: 'Swipe sideways — keep the rod tip low to skip under obstacles.',
@@ -49,7 +49,7 @@ export const TECHNIQUES = [
     difficulty: 'intermediate',
     stars: 2,
     unlocked: false,
-    emoji: '🌊',
+    emoji: 'waves',
     scene: 'river',
     description:
       'No back-cast needed — line rolls off the water surface forward.',
@@ -66,7 +66,7 @@ export const TECHNIQUES = [
     difficulty: 'intermediate',
     stars: 2,
     unlocked: false,
-    emoji: '🎯',
+    emoji: 'target',
     scene: 'lake',
     description:
       'Underhand pendulum swing for silent, precise short-range drops.',
@@ -83,7 +83,7 @@ export const TECHNIQUES = [
     difficulty: 'intermediate',
     stars: 2,
     unlocked: false,
-    emoji: '🪵',
+    emoji: 'treePine',
     scene: 'swamp',
     description: 'One-handed jig delivery into tight cover. Stealth fishing.',
     tip: 'Quick wrist flip upward — accuracy beats distance.',
@@ -99,7 +99,7 @@ export const TECHNIQUES = [
     difficulty: 'advanced',
     stars: 3,
     unlocked: false,
-    emoji: '🏖️',
+    emoji: 'waves',
     scene: 'ocean',
     description:
       'Two-handed power cast from the beach. Maximum distance over waves.',
@@ -116,7 +116,7 @@ export const TECHNIQUES = [
     difficulty: 'advanced',
     stars: 3,
     unlocked: false,
-    emoji: '🪰',
+    emoji: 'fish',
     scene: 'river',
     description:
       'False casts to load the rod, then shoot the line. Rhythm is key.',
@@ -133,7 +133,7 @@ export const TECHNIQUES = [
     difficulty: 'advanced',
     stars: 3,
     unlocked: false,
-    emoji: '💨',
+    emoji: 'wind',
     scene: 'ocean',
     description:
       'Fly fishing power technique — haul line on both back and forward cast.',
@@ -150,7 +150,7 @@ export const TECHNIQUES = [
     difficulty: 'pro',
     stars: 4,
     unlocked: false,
-    emoji: '🦈',
+    emoji: 'fish',
     scene: 'deep_ocean',
     description:
       'Heavy tackle offshore cast — big game lures, fighting the swell.',
@@ -167,7 +167,7 @@ export const TECHNIQUES = [
     difficulty: 'pro',
     stars: 4,
     unlocked: false,
-    emoji: '💎',
+    emoji: 'gem',
     scene: 'lake',
     description:
       'Skip your lure across water like a stone — under docks and mangroves.',

@@ -22,19 +22,20 @@ import subscriptionService, {
   TIER_META,
 } from '../services/subscriptionService';
 import PurchaseSuccessModal from './PurchaseSuccessModal';
+import { AppIcon } from '../constants/icons';
 
 // Feature comparison: [icon, key, free value, pro value]
 const FEATURE_COMPARISON = [
-  { icon: '🎣', key: 'catches', free: '10/mo', pro: '∞' },
-  { icon: '🗺️', key: 'mapLayers', free: '6', pro: '18' },
-  { icon: '📊', key: 'fishCast', free: '3 days', pro: '16 days' },
-  { icon: '🤖', key: 'aiId', free: '5/day', pro: '∞' },
-  { icon: '📷', key: 'catchPhotos', free: '—', pro: '✓' },
-  { icon: '📴', key: 'offlineMaps', free: '—', pro: '✓' },
-  { icon: '📈', key: 'catchStats', free: '—', pro: '✓' },
-  { icon: '🌊', key: 'bathymetry', free: '—', pro: '✓' },
-  { icon: '🌡️', key: 'seaSurfaceTemp', free: '—', pro: '✓' },
-  { icon: '🏆', key: 'leaderboards', free: '—', pro: '✓' },
+  { icon: 'fish', key: 'catches', free: '10/mo', pro: '∞' },
+  { icon: 'map', key: 'mapLayers', free: '6', pro: '18' },
+  { icon: 'barChart', key: 'fishCast', free: '3 days', pro: '16 days' },
+  { icon: 'bot', key: 'aiId', free: '5/day', pro: '∞' },
+  { icon: 'camera', key: 'catchPhotos', free: '—', pro: 'check' },
+  { icon: 'wifiOff', key: 'offlineMaps', free: '—', pro: 'check' },
+  { icon: 'trendingUp', key: 'catchStats', free: '—', pro: 'check' },
+  { icon: 'waves', key: 'bathymetry', free: '—', pro: 'check' },
+  { icon: 'thermometer', key: 'seaSurfaceTemp', free: '—', pro: 'check' },
+  { icon: 'trophy', key: 'leaderboards', free: '—', pro: 'check' },
 ];
 
 export default function PaywallModal({ visible, onClose, feature }) {
@@ -149,7 +150,7 @@ export default function PaywallModal({ visible, onClose, feature }) {
 
           {/* Header */}
           <View style={styles.header}>
-            <Text style={styles.icon}>⭐</Text>
+            <AppIcon name="star" size={40} color="#FFD700" />
             <Text style={styles.title}>
               {t('paywall.title', 'Upgrade to Pro')}
             </Text>
@@ -183,7 +184,7 @@ export default function PaywallModal({ visible, onClose, feature }) {
             {FEATURE_COMPARISON.map(f => (
               <View key={f.key} style={styles.tableRow}>
                 <View style={styles.tableFeatureCell}>
-                  <Text style={styles.featureIcon}>{f.icon}</Text>
+                  <AppIcon name={f.icon} size={18} color={colors.textSecondary} style={{ width: 30 }} />
                   <Text style={styles.featureText}>
                     {t(
                       `paywall.feature.${f.key}`,
@@ -192,7 +193,13 @@ export default function PaywallModal({ visible, onClose, feature }) {
                   </Text>
                 </View>
                 <Text style={styles.tableFreeValue}>{f.free}</Text>
-                <Text style={styles.tableProValue}>{f.pro}</Text>
+                {f.pro === 'check' ? (
+                  <View style={{ width: 56, alignItems: 'center' }}>
+                    <AppIcon name="check" size={16} color={colors.success} />
+                  </View>
+                ) : (
+                  <Text style={styles.tableProValue}>{f.pro}</Text>
+                )}
               </View>
             ))}
           </ScrollView>

@@ -27,6 +27,7 @@ import { checkLimit, requireFeature } from '../../services/featureGate';
 import { notificationSuccess, notificationWarning } from '../../utils/haptics';
 import SpeciesPicker from '../../components/SpeciesPicker';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 // Image picker - graceful import
 let launchImageLibrary, launchCamera;
@@ -48,9 +49,9 @@ const PHOTO_OPTIONS = {
 
 // Water type options
 const WATER_TYPES = [
-  { key: 'freshwater', label: '🏞️ Fresh', color: '#4FC3F7' },
-  { key: 'saltwater', label: '🌊 Salt', color: '#0080FF' },
-  { key: 'brackish', label: '🌿 Brackish', color: '#66BB6A' },
+  { key: 'freshwater', label: 'Fresh', icon: 'treePine', color: '#4FC3F7' },
+  { key: 'saltwater', label: 'Salt', icon: 'waves', color: '#0080FF' },
+  { key: 'brackish', label: 'Brackish', icon: 'leaf', color: '#66BB6A' },
 ];
 
 // Fishing method options
@@ -278,7 +279,7 @@ export default function LogCatchScreen({ navigation, route }) {
 
         // Offer "Log Another" quick action
         Alert.alert(
-          t('catch.saved', '🎉 Catch Saved!'),
+          t('catch.saved', 'Catch Saved!'),
           t('catch.savedMessage', 'Your catch has been logged successfully.'),
           [
             {
@@ -359,7 +360,9 @@ export default function LogCatchScreen({ navigation, route }) {
             <Image source={{ uri: photoUri }} style={styles.photoImage} />
           ) : (
             <>
-              <Text style={styles.photoIcon}>📷</Text>
+              <View style={{ marginBottom: 8 }}>
+                <AppIcon name="camera" size={24} color={colors.textSecondary} />
+              </View>
               <Text style={styles.photoText}>
                 {t('catch.addPhoto', 'Add Photo')}
               </Text>
@@ -421,14 +424,17 @@ export default function LogCatchScreen({ navigation, route }) {
                 ]}
                 onPress={() => setWaterType(wt.key)}
               >
-                <Text
-                  style={[
-                    styles.chipText,
-                    waterType === wt.key && { color: wt.color },
-                  ]}
-                >
-                  {wt.label}
-                </Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppIcon name={wt.icon} size={14} color={waterType === wt.key ? wt.color : colors.textSecondary} />
+                  <Text
+                    style={[
+                      styles.chipText,
+                      waterType === wt.key && { color: wt.color },
+                    ]}
+                  >
+                    {wt.label}
+                  </Text>
+                </View>
               </TouchableOpacity>
             ))}
           </View>
@@ -505,7 +511,7 @@ export default function LogCatchScreen({ navigation, route }) {
             onPress={() => setReleased(!released)}
           >
             <View style={[styles.checkbox, released && styles.checkboxActive]}>
-              {released && <Text style={styles.checkmark}>✓</Text>}
+              {released && <AppIcon name="check" size={16} color={colors.success} />}
             </View>
             <Text style={styles.releaseText}>
               {t('catch.released', 'Catch & Release')}
@@ -533,7 +539,10 @@ export default function LogCatchScreen({ navigation, route }) {
               {t('catch.autoCapture', 'Auto-captured')}
             </Text>
             <View style={styles.autoRow}>
-              <Text style={styles.autoLabel}>📍 GPS</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                <AppIcon name="mapPin" size={14} color={colors.textSecondary} />
+                <Text style={styles.autoLabel}>GPS</Text>
+              </View>
               {gpsLoading ? (
                 <ActivityIndicator size="small" color={colors.primary} />
               ) : coords ? (
@@ -546,7 +555,10 @@ export default function LogCatchScreen({ navigation, route }) {
             </View>
             {autoWeather && (
               <View style={styles.autoRow}>
-                <Text style={styles.autoLabel}>🌤️ Weather</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+                  <AppIcon name="cloudSun" size={14} color={colors.textSecondary} />
+                  <Text style={styles.autoLabel}>Weather</Text>
+                </View>
                 <Text style={styles.autoValue}>
                   {autoWeather.temp}° • {autoWeather.description} •{' '}
                   {autoWeather.wind} km/h

@@ -22,6 +22,7 @@ import {
 import gdprService from '../../services/gdprService';
 import regionGatingService from '../../services/regionGatingService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const EU_REGIONS = ['EU', 'NORDICS'];
 
@@ -74,7 +75,10 @@ export default function ConsentModal({ visible, onComplete }) {
       <View style={styles.overlay}>
         <View style={styles.container}>
           <ScrollView showsVerticalScrollIndicator={false}>
-            <Text style={styles.title}>🔒 Your Privacy Matters</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', marginBottom: 12 }}>
+              <AppIcon name="lock" size={20} color={colors.text} />
+              <Text style={[styles.title, { marginBottom: 0, marginLeft: 8 }]}>Your Privacy Matters</Text>
+            </View>
             <Text style={styles.description}>
               ProFish uses cookies and similar technologies to improve your
               experience. You can choose which types of data collection to

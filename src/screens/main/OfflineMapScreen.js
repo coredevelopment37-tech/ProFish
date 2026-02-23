@@ -22,6 +22,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 import offlineManager from '../../services/offlineManager';
 import subscriptionService from '../../services/subscriptionService';
 import regionGatingService from '../../services/regionGatingService';
@@ -185,7 +186,7 @@ export default function OfflineMapScreen({ navigation }) {
     const projectedTotal = totalSizeMB + regionPack.estimatedMB;
     if (projectedTotal > MAX_STORAGE_MB) {
       Alert.alert(
-        '⚠️ Storage Limit',
+        'Storage Limit',
         `This pack would exceed the ${MAX_STORAGE_MB}MB limit. Delete existing packs to free space.`,
       );
       return;
@@ -195,7 +196,7 @@ export default function OfflineMapScreen({ navigation }) {
     if (projectedTotal > MAX_STORAGE_MB * WARN_THRESHOLD) {
       const proceed = await new Promise(resolve => {
         Alert.alert(
-          '⚠️ Storage Warning',
+          'Storage Warning',
           `You're using ${Math.round(
             (projectedTotal / MAX_STORAGE_MB) * 100,
           )}% of your ${MAX_STORAGE_MB}MB offline storage.`,
@@ -300,23 +301,28 @@ export default function OfflineMapScreen({ navigation }) {
         {/* Downloaded packs (#144) */}
         {downloadedPacks.length > 0 && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>
-              📥 {t('offlineMaps.downloaded', 'Downloaded Packs')}
-            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+              <AppIcon name="download" size={18} color={colors.text} />
+              <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>
+                {t('offlineMaps.downloaded', 'Downloaded Packs')}
+              </Text>
+            </View>
             {downloadedPacks.map(pack => (
               <View key={pack.id} style={styles.packCard}>
                 <View style={styles.packInfo}>
                   <Text style={styles.packName}>{pack.name}</Text>
-                  <Text style={styles.packMeta}>
-                    {pack.status === 'complete' ? '✓ Ready' : pack.status} •{' '}
-                    {pack.sizeMB || '~'}MB
-                  </Text>
+                  <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 2 }}>
+                    {pack.status === 'complete' && <AppIcon name="check" size={14} color={colors.success} />}
+                    <Text style={[styles.packMeta, { marginTop: 0, marginLeft: pack.status === 'complete' ? 4 : 0 }]}>
+                      {pack.status === 'complete' ? 'Ready' : pack.status} • {pack.sizeMB || '~'}MB
+                    </Text>
+                  </View>
                 </View>
                 <TouchableOpacity
                   onPress={() => handleDelete(pack)}
                   style={styles.deleteBtn}
                 >
-                  <Text style={styles.deleteBtnText}>🗑️</Text>
+                  <AppIcon name="trash" size={18} color={colors.error} />
                 </TouchableOpacity>
               </View>
             ))}
@@ -325,9 +331,12 @@ export default function OfflineMapScreen({ navigation }) {
 
         {/* Available region packs (#142) */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>
-            🌍 {t('offlineMaps.available', 'Available Regions')}
-          </Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 12 }}>
+            <AppIcon name="globe" size={18} color={colors.text} />
+            <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>
+              {t('offlineMaps.available', 'Available Regions')}
+            </Text>
+          </View>
           {REGION_PACKS.map(regionPack => {
             const isDownloaded = downloadedPacks.some(
               p => p.name === regionPack.name,
@@ -355,7 +364,7 @@ export default function OfflineMapScreen({ navigation }) {
                   </View>
                 ) : isDownloaded ? (
                   <View style={styles.downloadedBadge}>
-                    <Text style={styles.downloadedText}>✓</Text>
+                    <AppIcon name="check" size={14} color={colors.success} />
                   </View>
                 ) : (
                   <TouchableOpacity

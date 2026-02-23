@@ -46,7 +46,7 @@ export const TIER_META = {
     label: 'Free',
     price: '$0',
     color: '#888',
-    icon: '🎣',
+    icon: 'fish',
     description: 'Maps, catch log (5/mo), weather, solunar, 5 AI IDs/day',
   },
   [TIERS.PRO]: {
@@ -54,7 +54,7 @@ export const TIER_META = {
     price: '$59.99/yr',
     priceMonthly: '$7.99/mo',
     color: '#FF9800',
-    icon: '⭐',
+    icon: 'star',
     description:
       'Unlimited catches, all 18 layers, offline maps, 7-day FishCast, stats, AI species ID, no ads',
   },

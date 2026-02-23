@@ -20,6 +20,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import firebaseAuthService from '../../services/firebaseAuthService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 export default function AuthScreen({ route, navigation }) {
   const { colors } = useTheme();
@@ -189,7 +190,7 @@ export default function AuthScreen({ route, navigation }) {
 
         {/* Branding */}
         <View style={styles.branding}>
-          <Text style={styles.logo}>🐟</Text>
+          <AppIcon name="fish" size={48} color={colors.primary} />
           <Text style={styles.title}>ProFish</Text>
           <Text style={styles.subtitle}>
             {t(
@@ -263,7 +264,7 @@ export default function AuthScreen({ route, navigation }) {
               <ActivityIndicator color={colors.textTertiary} size="small" />
             ) : (
               <>
-                <Text style={styles.authBtnIcon}>👤</Text>
+                <AppIcon name="user" size={20} color={colors.text} />
                 <Text style={[styles.authBtnText, styles.anonText]}>
                   {t('auth.continueGuest', 'Continue as Guest')}
                 </Text>
@@ -288,7 +289,7 @@ export default function AuthScreen({ route, navigation }) {
               onPress={() => setShowEmail(true)}
               disabled={loading}
             >
-              <Text style={styles.authBtnIcon}>✉️</Text>
+              <AppIcon name="mail" size={20} color={colors.text} />
               <Text style={[styles.authBtnText, styles.anonText]}>
                 {t('auth.continueEmail', 'Continue with Email')}
               </Text>

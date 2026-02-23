@@ -14,48 +14,49 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 const GEAR_CHECKLIST = [
-  { id: 'rod', label: 'Rod & Reel', emoji: '🎣', category: 'essentials' },
-  { id: 'tackle', label: 'Tackle Box', emoji: '🧰', category: 'essentials' },
-  { id: 'bait', label: 'Bait / Lures', emoji: '🪱', category: 'essentials' },
-  { id: 'line', label: 'Extra Line', emoji: '🧵', category: 'essentials' },
+  { id: 'rod', label: 'Rod & Reel', icon: 'fish', category: 'essentials' },
+  { id: 'tackle', label: 'Tackle Box', icon: 'package', category: 'essentials' },
+  { id: 'bait', label: 'Bait / Lures', icon: 'anchor', category: 'essentials' },
+  { id: 'line', label: 'Extra Line', icon: 'anchor', category: 'essentials' },
   {
     id: 'hooks',
     label: 'Hooks & Weights',
-    emoji: '🪝',
+    icon: 'anchor',
     category: 'essentials',
   },
-  { id: 'net', label: 'Landing Net', emoji: '🥅', category: 'essentials' },
+  { id: 'net', label: 'Landing Net', icon: 'fish', category: 'essentials' },
   {
     id: 'pliers',
     label: 'Pliers / Forceps',
-    emoji: '🔧',
+    icon: 'wrench',
     category: 'essentials',
   },
-  { id: 'knife', label: 'Fillet Knife', emoji: '🔪', category: 'essentials' },
-  { id: 'cooler', label: 'Cooler / Ice', emoji: '🧊', category: 'storage' },
-  { id: 'sunscreen', label: 'Sunscreen', emoji: '🧴', category: 'safety' },
+  { id: 'knife', label: 'Fillet Knife', icon: 'scissors', category: 'essentials' },
+  { id: 'cooler', label: 'Cooler / Ice', icon: 'snowflake', category: 'storage' },
+  { id: 'sunscreen', label: 'Sunscreen', icon: 'droplet', category: 'safety' },
   {
     id: 'sunglasses',
     label: 'Polarized Sunglasses',
-    emoji: '🕶️',
+    icon: 'glasses',
     category: 'safety',
   },
-  { id: 'hat', label: 'Hat', emoji: '🧢', category: 'safety' },
-  { id: 'pfd', label: 'Life Jacket / PFD', emoji: '🦺', category: 'safety' },
-  { id: 'firstaid', label: 'First Aid Kit', emoji: '⛑️', category: 'safety' },
-  { id: 'water', label: 'Water / Drinks', emoji: '💧', category: 'food' },
-  { id: 'snacks', label: 'Snacks / Food', emoji: '🥪', category: 'food' },
-  { id: 'license', label: 'Fishing License', emoji: '📄', category: 'legal' },
-  { id: 'phone', label: 'Phone (charged)', emoji: '📱', category: 'tech' },
-  { id: 'camera', label: 'Camera', emoji: '📷', category: 'tech' },
-  { id: 'gps', label: 'GPS / Fish Finder', emoji: '📡', category: 'tech' },
-  { id: 'raincoat', label: 'Rain Gear', emoji: '🌧️', category: 'clothing' },
-  { id: 'boots', label: 'Waterproof Boots', emoji: '🥾', category: 'clothing' },
-  { id: 'gloves', label: 'Fishing Gloves', emoji: '🧤', category: 'clothing' },
-  { id: 'headlamp', label: 'Headlamp', emoji: '🔦', category: 'night' },
-  { id: 'bugspray', label: 'Bug Spray', emoji: '🦟', category: 'comfort' },
+  { id: 'hat', label: 'Hat', icon: 'shield', category: 'safety' },
+  { id: 'pfd', label: 'Life Jacket / PFD', icon: 'shield', category: 'safety' },
+  { id: 'firstaid', label: 'First Aid Kit', icon: 'shieldAlert', category: 'safety' },
+  { id: 'water', label: 'Water / Drinks', icon: 'droplet', category: 'food' },
+  { id: 'snacks', label: 'Snacks / Food', icon: 'package', category: 'food' },
+  { id: 'license', label: 'Fishing License', icon: 'fileText', category: 'legal' },
+  { id: 'phone', label: 'Phone (charged)', icon: 'smartphone', category: 'tech' },
+  { id: 'camera', label: 'Camera', icon: 'camera', category: 'tech' },
+  { id: 'gps', label: 'GPS / Fish Finder', icon: 'satellite', category: 'tech' },
+  { id: 'raincoat', label: 'Rain Gear', icon: 'cloudRain', category: 'clothing' },
+  { id: 'boots', label: 'Waterproof Boots', icon: 'footprints', category: 'clothing' },
+  { id: 'gloves', label: 'Fishing Gloves', icon: 'shield', category: 'clothing' },
+  { id: 'headlamp', label: 'Headlamp', icon: 'flashlight', category: 'night' },
+  { id: 'bugspray', label: 'Bug Spray', icon: 'bug', category: 'comfort' },
 ];
 
 export default function TripPlannerScreen({ navigation }) {
@@ -113,7 +114,7 @@ export default function TripPlannerScreen({ navigation }) {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Text style={styles.backBtn}>← Back</Text>
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>🗓️ Trip Planner</Text>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}><AppIcon name="calendarDays" size={20} color={colors.text} /><Text style={styles.headerTitle}>Trip Planner</Text></View>
       </View>
 
       {/* Trip details */}
@@ -160,7 +161,7 @@ export default function TripPlannerScreen({ navigation }) {
       {/* Gear checklist */}
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>🎒 Gear Checklist</Text>
+          <Text style={styles.sectionTitle}><AppIcon name="package" size={18} color={colors.text} /> Gear Checklist</Text>
           <Text style={styles.progressText}>
             {gearProgress.checked}/{gearProgress.total} ({gearProgress.pct}%)
           </Text>
@@ -177,9 +178,9 @@ export default function TripPlannerScreen({ navigation }) {
             onPress={() => toggleGear(item.id)}
           >
             <Text style={styles.gearCheck}>
-              {checkedGear[item.id] ? '☑️' : '⬜'}
+              {checkedGear[item.id] ? <AppIcon name="checkCircle" size={20} color={colors.accent} /> : <AppIcon name="circle" size={20} color={colors.textTertiary} />}
             </Text>
-            <Text style={styles.gearEmoji}>{item.emoji}</Text>
+            <Text style={styles.gearEmoji}><AppIcon name={item.icon} size={20} color={colors.text} /></Text>
             <Text
               style={[
                 styles.gearLabel,
@@ -199,7 +200,7 @@ export default function TripPlannerScreen({ navigation }) {
         disabled={saved}
       >
         <Text style={styles.saveBtnText}>
-          {saved ? '✅ Trip Saved!' : '💾 Save Trip'}
+          {saved ? <><AppIcon name="checkCircle" size={18} color={colors.text} /> Trip Saved!</> : <><AppIcon name="save" size={18} color={colors.text} /> Save Trip</>}
         </Text>
       </TouchableOpacity>
     </ScrollView>

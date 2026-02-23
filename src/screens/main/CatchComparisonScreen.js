@@ -19,6 +19,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import catchService from '../../services/catchService';
 import useTheme from '../../hooks/useTheme';
+import { AppIcon } from '../../constants/icons';
 
 function StatRow({ label, left, right, unit = '', highlight = false }) {
   const { colors } = useTheme();
@@ -69,7 +70,7 @@ function CatchPickerModal({ visible, catches, onSelect, onClose, excludeId }) {
           <View style={styles.modalHeader}>
             <Text style={styles.modalTitle}>Select a Catch</Text>
             <TouchableOpacity onPress={onClose}>
-              <Text style={styles.modalClose}>✕</Text>
+              <AppIcon name="x" size={24} color={colors.text} />
             </TouchableOpacity>
           </View>
           <FlatList
@@ -87,7 +88,7 @@ function CatchPickerModal({ visible, catches, onSelect, onClose, excludeId }) {
                   />
                 ) : (
                   <View style={[styles.pickerThumb, styles.pickerPlaceholder]}>
-                    <Text style={styles.pickerEmoji}>🐟</Text>
+                    <AppIcon name="fish" size={32} color={colors.textTertiary} />
                   </View>
                 )}
                 <View style={styles.pickerInfo}>
@@ -193,7 +194,7 @@ export default function CatchComparisonScreen({ navigation, route }) {
                   />
                 ) : (
                   <View style={[styles.cardPhoto, styles.cardPhotoPlaceholder]}>
-                    <Text style={{ fontSize: 28 }}>🐟</Text>
+                    <AppIcon name="fish" size={32} color={colors.textTertiary} />
                   </View>
                 )}
                 <Text style={styles.cardSpecies} numberOfLines={1}>
@@ -227,7 +228,7 @@ export default function CatchComparisonScreen({ navigation, route }) {
                   />
                 ) : (
                   <View style={[styles.cardPhoto, styles.cardPhotoPlaceholder]}>
-                    <Text style={{ fontSize: 28 }}>🐟</Text>
+                    <AppIcon name="fish" size={32} color={colors.textTertiary} />
                   </View>
                 )}
                 <Text style={styles.cardSpecies} numberOfLines={1}>
