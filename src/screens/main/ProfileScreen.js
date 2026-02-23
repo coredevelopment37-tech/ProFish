@@ -336,7 +336,7 @@ export default function ProfileScreen({ navigation }) {
   }, [dispatch, t]);
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 100 }}>
       <ScreenHeader
         variant="actions"
         title={t('profile.title', 'Profile')}

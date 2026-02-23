@@ -159,6 +159,7 @@ function PaywallScreen({ navigation, route }) {
 
 // Tab bar icons — Lucide SVG icons (no emoji fallback)
 import { Map as MapIcon, Fish, Target, Users, User, Circle } from 'lucide-react-native';
+import FloatingTabBar from '../components/Navigation/FloatingTabBar';
 
 const TAB_ICONS = {
   Map: MapIcon,
@@ -185,16 +186,11 @@ function MainTabs() {
   const { colors } = useTheme();
   return (
     <Tab.Navigator
+      tabBar={(props) => <FloatingTabBar {...props} />}
       screenOptions={({ route }) => ({
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textTertiary,
-        tabBarStyle: {
-          backgroundColor: colors.surface,
-          borderTopColor: colors.border,
-          paddingBottom: 4,
-          height: 56,
-        },
         tabBarIcon: ({ color, size }) => {
           const IconComponent = TAB_ICONS[route.name] || Circle;
           return <IconComponent size={size} color={color} strokeWidth={2} />;

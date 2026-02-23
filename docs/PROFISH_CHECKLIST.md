@@ -883,35 +883,35 @@ Legend: `[x]` = Done · `[ ]` = To Do
 - [x] 572. Bundle verify — clean compile, zero import errors
 - [x] 573. Install `react-native-svg` dependency (was missing)
 
-### Phase 2: Icon System — Lucide Icons (CURRENT)
+### Phase 2: Icon System — Lucide Icons ✅ (commit `b087ba7`)
 
-- [ ] 574. Install `lucide-react-native` + `react-native-svg` (svg already done)
-- [ ] 575. Create `src/constants/icons.js` — centralized icon registry mapping names → Lucide components
-- [ ] 576. Replace all emoji icons in tab bar with Lucide icons
-- [ ] 577. Replace all emoji icons in screen headers with Lucide icons
-- [ ] 578. Replace all emoji icons in list items, cards, and buttons with Lucide icons
-- [ ] 579. Replace all emoji icons in settings, profile, and preference screens
-- [ ] 580. Replace all emoji icons in education screens (FishingSchool, KnotGuide, etc.)
-- [ ] 581. Audit — zero emoji used as UI icons remaining (emoji in content/data OK)
+- [x] 574. Install `lucide-react-native` + `react-native-svg` (svg already done)
+- [x] 575. Create `src/constants/icons.js` — centralized icon registry mapping names → Lucide components
+- [x] 576. Replace all emoji icons in tab bar with Lucide icons
+- [x] 577. Replace all emoji icons in screen headers with Lucide icons
+- [x] 578. Replace all emoji icons in list items, cards, and buttons with Lucide icons
+- [x] 579. Replace all emoji icons in settings, profile, and preference screens
+- [x] 580. Replace all emoji icons in education screens (FishingSchool, KnotGuide, etc.)
+- [x] 581. Audit — zero emoji used as UI icons remaining (emoji in content/data OK)
 
-### Phase 3: Shared Components
+### Phase 3: Shared Components ✅ (commit `7d92f9a`)
 
-- [ ] 582. Create `src/components/Common/Button.js` — primary, secondary, outline, danger variants
-- [ ] 583. Create `src/components/Common/Card.js` — surface card with shadow, padding, radius
-- [ ] 584. Create `src/components/Common/Input.js` — themed TextInput with label, error state, icon
-- [ ] 585. Create `src/components/Common/ScreenHeader.js` — consistent header with back, title, actions
-- [ ] 586. Refactor all screens to use shared `<Button>` instead of inline TouchableOpacity styles
-- [ ] 587. Refactor all screens to use shared `<Card>` instead of inline surface containers
-- [ ] 588. Refactor all screens to use shared `<Input>` for text inputs
-- [ ] 589. Refactor all screens to use shared `<ScreenHeader>` for consistent navigation headers
+- [x] 582. Create `src/components/Common/Button.js` — primary, secondary, outline, danger variants
+- [x] 583. Create `src/components/Common/Card.js` — surface card with shadow, padding, radius
+- [x] 584. Create `src/components/Common/Input.js` — themed TextInput with label, error state, icon
+- [x] 585. Create `src/components/Common/ScreenHeader.js` — consistent header with back, title, actions
+- [x] 586. Refactor all screens to use shared `<Button>` instead of inline TouchableOpacity styles
+- [x] 587. Refactor all screens to use shared `<Card>` instead of inline surface containers
+- [x] 588. Refactor all screens to use shared `<Input>` for text inputs
+- [x] 589. Refactor all screens to use shared `<ScreenHeader>` for consistent navigation headers
 
-### Phase 4: FloatingTabBar
+### Phase 4: FloatingTabBar ✅
 
-- [ ] 590. Create `src/components/Navigation/FloatingTabBar.js` — glassmorphic floating tab bar
-- [ ] 591. Style: rounded pill shape, blur background, elevated shadow, animated active indicator
-- [ ] 592. Wire into `RootNavigator.js` as custom `tabBar` component
-- [ ] 593. Add haptic feedback on tab switch
-- [ ] 594. Test on all screen sizes (small phone, large phone, tablet)
+- [x] 590. Create `src/components/Navigation/FloatingTabBar.js` — glassmorphic floating tab bar
+- [x] 591. Style: rounded pill shape, blur background, elevated shadow, animated active indicator
+- [x] 592. Wire into `RootNavigator.js` as custom `tabBar` component
+- [x] 593. Add haptic feedback on tab switch
+- [x] 594. Test on all screen sizes (small phone, large phone, tablet)
 
 ---
 
@@ -984,16 +984,17 @@ Legend: `[x]` = Done · `[ ]` = To Do
 | 19. Launch & Marketing              | 15      | 15      | 0         | 100%    |
 | 20. Post-Launch & Scale             | 17      | 17      | 0         | 100%    |
 | 21. Critical Gaps                   | 62      | 62      | 0         | 100%    |
-| 22. UI Overhaul                     | 32      | 11      | 21        | 34%     |
+| 22. UI Overhaul                     | 32      | 32      | 0         | 100%    |
 | 23. Fishing Spots — Worldwide DB    | 26      | 0       | 26        | 0%      |
-| **TOTAL**                           | **620** | **544** | **76**    | **88%** |
+| **TOTAL**                           | **620** | **565** | **55**    | **91%** |
 
 ### Current Sprint Order
 
-1. **NOW →** Phase 2: Lucide Icons (#574-581)
-2. **NEXT →** Phase 3: Shared Components (#582-589)
-3. **THEN →** Phase 4: FloatingTabBar (#590-594)
-4. **AFTER UI →** Fishing Spots Worldwide (#595-620)
+1. ~~Phase 1: Centralized Theme System~~ ✅ `4b23be6`
+2. ~~Phase 2: Lucide Icons~~ ✅ `b087ba7`
+3. ~~Phase 3: Shared Components~~ ✅ `7d92f9a`
+4. ~~Phase 4: FloatingTabBar~~ ✅
+5. **NOW →** Fishing Spots Worldwide (#595-620)
 
 ---
 

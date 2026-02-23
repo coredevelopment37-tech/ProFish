@@ -373,7 +373,7 @@ function getSummaryText(score, t) {
 
 const createStyles = (colors) => StyleSheet.create({
   container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: 20, paddingTop: 50 },
+  content: { padding: 20, paddingTop: 50, paddingBottom: 100 },
   centerContainer: {
     flex: 1,
     backgroundColor: colors.background,
