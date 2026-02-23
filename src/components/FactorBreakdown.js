@@ -6,6 +6,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 
 const FACTOR_CONFIG = {
   pressure: { icon: '🌡️', weight: 20 },
@@ -18,16 +19,18 @@ const FACTOR_CONFIG = {
   precipitation: { icon: '🌧️', weight: 8 },
 };
 
-function getBarColor(score) {
-  if (score >= 80) return '#4CAF50';
+function getBarColor(score, colors) {
+  if (score >= 80) return colors.success;
   if (score >= 60) return '#8BC34A';
   if (score >= 40) return '#FFC107';
-  if (score >= 20) return '#FF9800';
-  return '#F44336';
+  if (score >= 20) return colors.accent;
+  return colors.error;
 }
 
 export default function FactorBreakdown({ factors }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   if (!factors) return null;
 
@@ -54,7 +57,7 @@ export default function FactorBreakdown({ factors }) {
             <Text style={styles.factorLabel}>{factor.label}</Text>
             <Text style={styles.factorWeight}>{factor.weight}%</Text>
             <Text
-              style={[styles.factorScore, { color: getBarColor(factor.score) }]}
+              style={[styles.factorScore, { color: getBarColor(factor.score, colors) }]}
             >
               {Math.round(factor.score)}
             </Text>
@@ -65,7 +68,7 @@ export default function FactorBreakdown({ factors }) {
                 styles.barFill,
                 {
                   width: `${factor.score}%`,
-                  backgroundColor: getBarColor(factor.score),
+                  backgroundColor: getBarColor(factor.score, colors),
                 },
               ]}
             />
@@ -76,9 +79,9 @@ export default function FactorBreakdown({ factors }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -86,7 +89,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 14,
   },
   factorRow: {
@@ -101,10 +104,10 @@ const styles = StyleSheet.create({
   factorLabel: {
     flex: 1,
     fontSize: 13,
-    color: '#ccc',
+    color: colors.textSecondary,
     textTransform: 'capitalize',
   },
-  factorWeight: { fontSize: 11, color: '#555', marginRight: 8 },
+  factorWeight: { fontSize: 11, color: colors.textDisabled, marginRight: 8 },
   factorScore: {
     fontSize: 14,
     fontWeight: 'bold',

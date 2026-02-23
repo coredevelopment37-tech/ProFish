@@ -6,9 +6,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 
 export default function SolunarTimeline({ solunar, sunTimes }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   if (!solunar) return null;
 
@@ -98,19 +101,19 @@ export default function SolunarTimeline({ solunar, sunTimes }) {
       {/* Legend */}
       <View style={styles.legend}>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#FF6B00' }]} />
+          <View style={[styles.legendDot, { backgroundColor: colors.accent }]} />
           <Text style={styles.legendText}>
             {t('fishcast.majorPeriod', 'Major Period')}
           </Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#0080FF' }]} />
+          <View style={[styles.legendDot, { backgroundColor: colors.primary }]} />
           <Text style={styles.legendText}>
             {t('fishcast.minorPeriod', 'Minor Period')}
           </Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#1a1a3a' }]} />
+          <View style={[styles.legendDot, { backgroundColor: colors.surface }]} />
           <Text style={styles.legendText}>{t('fishcast.night', 'Night')}</Text>
         </View>
       </View>
@@ -148,9 +151,9 @@ function getMoonEmoji(phaseName) {
   return map[phaseName] || '🌙';
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -161,14 +164,14 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  title: { fontSize: 16, fontWeight: '600', color: '#fff' },
+  title: { fontSize: 16, fontWeight: '600', color: colors.text },
   moonInfo: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   moonPhase: { fontSize: 20 },
-  moonName: { fontSize: 13, color: '#aaa' },
-  illumination: { fontSize: 12, color: '#666' },
+  moonName: { fontSize: 13, color: colors.textSecondary },
+  illumination: { fontSize: 12, color: colors.textTertiary },
   timeline: {
     height: 24,
-    backgroundColor: '#2a2a4a',
+    backgroundColor: colors.surfaceLight,
     borderRadius: 12,
     overflow: 'hidden',
     position: 'relative',
@@ -177,7 +180,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     bottom: 0,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+    backgroundColor: colors.overlay,
   },
   period: {
     position: 'absolute',
@@ -201,13 +204,13 @@ const styles = StyleSheet.create({
     width: 8,
     height: 8,
     borderRadius: 4,
-    backgroundColor: '#FF4081',
+    backgroundColor: colors.error,
     marginBottom: 1,
   },
   nowLine: {
     width: 2,
     height: 20,
-    backgroundColor: '#FF4081',
+    backgroundColor: colors.error,
   },
   timeLabels: {
     flexDirection: 'row',
@@ -215,7 +218,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
     paddingHorizontal: 2,
   },
-  timeLabel: { fontSize: 10, color: '#555' },
+  timeLabel: { fontSize: 10, color: colors.textDisabled },
   legend: {
     flexDirection: 'row',
     justifyContent: 'center',
@@ -232,5 +235,5 @@ const styles = StyleSheet.create({
     height: 8,
     borderRadius: 4,
   },
-  legendText: { fontSize: 11, color: '#888' },
+  legendText: { fontSize: 11, color: colors.textTertiary },
 });

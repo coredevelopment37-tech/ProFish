@@ -11,16 +11,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from 'react-native';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
+import useTheme from '../../hooks/useTheme';
 
 /**
  * Calculate moon phase for a given date
@@ -131,9 +122,9 @@ function generateCalendar(startDate) {
   return days;
 }
 
-function DayCard({ day }) {
+function DayCard({ day, colors, styles }) {
   const scoreColor =
-    day.score >= 80 ? '#00D4AA' : day.score >= 60 ? '#FFA500' : '#FF6666';
+    day.score >= 80 ? colors.success : day.score >= 60 ? colors.accent : colors.error;
 
   return (
     <View style={[styles.dayCard, day.isToday && styles.dayCardToday]}>
@@ -177,6 +168,8 @@ function DayCard({ day }) {
 }
 
 export default function MoonCalendarScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [startDate] = useState(new Date());
   const calendar = useMemo(() => generateCalendar(startDate), [startDate]);
 
@@ -214,7 +207,7 @@ export default function MoonCalendarScreen({ navigation }) {
       <FlatList
         data={calendar}
         keyExtractor={item => item.dateStr}
-        renderItem={({ item }) => <DayCard day={item} />}
+        renderItem={({ item }) => <DayCard day={item} colors={colors} styles={styles} />}
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
@@ -224,64 +217,64 @@ export default function MoonCalendarScreen({ navigation }) {
 
 export { getMoonPhase, getMoonInfo, getSolunarPeriods };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 8 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
-  headerDesc: { fontSize: 14, color: THEME.muted, marginTop: 4 },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
+  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
   bestDaysBanner: {
     margin: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     borderWidth: 1,
-    borderColor: THEME.accent + '40',
+    borderColor: colors.accent + '40',
   },
   bestDaysTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: THEME.accent,
+    color: colors.accent,
     marginBottom: 8,
   },
   bestDaysList: { flexDirection: 'row', flexWrap: 'wrap', gap: 6 },
   bestDayChip: {
-    backgroundColor: THEME.accent + '15',
+    backgroundColor: colors.accent + '15',
     paddingHorizontal: 10,
     paddingVertical: 5,
     borderRadius: 12,
   },
-  bestDayText: { fontSize: 12, color: THEME.accent },
+  bestDayText: { fontSize: 12, color: colors.accent },
   listContent: { padding: 16, paddingTop: 0, paddingBottom: 100 },
   dayCard: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  dayCardToday: { borderColor: THEME.primary, borderWidth: 2 },
+  dayCardToday: { borderColor: colors.primary, borderWidth: 2 },
   dayHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 6,
   },
-  dayDate: { fontSize: 15, fontWeight: '700', color: THEME.text },
+  dayDate: { fontSize: 15, fontWeight: '700', color: colors.text },
   dayRight: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   moonEmoji: { fontSize: 24 },
   scoreBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 10 },
   scoreText: { fontSize: 14, fontWeight: '700' },
-  moonName: { fontSize: 13, color: THEME.muted, marginBottom: 2 },
-  fishingRating: { fontSize: 13, color: THEME.accent, marginBottom: 10 },
+  moonName: { fontSize: 13, color: colors.textTertiary, marginBottom: 2 },
+  fishingRating: { fontSize: 13, color: colors.accent, marginBottom: 10 },
   solunarRow: { flexDirection: 'row', gap: 12 },
   solunarBlock: { flex: 1 },
   solunarLabel: {
     fontSize: 12,
     fontWeight: '600',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 4,
   },
-  solunarTime: { fontSize: 11, color: THEME.muted, lineHeight: 16 },
+  solunarTime: { fontSize: 11, color: colors.textTertiary, lineHeight: 16 },
 });

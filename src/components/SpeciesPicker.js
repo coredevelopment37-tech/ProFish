@@ -14,9 +14,12 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import speciesDatabase from '../services/speciesDatabase';
+import useTheme from '../hooks/useTheme';
 
 export default function SpeciesPicker({ value, onSelect, placeholder }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [query, setQuery] = useState(value || '');
   const [results, setResults] = useState([]);
   const [showResults, setShowResults] = useState(false);
@@ -56,7 +59,7 @@ export default function SpeciesPicker({ value, onSelect, placeholder }) {
         placeholder={
           placeholder || t('catch.speciesPlaceholder', 'e.g. Largemouth Bass')
         }
-        placeholderTextColor="#555"
+        placeholderTextColor={colors.textDisabled}
         autoCapitalize="words"
       />
 
@@ -104,26 +107,26 @@ function getHabitatEmoji(habitat) {
   }
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: { position: 'relative', zIndex: 100 },
   input: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     padding: 14,
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   dropdown: {
     position: 'absolute',
     top: 52,
     left: 0,
     right: 0,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
     maxHeight: 240,
     zIndex: 200,
     elevation: 10,
@@ -137,18 +140,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#262640',
+    borderBottomColor: colors.borderLight,
   },
   resultInfo: { flex: 1 },
   resultName: {
     fontSize: 15,
-    color: '#fff',
+    color: colors.text,
     fontWeight: '500',
     textTransform: 'capitalize',
   },
   resultScientific: {
     fontSize: 12,
-    color: '#666',
+    color: colors.textTertiary,
     fontStyle: 'italic',
     marginTop: 2,
   },

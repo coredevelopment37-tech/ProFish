@@ -4,6 +4,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../config/theme';
 
 const STORAGE_KEY = '@profish_casting_progress';
 
@@ -180,9 +181,9 @@ export const TECHNIQUES = [
 ];
 
 export const DIFFICULTY_COLORS = {
-  beginner: '#4CAF50',
-  intermediate: '#FF9800',
-  advanced: '#F44336',
+  beginner: COLORS.success,
+  intermediate: COLORS.accent,
+  advanced: COLORS.error,
   pro: '#9C27B0',
 };
 

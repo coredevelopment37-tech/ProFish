@@ -6,6 +6,7 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 import { formatWeight, formatLength } from '../utils/units';
+import useTheme from '../hooks/useTheme';
 
 export default function CatchCard({
   item,
@@ -13,6 +14,8 @@ export default function CatchCard({
   onLongPress,
   units = 'metric',
 }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const hasPhoto = !!item.photo;
 
   return (
@@ -108,10 +111,10 @@ function formatDate(dateStr) {
   return d.toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 12,
     marginBottom: 10,
@@ -124,13 +127,13 @@ const styles = StyleSheet.create({
     width: 72,
     height: 72,
     borderRadius: 10,
-    backgroundColor: '#0d0d1a',
+    backgroundColor: colors.background,
   },
   photoPlaceholder: {
     width: 72,
     height: 72,
     borderRadius: 10,
-    backgroundColor: '#0d0d1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -139,12 +142,12 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -4,
     right: -4,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
     borderRadius: 6,
     paddingHorizontal: 5,
     paddingVertical: 1,
   },
-  releasedText: { fontSize: 9, color: '#fff', fontWeight: 'bold' },
+  releasedText: { fontSize: 9, color: colors.text, fontWeight: 'bold' },
   info: {
     flex: 1,
     justifyContent: 'center',
@@ -152,7 +155,7 @@ const styles = StyleSheet.create({
   species: {
     fontSize: 17,
     fontWeight: '600',
-    color: '#fff',
+    color: colors.text,
     textTransform: 'capitalize',
     marginBottom: 4,
     flex: 1,
@@ -164,17 +167,17 @@ const styles = StyleSheet.create({
   },
   syncBadge: {
     fontSize: 12,
-    color: '#4CAF50',
+    color: colors.success,
     marginLeft: 6,
   },
   pendingBadge: {
     fontSize: 12,
-    color: '#FF9800',
+    color: colors.accent,
     marginLeft: 6,
   },
   errorBadge: {
     fontSize: 12,
-    color: '#F44336',
+    color: colors.error,
     marginLeft: 6,
   },
   stats: {
@@ -188,13 +191,13 @@ const styles = StyleSheet.create({
     gap: 4,
   },
   statIcon: { fontSize: 12 },
-  statValue: { fontSize: 13, color: '#0080FF', fontWeight: '600' },
-  bait: { fontSize: 12, color: '#888', marginBottom: 4 },
+  statValue: { fontSize: 13, color: colors.primary, fontWeight: '600' },
+  bait: { fontSize: 12, color: colors.textTertiary, marginBottom: 4 },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  date: { fontSize: 11, color: '#555' },
+  date: { fontSize: 11, color: colors.textDisabled },
   waterType: { fontSize: 14 },
 });

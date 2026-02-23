@@ -21,23 +21,17 @@ import {
 } from 'react-native';
 import gdprService from '../../services/gdprService';
 import regionGatingService from '../../services/regionGatingService';
+import useTheme from '../../hooks/useTheme';
 
 const EU_REGIONS = ['EU', 'NORDICS'];
-const THEME = {
-  bg: '#1A1A2E',
-  card: '#16213E',
-  accent: '#0F3460',
-  primary: '#E94560',
-  text: '#FFFFFF',
-  textSecondary: '#A0A0B0',
-  border: '#2A2A4A',
-};
 
 export default function ConsentModal({ visible, onComplete }) {
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
   const [thirdParty, setThirdParty] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   useEffect(() => {
     loadExisting();
@@ -99,7 +93,7 @@ export default function ConsentModal({ visible, onComplete }) {
               <Switch
                 value={true}
                 disabled
-                trackColor={{ true: THEME.primary }}
+                trackColor={{ true: colors.primary }}
               />
             </View>
 
@@ -114,7 +108,7 @@ export default function ConsentModal({ visible, onComplete }) {
               <Switch
                 value={analytics}
                 onValueChange={setAnalytics}
-                trackColor={{ true: THEME.primary, false: THEME.border }}
+                trackColor={{ true: colors.primary, false: colors.border }}
               />
             </View>
 
@@ -129,7 +123,7 @@ export default function ConsentModal({ visible, onComplete }) {
               <Switch
                 value={marketing}
                 onValueChange={setMarketing}
-                trackColor={{ true: THEME.primary, false: THEME.border }}
+                trackColor={{ true: colors.primary, false: colors.border }}
               />
             </View>
 
@@ -144,7 +138,7 @@ export default function ConsentModal({ visible, onComplete }) {
               <Switch
                 value={thirdParty}
                 onValueChange={setThirdParty}
-                trackColor={{ true: THEME.primary, false: THEME.border }}
+                trackColor={{ true: colors.primary, false: colors.border }}
               />
             </View>
 
@@ -215,14 +209,14 @@ export default function ConsentModal({ visible, onComplete }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.7)',
+    backgroundColor: colors.overlay,
     justifyContent: 'flex-end',
   },
   container: {
-    backgroundColor: THEME.bg,
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     padding: 24,
@@ -231,13 +225,13 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: THEME.text,
+    color: colors.text,
     textAlign: 'center',
     marginBottom: 12,
   },
   description: {
     fontSize: 14,
-    color: THEME.textSecondary,
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 20,
@@ -248,74 +242,74 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: THEME.border,
+    borderBottomColor: colors.border,
   },
   consentInfo: { flex: 1, marginRight: 12 },
   consentLabel: {
     fontSize: 16,
     fontWeight: '600',
-    color: THEME.text,
+    color: colors.text,
   },
   consentDesc: {
     fontSize: 12,
-    color: THEME.textSecondary,
+    color: colors.textSecondary,
     marginTop: 2,
   },
   detailsToggle: {
-    color: THEME.primary,
+    color: colors.primary,
     textAlign: 'center',
     marginTop: 16,
     fontSize: 13,
   },
   detailsBox: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surfaceLight,
     borderRadius: 12,
     padding: 14,
     marginTop: 12,
   },
   detailsText: {
     fontSize: 12,
-    color: THEME.textSecondary,
+    color: colors.textSecondary,
     lineHeight: 20,
   },
-  bold: { fontWeight: '700', color: THEME.text },
+  bold: { fontWeight: '700', color: colors.text },
   links: {
     flexDirection: 'row',
     justifyContent: 'center',
     marginTop: 16,
     marginBottom: 8,
   },
-  linkText: { color: THEME.primary, fontSize: 13 },
-  linkSep: { color: THEME.textSecondary, marginHorizontal: 8, fontSize: 13 },
+  linkText: { color: colors.primary, fontSize: 13 },
+  linkSep: { color: colors.textSecondary, marginHorizontal: 8, fontSize: 13 },
   buttons: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 16,
     borderTopWidth: 1,
-    borderTopColor: THEME.border,
+    borderTopColor: colors.border,
   },
   rejectBtn: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  rejectText: { color: THEME.textSecondary, fontSize: 14, fontWeight: '600' },
+  rejectText: { color: colors.textSecondary, fontSize: 14, fontWeight: '600' },
   acceptSelectedBtn: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,
-    backgroundColor: THEME.accent,
+    backgroundColor: colors.accent,
   },
-  acceptSelectedText: { color: THEME.text, fontSize: 14, fontWeight: '600' },
+  acceptSelectedText: { color: colors.text, fontSize: 14, fontWeight: '600' },
   acceptAllBtn: {
     paddingVertical: 12,
     paddingHorizontal: 16,
     borderRadius: 10,
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
   },
-  acceptAllText: { color: THEME.text, fontSize: 14, fontWeight: '700' },
+  acceptAllText: { color: colors.text, fontSize: 14, fontWeight: '700' },
 });
 
 /**

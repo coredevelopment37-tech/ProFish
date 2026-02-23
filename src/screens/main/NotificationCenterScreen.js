@@ -17,6 +17,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import notificationService from '../../services/notificationService';
+import useTheme from '../../hooks/useTheme';
 
 const TYPE_CONFIG = {
   follower: { icon: '👤', color: '#4A90D9' },
@@ -40,6 +41,8 @@ function timeAgo(dateStr) {
 }
 
 export default function NotificationCenterScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [notifications, setNotifications] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -172,7 +175,7 @@ export default function NotificationCenterScreen({ navigation }) {
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={handleClearAll} style={styles.actionBtn}>
-            <Text style={[styles.actionText, { color: '#FF6B6B' }]}>
+            <Text style={[styles.actionText, { color: colors.error }]}>
               Clear all
             </Text>
           </TouchableOpacity>
@@ -201,7 +204,7 @@ export default function NotificationCenterScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#0080FF"
+            tintColor={colors.primary}
           />
         }
       />
@@ -209,8 +212,8 @@ export default function NotificationCenterScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -218,11 +221,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   backBtn: { padding: 8 },
-  backText: { color: '#fff', fontSize: 22 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  backText: { color: colors.text, fontSize: 22 },
+  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
   gearIcon: { fontSize: 20 },
 
   actionBar: {
@@ -232,10 +235,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   actionBtn: { padding: 4 },
-  actionText: { color: '#0080FF', fontSize: 13, fontWeight: '600' },
+  actionText: { color: colors.primary, fontSize: 13, fontWeight: '600' },
 
   item: {
     flexDirection: 'row',
@@ -243,10 +246,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   itemUnread: {
-    backgroundColor: '#0080FF08',
+    backgroundColor: colors.primary + '08',
   },
 
   iconCircle: {
@@ -260,24 +263,24 @@ const styles = StyleSheet.create({
   icon: { fontSize: 20 },
 
   content: { flex: 1, marginRight: 8 },
-  title: { color: '#fff', fontSize: 14, fontWeight: '600', marginBottom: 2 },
-  body: { color: '#aaa', fontSize: 13, lineHeight: 18 },
+  title: { color: colors.text, fontSize: 14, fontWeight: '600', marginBottom: 2 },
+  body: { color: colors.textSecondary, fontSize: 13, lineHeight: 18 },
 
   meta: { alignItems: 'flex-end', gap: 4 },
-  time: { color: '#666', fontSize: 12 },
+  time: { color: colors.textTertiary, fontSize: 12 },
   dot: { width: 8, height: 8, borderRadius: 4 },
 
   emptyContainer: { flex: 1, justifyContent: 'center' },
   empty: { alignItems: 'center', padding: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 16 },
   emptyTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 8,
   },
   emptyText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,

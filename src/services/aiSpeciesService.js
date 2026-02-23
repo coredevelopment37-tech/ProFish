@@ -15,6 +15,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../config/theme';
 
 // ── Configuration ────────────────────────────────────────
 
@@ -57,23 +58,28 @@ const AI_CONFIG = {
 export const CONFIDENCE_LEVEL = {
   HIGH: {
     label: 'High Confidence',
-    color: '#4CAF50',
+    color: COLORS.success,
     icon: '✅',
     minScore: AI_CONFIG.HIGH_CONFIDENCE,
   },
   MEDIUM: {
     label: 'Likely Match',
-    color: '#FF9800',
+    color: COLORS.accent,
     icon: '🟡',
     minScore: AI_CONFIG.MEDIUM_CONFIDENCE,
   },
   LOW: {
     label: 'Possible Match',
-    color: '#F44336',
+    color: COLORS.error,
     icon: '❓',
     minScore: AI_CONFIG.LOW_CONFIDENCE,
   },
-  UNKNOWN: { label: 'Unknown Species', color: '#666', icon: '❌', minScore: 0 },
+  UNKNOWN: {
+    label: 'Unknown Species',
+    color: COLORS.textTertiary,
+    icon: '❌',
+    minScore: 0,
+  },
 };
 
 function getConfidenceLevel(score) {

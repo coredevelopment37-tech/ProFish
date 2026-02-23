@@ -21,6 +21,7 @@ import {
   Platform,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../../hooks/useTheme';
 import offlineManager from '../../services/offlineManager';
 import subscriptionService from '../../services/subscriptionService';
 import regionGatingService from '../../services/regionGatingService';
@@ -120,6 +121,8 @@ const REGION_PACKS = [
 ];
 
 export default function OfflineMapScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [downloadedPacks, setDownloadedPacks] = useState([]);
   const [downloading, setDownloading] = useState({}); // { packId: progress }
@@ -373,8 +376,8 @@ export default function OfflineMapScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -383,12 +386,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  backText: { fontSize: 28, color: colors.text },
+  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
 
   storageCard: {
     marginHorizontal: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 16,
@@ -398,27 +401,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 8,
   },
-  storageLabel: { color: '#888', fontSize: 13 },
-  storageValue: { color: '#fff', fontSize: 13, fontWeight: '600' },
-  storageWarning: { color: '#FF9800' },
+  storageLabel: { color: colors.textTertiary, fontSize: 13 },
+  storageValue: { color: colors.text, fontSize: 13, fontWeight: '600' },
+  storageWarning: { color: colors.accent },
   storageBar: {
     height: 8,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 4,
     overflow: 'hidden',
   },
   storageFill: {
     height: 8,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 4,
   },
-  storageFillWarning: { backgroundColor: '#FF9800' },
+  storageFillWarning: { backgroundColor: colors.accent },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
 
   section: { marginBottom: 20 },
   sectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 12,
@@ -427,14 +430,14 @@ const styles = StyleSheet.create({
   packCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
   },
   packInfo: { flex: 1 },
-  packName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  packMeta: { color: '#888', fontSize: 12, marginTop: 2 },
+  packName: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  packMeta: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
   deleteBtn: {
     width: 40,
     height: 40,
@@ -446,20 +449,20 @@ const styles = StyleSheet.create({
   regionCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
   },
   regionInfo: { flex: 1 },
-  regionName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  regionSize: { color: '#888', fontSize: 12, marginTop: 2 },
+  regionName: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  regionSize: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
 
   downloadBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -473,21 +476,21 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  downloadedText: { color: '#4CAF50', fontSize: 18, fontWeight: '700' },
+  downloadedText: { color: colors.success, fontSize: 18, fontWeight: '700' },
 
   progressContainer: { alignItems: 'center', width: 80 },
   progressBar: {
     height: 6,
     width: 60,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: 4,
   },
   progressFill: {
     height: 6,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 3,
   },
-  progressText: { color: '#0080FF', fontSize: 10, fontWeight: '600' },
+  progressText: { color: colors.primary, fontSize: 10, fontWeight: '600' },
 });

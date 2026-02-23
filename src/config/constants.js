@@ -4,29 +4,6 @@
  * All magic numbers, limits, defaults, and config values in one place.
  */
 
-// ── Colors ──────────────────────────────────────────────
-export const COLORS = {
-  primary: '#0080FF',
-  primaryDark: '#0060CC',
-  background: '#0a0a1a',
-  surface: '#1a1a2e',
-  surfaceLight: '#2a2a3e',
-  text: '#fff',
-  textSecondary: '#ccc',
-  textMuted: '#888',
-  textDisabled: '#555',
-  border: '#333',
-  success: '#4CAF50',
-  warning: '#FF9800',
-  error: '#F44336',
-  info: '#2196F3',
-  catch: '#FF6B00',
-  spot: '#4CAF50',
-  pro: '#FF9800',
-  team: '#4CAF50',
-  guide: '#2196F3',
-};
-
 // ── Typography ──────────────────────────────────────────
 export const FONTS = {
   h1: { fontSize: 28, fontWeight: 'bold' },

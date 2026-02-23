@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 export default function EmptyState({
   icon = '🎣',
@@ -13,6 +14,9 @@ export default function EmptyState({
   actionLabel = '',
   onAction = null,
 }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   return (
     <View style={styles.container}>
       <Text style={styles.icon}>{icon}</Text>
@@ -27,7 +31,7 @@ export default function EmptyState({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
@@ -39,25 +43,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     textAlign: 'center',
     marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: colors.textTertiary,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 24,
   },
   button: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },

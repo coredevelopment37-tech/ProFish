@@ -18,8 +18,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import catchService from '../../services/catchService';
+import useTheme from '../../hooks/useTheme';
 
 function StatRow({ label, left, right, unit = '', highlight = false }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const leftVal = left ?? '—';
   const rightVal = right ?? '—';
   const leftNum = parseFloat(left);
@@ -55,6 +58,8 @@ function StatRow({ label, left, right, unit = '', highlight = false }) {
 }
 
 function CatchPickerModal({ visible, catches, onSelect, onClose, excludeId }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const filtered = catches.filter(c => c.id !== excludeId);
 
   return (
@@ -110,6 +115,8 @@ function CatchPickerModal({ visible, catches, onSelect, onClose, excludeId }) {
 }
 
 export default function CatchComparisonScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const initialCatchId = route.params?.catchId;
 
@@ -367,8 +374,8 @@ export default function CatchComparisonScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -376,11 +383,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   backBtn: { padding: 8 },
-  backText: { color: '#fff', fontSize: 22 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  backText: { color: colors.text, fontSize: 22 },
+  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
 
   scrollContent: { paddingBottom: 40 },
 
@@ -393,17 +400,17 @@ const styles = StyleSheet.create({
   },
   selectorCard: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
     minHeight: 140,
     justifyContent: 'center',
   },
   selectorCardActive: {
-    borderColor: '#0080FF44',
+    borderColor: colors.primary + '44',
   },
   cardPhoto: {
     width: 60,
@@ -412,17 +419,17 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   cardPhotoPlaceholder: {
-    backgroundColor: '#2a2a4a',
+    backgroundColor: colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  cardSpecies: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  cardDate: { color: '#888', fontSize: 11, marginTop: 2 },
-  cardPlus: { color: '#0080FF', fontSize: 32, fontWeight: '300' },
-  cardAction: { color: '#0080FF', fontSize: 12, marginTop: 4 },
+  cardSpecies: { color: colors.text, fontSize: 14, fontWeight: '700' },
+  cardDate: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
+  cardPlus: { color: colors.primary, fontSize: 32, fontWeight: '300' },
+  cardAction: { color: colors.primary, fontSize: 12, marginTop: 4 },
 
   vsText: {
-    color: '#FFB347',
+    color: colors.accent,
     fontSize: 16,
     fontWeight: '800',
     marginHorizontal: 4,
@@ -433,7 +440,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   tableTitle: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -446,11 +453,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   statVal: {
     flex: 1,
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 13,
   },
   statLeft: { textAlign: 'left' },
@@ -458,17 +465,17 @@ const styles = StyleSheet.create({
   statLabel: {
     width: 80,
     textAlign: 'center',
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 11,
     fontWeight: '600',
   },
   statWinner: {
-    color: '#50C878',
+    color: colors.success,
     fontWeight: '700',
   },
 
   prompt: { padding: 40, alignItems: 'center' },
-  promptText: { color: '#666', fontSize: 14, textAlign: 'center' },
+  promptText: { color: colors.textTertiary, fontSize: 14, textAlign: 'center' },
 
   // Picker modal
   modalOverlay: {
@@ -477,7 +484,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   modalContent: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     maxHeight: '70%',
@@ -489,10 +496,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    borderBottomColor: colors.border,
   },
-  modalTitle: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  modalClose: { color: '#888', fontSize: 20, padding: 4 },
+  modalTitle: { color: colors.text, fontSize: 16, fontWeight: '700' },
+  modalClose: { color: colors.textTertiary, fontSize: 20, padding: 4 },
 
   pickerItem: {
     flexDirection: 'row',
@@ -500,18 +507,18 @@ const styles = StyleSheet.create({
     padding: 12,
     paddingHorizontal: 16,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   pickerThumb: { width: 44, height: 44, borderRadius: 22, marginRight: 12 },
   pickerPlaceholder: {
-    backgroundColor: '#2a2a4a',
+    backgroundColor: colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   pickerEmoji: { fontSize: 20 },
   pickerInfo: { flex: 1 },
-  pickerSpecies: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  pickerMeta: { color: '#888', fontSize: 12, marginTop: 2 },
+  pickerSpecies: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  pickerMeta: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
 
-  emptyText: { color: '#666', textAlign: 'center', padding: 24 },
+  emptyText: { color: colors.textTertiary, textAlign: 'center', padding: 24 },
 });

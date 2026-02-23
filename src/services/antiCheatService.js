@@ -18,6 +18,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../config/theme';
 
 let firestore = null;
 let auth = null;
@@ -420,15 +421,27 @@ const antiCheatService = {
   getVerificationBadge(status) {
     switch (status) {
       case VERIFICATION_STATUS.VERIFIED:
-        return { text: '✓ Verified', color: '#4CAF50', icon: 'check-circle' };
+        return {
+          text: '✓ Verified',
+          color: COLORS.success,
+          icon: 'check-circle',
+        };
       case VERIFICATION_STATUS.SUSPICIOUS:
-        return { text: '⚠ Suspicious', color: '#FF9800', icon: 'alert' };
+        return { text: '⚠ Suspicious', color: COLORS.accent, icon: 'alert' };
       case VERIFICATION_STATUS.REJECTED:
-        return { text: '✗ Rejected', color: '#F44336', icon: 'close-circle' };
+        return {
+          text: '✗ Rejected',
+          color: COLORS.error,
+          icon: 'close-circle',
+        };
       case VERIFICATION_STATUS.PENDING:
         return { text: '⏳ Pending', color: '#2196F3', icon: 'clock' };
       default:
-        return { text: 'Unverified', color: '#888', icon: 'help-circle' };
+        return {
+          text: 'Unverified',
+          color: COLORS.textTertiary,
+          icon: 'help-circle',
+        };
     }
   },
 };

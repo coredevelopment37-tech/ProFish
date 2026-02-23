@@ -13,6 +13,7 @@ import {
   Keyboard,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 
 export default function SearchBar({
   placeholder,
@@ -27,6 +28,8 @@ export default function SearchBar({
   inputStyle,
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [localValue, setLocalValue] = useState(value || '');
   const debounceRef = useRef(null);
 
@@ -83,7 +86,7 @@ export default function SearchBar({
         onChangeText={handleChange}
         onSubmitEditing={handleSubmit}
         placeholder={placeholder || t('common.search', 'Search...')}
-        placeholderTextColor="#666"
+        placeholderTextColor={colors.textTertiary}
         autoFocus={autoFocus}
         returnKeyType="search"
         autoCorrect={false}
@@ -105,14 +108,14 @@ export default function SearchBar({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
     paddingHorizontal: 12,
     height: 44,
   },
@@ -122,7 +125,7 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     paddingVertical: 0,
     height: 44,
@@ -131,13 +134,13 @@ const styles = StyleSheet.create({
     width: 24,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#333',
+    backgroundColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
   },
   clearText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
     fontWeight: 'bold',
   },

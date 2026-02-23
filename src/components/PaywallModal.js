@@ -16,6 +16,7 @@ import {
   Alert,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 import subscriptionService, {
   TIERS,
   TIER_META,
@@ -38,6 +39,8 @@ const FEATURE_COMPARISON = [
 
 export default function PaywallModal({ visible, onClose, feature }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const proMeta = TIER_META[TIERS.PRO];
   const [offerings, setOfferings] = useState(null);
   const [purchasing, setPurchasing] = useState(false);
@@ -232,7 +235,7 @@ export default function PaywallModal({ visible, onClose, feature }) {
 
           {purchasing && (
             <ActivityIndicator
-              color="#FF9800"
+              color={colors.accent}
               size="small"
               style={{ marginBottom: 10 }}
             />
@@ -284,14 +287,14 @@ export default function PaywallModal({ visible, onClose, feature }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.overlay,
   },
   sheet: {
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     paddingHorizontal: 24,
@@ -309,38 +312,38 @@ const styles = StyleSheet.create({
   },
   header: { alignItems: 'center', marginBottom: 24 },
   icon: { fontSize: 48, marginBottom: 12 },
-  title: { fontSize: 26, fontWeight: 'bold', color: '#fff', marginBottom: 8 },
-  subtitle: { fontSize: 15, color: '#888', textAlign: 'center' },
+  title: { fontSize: 26, fontWeight: 'bold', color: colors.text, marginBottom: 8 },
+  subtitle: { fontSize: 15, color: colors.textTertiary, textAlign: 'center' },
   features: { maxHeight: 300, marginBottom: 24 },
   tableHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 2,
-    borderBottomColor: '#2a2a3e',
+    borderBottomColor: colors.surfaceLight,
     marginBottom: 4,
   },
   tableHeaderFeature: {
     flex: 1,
     fontSize: 12,
-    color: '#666',
+    color: colors.textTertiary,
     fontWeight: '600',
     textTransform: 'uppercase',
   },
   tableHeaderTier: {
     width: 56,
     fontSize: 12,
-    color: '#666',
+    color: colors.textTertiary,
     fontWeight: '600',
     textAlign: 'center',
   },
-  tableHeaderPro: { color: '#FF9800' },
+  tableHeaderPro: { color: colors.accent },
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   tableFeatureCell: {
     flex: 1,
@@ -350,13 +353,13 @@ const styles = StyleSheet.create({
   tableFreeValue: {
     width: 56,
     fontSize: 14,
-    color: '#666',
+    color: colors.textTertiary,
     textAlign: 'center',
   },
   tableProValue: {
     width: 56,
     fontSize: 14,
-    color: '#4CAF50',
+    color: colors.success,
     fontWeight: '600',
     textAlign: 'center',
   },
@@ -364,7 +367,7 @@ const styles = StyleSheet.create({
   featureText: {
     flex: 1,
     fontSize: 14,
-    color: '#ccc',
+    color: colors.textSecondary,
     textTransform: 'capitalize',
   },
   pricing: { marginBottom: 16 },
@@ -372,42 +375,42 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     borderRadius: 14,
     padding: 18,
     marginBottom: 10,
   },
   yearlyLabel: { fontSize: 14, color: 'rgba(255,255,255,0.8)' },
-  yearlyPrice: { fontSize: 22, fontWeight: 'bold', color: '#fff' },
+  yearlyPrice: { fontSize: 22, fontWeight: 'bold', color: colors.text },
   saveBadge: {
     backgroundColor: 'rgba(255,255,255,0.2)',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 8,
   },
-  saveText: { fontSize: 12, color: '#fff', fontWeight: '600' },
+  saveText: { fontSize: 12, color: colors.text, fontWeight: '600' },
   monthlyButton: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
     padding: 18,
   },
-  monthlyLabel: { fontSize: 14, color: '#ccc' },
-  monthlyPrice: { fontSize: 18, fontWeight: '600', color: '#fff' },
+  monthlyLabel: { fontSize: 14, color: colors.textSecondary },
+  monthlyPrice: { fontSize: 18, fontWeight: '600', color: colors.text },
   closeButton: {
     alignItems: 'center',
     paddingVertical: 12,
   },
-  closeText: { fontSize: 15, color: '#666' },
+  closeText: { fontSize: 15, color: colors.textTertiary },
   restoreButton: {
     alignItems: 'center',
     paddingVertical: 8,
   },
-  restoreText: { fontSize: 13, color: '#0080FF' },
+  restoreText: { fontSize: 13, color: colors.primary },
   terms: {
     fontSize: 11,
     color: '#444',
@@ -416,7 +419,7 @@ const styles = StyleSheet.create({
   },
   trialText: {
     fontSize: 13,
-    color: '#4CAF50',
+    color: colors.success,
     textAlign: 'center',
     marginTop: 10,
     fontWeight: '600',

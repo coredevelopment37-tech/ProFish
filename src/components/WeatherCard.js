@@ -6,6 +6,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 
 const WMO_ICONS = {
   0: '☀️',
@@ -42,6 +43,17 @@ export default function WeatherCard({
   compact = false,
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
+  function DetailItem({ label, value }) {
+    return (
+      <View style={styles.detailItem}>
+        <Text style={styles.detailLabel}>{label}</Text>
+        <Text style={styles.detailValue}>{value}</Text>
+      </View>
+    );
+  }
 
   if (!weather) return null;
 
@@ -110,18 +122,9 @@ export default function WeatherCard({
   );
 }
 
-function DetailItem({ label, value }) {
-  return (
-    <View style={styles.detailItem}>
-      <Text style={styles.detailLabel}>{label}</Text>
-      <Text style={styles.detailValue}>{value}</Text>
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -133,8 +136,8 @@ const styles = StyleSheet.create({
   },
   icon: { fontSize: 48, marginRight: 16 },
   mainInfo: { flex: 1 },
-  temp: { fontSize: 32, fontWeight: 'bold', color: '#fff' },
-  desc: { fontSize: 14, color: '#aaa', marginTop: 2 },
+  temp: { fontSize: 32, fontWeight: 'bold', color: colors.text },
+  desc: { fontSize: 14, color: colors.textSecondary, marginTop: 2 },
   details: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -142,39 +145,39 @@ const styles = StyleSheet.create({
   },
   detailItem: {
     width: '48%',
-    backgroundColor: '#0d0d1a',
+    backgroundColor: colors.background,
     borderRadius: 10,
     padding: 10,
     marginBottom: 8,
   },
   detailLabel: {
     fontSize: 11,
-    color: '#666',
+    color: colors.textTertiary,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
-  detailValue: { fontSize: 15, color: '#fff', fontWeight: '600', marginTop: 4 },
+  detailValue: { fontSize: 15, color: colors.text, fontWeight: '600', marginTop: 4 },
   marineRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#333',
+    borderTopColor: colors.border,
     marginTop: 4,
   },
-  marineLabel: { fontSize: 14, color: '#888' },
-  marineValue: { fontSize: 14, color: '#0080FF', fontWeight: '600' },
+  marineLabel: { fontSize: 14, color: colors.textTertiary },
+  marineValue: { fontSize: 14, color: colors.primary, fontWeight: '600' },
   // Compact
   compact: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.overlay,
     borderRadius: 20,
     paddingHorizontal: 12,
     paddingVertical: 6,
     gap: 8,
   },
   compactIcon: { fontSize: 18 },
-  compactTemp: { fontSize: 14, color: '#fff', fontWeight: '600' },
-  compactWind: { fontSize: 12, color: '#aaa' },
+  compactTemp: { fontSize: 14, color: colors.text, fontWeight: '600' },
+  compactWind: { fontSize: 12, color: colors.textSecondary },
 });

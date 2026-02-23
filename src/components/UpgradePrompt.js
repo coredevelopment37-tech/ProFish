@@ -5,9 +5,10 @@
 
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
-const TIER_LABELS = {
-  pro: { name: 'Pro', color: '#FF9800', emoji: '⭐' },
+const TIER_CONFIG = {
+  pro: { name: 'Pro', emoji: '⭐' },
   elite: { name: 'Elite', color: '#E040FB', emoji: '👑' },
 };
 
@@ -17,7 +18,10 @@ export default function UpgradePrompt({
   onUpgrade,
   compact = false,
 }) {
-  const tier = TIER_LABELS[requiredTier] || TIER_LABELS.pro;
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+  const config = TIER_CONFIG[requiredTier] || TIER_CONFIG.pro;
+  const tier = { ...config, color: config.color || colors.accent };
 
   if (compact) {
     return (
@@ -47,9 +51,9 @@ export default function UpgradePrompt({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     borderWidth: 1.5,
     padding: 24,
@@ -62,13 +66,13 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   title: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '700',
     marginBottom: 6,
   },
   subtitle: {
-    color: '#aaa',
+    color: colors.textSecondary,
     fontSize: 14,
     textAlign: 'center',
     lineHeight: 20,
@@ -80,21 +84,21 @@ const styles = StyleSheet.create({
     borderRadius: 12,
   },
   buttonText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
   },
   compactRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: 'rgba(255,152,0,0.1)',
+    backgroundColor: colors.accent + '1A',
     borderRadius: 10,
     padding: 12,
     marginVertical: 6,
     marginHorizontal: 16,
   },
   compactText: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 13,
     fontWeight: '600',
     flex: 1,

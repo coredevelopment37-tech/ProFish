@@ -11,6 +11,7 @@
 
 import { Dimensions, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../config/theme';
 
 // ── Configuration ────────────────────────────────────────
 
@@ -306,10 +307,10 @@ const OVERLAY_SPECIES_INFO = {
         visible: true,
         position: 'top-center',
         states: {
-          scanning: { label: 'Scanning...', color: '#FF9800' },
-          detected: { label: 'Fish Detected', color: '#4CAF50' },
+          scanning: { label: 'Scanning...', color: COLORS.accent },
+          detected: { label: 'Fish Detected', color: COLORS.success },
           identifying: { label: 'Identifying...', color: '#0a84ff' },
-          identified: { label: 'Species Found', color: '#4CAF50' },
+          identified: { label: 'Species Found', color: COLORS.success },
         },
       },
     };

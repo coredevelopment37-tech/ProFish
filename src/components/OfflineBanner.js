@@ -5,8 +5,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
+import useTheme from '../hooks/useTheme';
 
 export default function OfflineBanner() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [isOffline, setIsOffline] = useState(false);
   const [slideAnim] = useState(new Animated.Value(-40));
 
@@ -34,20 +37,20 @@ export default function OfflineBanner() {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   banner: {
     position: 'absolute',
     top: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     paddingVertical: 6,
     paddingHorizontal: 16,
     alignItems: 'center',
     zIndex: 9999,
   },
   text: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 13,
     fontWeight: '600',
   },

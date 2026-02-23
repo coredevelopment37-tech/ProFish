@@ -13,16 +13,7 @@ import {
   TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
+import useTheme from '../../hooks/useTheme';
 
 const GEAR_CHECKLIST = [
   { id: 'rod', label: 'Rod & Reel', emoji: '🎣', category: 'essentials' },
@@ -68,6 +59,9 @@ const GEAR_CHECKLIST = [
 ];
 
 export default function TripPlannerScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   const [tripName, setTripName] = useState('');
   const [tripDate, setTripDate] = useState('');
   const [tripLocation, setTripLocation] = useState('');
@@ -130,35 +124,35 @@ export default function TripPlannerScreen({ navigation }) {
           value={tripName}
           onChangeText={setTripName}
           placeholder="Trip name"
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
         />
         <TextInput
           style={styles.input}
           value={tripDate}
           onChangeText={setTripDate}
           placeholder="Date (e.g. 2025-07-15)"
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
         />
         <TextInput
           style={styles.input}
           value={tripLocation}
           onChangeText={setTripLocation}
           placeholder="Location"
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
         />
         <TextInput
           style={styles.input}
           value={targetSpecies}
           onChangeText={setTargetSpecies}
           placeholder="Target species"
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
         />
         <TextInput
           style={[styles.input, styles.inputMulti]}
           value={notes}
           onChangeText={setNotes}
           placeholder="Notes, tactics, etc."
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
           multiline
         />
       </View>
@@ -214,12 +208,12 @@ export default function TripPlannerScreen({ navigation }) {
 
 export { GEAR_CHECKLIST };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 100 },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
   section: { margin: 16, marginTop: 8 },
   sectionHeader: {
     flexDirection: 'row',
@@ -229,25 +223,25 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: '700',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 12,
   },
-  progressText: { fontSize: 14, color: THEME.accent, fontWeight: '600' },
+  progressText: { fontSize: 14, color: colors.accent, fontWeight: '600' },
   progressBar: {
     height: 4,
-    backgroundColor: THEME.border,
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginBottom: 12,
   },
-  progressFill: { height: 4, backgroundColor: THEME.accent, borderRadius: 2 },
+  progressFill: { height: 4, backgroundColor: colors.accent, borderRadius: 2 },
   input: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     fontSize: 15,
-    color: THEME.text,
+    color: colors.text,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
     marginBottom: 10,
   },
   inputMulti: { height: 80, textAlignVertical: 'top' },
@@ -256,20 +250,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: THEME.border,
+    borderBottomColor: colors.border,
   },
   gearCheck: { fontSize: 20, marginRight: 10 },
   gearEmoji: { fontSize: 20, marginRight: 10 },
-  gearLabel: { fontSize: 15, color: THEME.text },
-  gearLabelChecked: { textDecorationLine: 'line-through', color: THEME.muted },
+  gearLabel: { fontSize: 15, color: colors.text },
+  gearLabelChecked: { textDecorationLine: 'line-through', color: colors.textTertiary },
   saveBtn: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: 'center',
   },
-  saveBtnDone: { backgroundColor: THEME.accent },
-  saveBtnText: { fontSize: 18, fontWeight: '700', color: '#FFF' },
+  saveBtnDone: { backgroundColor: colors.accent },
+  saveBtnText: { fontSize: 18, fontWeight: '700', color: colors.text },
 });

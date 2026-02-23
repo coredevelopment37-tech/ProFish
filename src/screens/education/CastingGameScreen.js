@@ -43,6 +43,7 @@ import {
   saveResult,
   generateWind,
 } from '../../services/castingService';
+import useTheme from '../../hooks/useTheme';
 
 const { width: W, height: H } = Dimensions.get('window');
 const SVG_W = W;
@@ -60,6 +61,8 @@ const PHASE = {
 const AnimatedCircle = Animated.createAnimatedComponent(Circle);
 
 export default function CastingGameScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { techniqueId } = route.params;
   const technique = TECHNIQUES.find(t => t.id === techniqueId) || TECHNIQUES[0];
   const scene = SCENE_CONFIG[technique.scene] || SCENE_CONFIG.lake;
@@ -373,7 +376,7 @@ export default function CastingGameScreen({ navigation, route }) {
   // Power bar color
   const powerColor = powerAnim.interpolate({
     inputRange: [0, 0.4, 0.7, 1],
-    outputRange: ['#4CAF50', '#FFD700', '#FF9800', '#F44336'],
+    outputRange: [colors.success, '#FFD700', colors.accent, colors.error],
   });
 
   // Build SVG trajectory path
@@ -760,7 +763,7 @@ export default function CastingGameScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
   },
@@ -783,7 +786,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   techTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
   },
@@ -930,8 +933,8 @@ const styles = StyleSheet.create({
     shadowRadius: 12,
   },
   castBtnCharging: {
-    backgroundColor: '#FF9800',
-    shadowColor: '#FF9800',
+    backgroundColor: colors.accent,
+    shadowColor: colors.accent,
   },
   castBtnEmoji: {
     fontSize: 24,
@@ -975,7 +978,7 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   finalTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 22,
     fontWeight: '800',
     marginBottom: 8,

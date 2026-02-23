@@ -18,6 +18,7 @@ import catchService from '../../services/catchService';
 import { formatWeight, formatLength } from '../../utils/units';
 import { formatNumber } from '../../utils/formatting';
 import UpgradePrompt from '../../components/UpgradePrompt';
+import useTheme from '../../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 const BAR_MAX_W = width - 120;
@@ -132,6 +133,8 @@ function buildCatchRateTrend(catches) {
 }
 
 export default function CatchStatsScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state } = useApp();
   const units = state.units || 'metric';
@@ -463,7 +466,7 @@ export default function CatchStatsScreen({ navigation }) {
                           (count / stats.maxSpeciesCount) * BAR_MAX_W * 0.6,
                         ),
                         backgroundColor:
-                          idx === 0 ? '#FF9800' : idx < 3 ? '#0080FF' : '#444',
+                          idx === 0 ? colors.accent : idx < 3 ? colors.primary : '#444',
                       },
                     ]}
                   />
@@ -513,7 +516,7 @@ export default function CatchStatsScreen({ navigation }) {
                               styles.trendBar,
                               {
                                 height: Math.max(4, h),
-                                backgroundColor: '#0080FF',
+                                backgroundColor: colors.primary,
                               },
                             ]}
                           />
@@ -577,7 +580,7 @@ export default function CatchStatsScreen({ navigation }) {
                   ))}
                 {stats.uniqueSpecies > 20 && (
                   <View
-                    style={[styles.speciesBadge, { backgroundColor: '#333' }]}
+                    style={[styles.speciesBadge, { backgroundColor: colors.border }]}
                   >
                     <Text style={styles.speciesBadgeText}>
                       +{stats.uniqueSpecies - 20}
@@ -614,10 +617,10 @@ export default function CatchStatsScreen({ navigation }) {
                           {
                             backgroundColor:
                               intensity > 0.7
-                                ? '#FF4444'
+                                ? colors.error
                                 : intensity > 0.4
-                                ? '#FF9800'
-                                : '#0080FF',
+                                ? colors.accent
+                                : colors.primary,
                             width: 12 + intensity * 16,
                             height: 12 + intensity * 16,
                             borderRadius: (12 + intensity * 16) / 2,
@@ -740,7 +743,7 @@ export default function CatchStatsScreen({ navigation }) {
                             {
                               height: Math.max(4, pct * 60),
                               backgroundColor:
-                                idx === stats.bestDay ? '#FF9800' : '#0080FF',
+                                idx === stats.bestDay ? colors.accent : colors.primary,
                             },
                           ]}
                         />
@@ -786,7 +789,7 @@ export default function CatchStatsScreen({ navigation }) {
                               {
                                 width: `${Math.max(8, pct * 100)}%`,
                                 backgroundColor:
-                                  idx === 0 ? '#FF9800' : '#0080FF',
+                                  idx === 0 ? colors.accent : colors.primary,
                               },
                             ]}
                           />
@@ -955,7 +958,7 @@ export default function CatchStatsScreen({ navigation }) {
                     <View
                       style={[
                         styles.rateTrendLegendBox,
-                        { backgroundColor: '#0080FF' },
+                        { backgroundColor: colors.primary },
                       ]}
                     />
                     <Text style={styles.rateTrendLegendText}>
@@ -966,7 +969,7 @@ export default function CatchStatsScreen({ navigation }) {
                     <View
                       style={[
                         styles.rateTrendLegendBox,
-                        { backgroundColor: '#FF9800', borderRadius: 4 },
+                        { backgroundColor: colors.accent, borderRadius: 4 },
                       ]}
                     />
                     <Text style={styles.rateTrendLegendText}>
@@ -985,8 +988,8 @@ export default function CatchStatsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -995,13 +998,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  backText: { fontSize: 28, color: colors.text },
+  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
   headerActionBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -1016,18 +1019,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   periodChipActive: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
   },
   periodText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
     fontWeight: '600',
   },
   periodTextActive: {
-    color: '#fff',
+    color: colors.text,
   },
   overviewRow: {
     flexDirection: 'row',
@@ -1037,7 +1040,7 @@ const styles = StyleSheet.create({
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     alignItems: 'center',
@@ -1045,12 +1048,12 @@ const styles = StyleSheet.create({
   statValue: {
     fontSize: 22,
     fontWeight: '800',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
   statLabel: {
     fontSize: 12,
-    color: '#888',
+    color: colors.textTertiary,
   },
   section: {
     paddingHorizontal: 16,
@@ -1059,7 +1062,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 14,
   },
   recordRow: {
@@ -1067,14 +1070,14 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   recordLabel: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
   },
   recordValue: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '600',
   },
@@ -1085,13 +1088,13 @@ const styles = StyleSheet.create({
   },
   barLabel: {
     width: 80,
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 13,
   },
   barTrack: {
     flex: 1,
     height: 18,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 9,
     overflow: 'hidden',
     marginHorizontal: 8,
@@ -1102,7 +1105,7 @@ const styles = StyleSheet.create({
   },
   barCount: {
     width: 30,
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 13,
     textAlign: 'right',
   },
@@ -1115,12 +1118,12 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   emptyText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 15,
   },
   // Trend chart
   trendChart: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
   },
@@ -1135,7 +1138,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   trendBarValue: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 10,
     marginBottom: 4,
   },
@@ -1145,13 +1148,13 @@ const styles = StyleSheet.create({
     minHeight: 4,
   },
   trendBarLabel: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 11,
     marginTop: 6,
   },
   // Species collection
   collectionCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
   },
@@ -1163,27 +1166,27 @@ const styles = StyleSheet.create({
   collectionCount: {
     fontSize: 36,
     fontWeight: '800',
-    color: '#FF9800',
+    color: colors.accent,
     marginRight: 8,
   },
   collectionOf: {
     fontSize: 16,
-    color: '#888',
+    color: colors.textTertiary,
   },
   collectionProgress: {
     height: 8,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 4,
     overflow: 'hidden',
     marginBottom: 10,
   },
   collectionFill: {
     height: 8,
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     borderRadius: 4,
   },
   collectionGoal: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 12,
     marginBottom: 14,
   },
@@ -1193,20 +1196,20 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   speciesBadge: {
-    backgroundColor: '#0080FF20',
+    backgroundColor: colors.primary + '20',
     borderRadius: 10,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
   speciesBadgeText: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'capitalize',
   },
   // Hot spots heatmap
   heatmapCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 12,
   },
@@ -1215,7 +1218,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#0a0a1a',
+    borderBottomColor: colors.background,
   },
   hotSpotDot: {
     marginRight: 12,
@@ -1224,12 +1227,12 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   hotSpotName: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '600',
   },
   hotSpotSpecies: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
     marginTop: 2,
   },
@@ -1238,17 +1241,17 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   hotSpotCountText: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 18,
     fontWeight: '800',
   },
   hotSpotCountLabel: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 10,
   },
   // Time analysis
   timeCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
   },
@@ -1262,22 +1265,22 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   timeSummaryValue: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 24,
     fontWeight: '800',
   },
   timeSummaryLabel: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
     marginTop: 4,
   },
   timeSummaryDivider: {
     width: 1,
     height: 40,
-    backgroundColor: '#333',
+    backgroundColor: colors.border,
   },
   timeSubTitle: {
-    color: '#aaa',
+    color: colors.textSecondary,
     fontSize: 13,
     fontWeight: '600',
     marginBottom: 8,
@@ -1297,7 +1300,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
   hourLabel: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 9,
     marginTop: 2,
   },
@@ -1312,7 +1315,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   weekBarValue: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 10,
     marginBottom: 4,
   },
@@ -1322,13 +1325,13 @@ const styles = StyleSheet.create({
     minHeight: 4,
   },
   weekBarLabel: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 10,
     marginTop: 6,
   },
   // Bait effectiveness
   baitCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 12,
   },
@@ -1336,20 +1339,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#0a0a1a',
+    borderBottomColor: colors.background,
   },
   baitRank: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
     marginTop: 2,
   },
   baitRankText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 13,
     fontWeight: '700',
   },
@@ -1357,7 +1360,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   baitName: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '600',
     marginBottom: 6,
@@ -1365,7 +1368,7 @@ const styles = StyleSheet.create({
   },
   baitBarTrack: {
     height: 6,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 3,
     overflow: 'hidden',
     marginBottom: 4,
@@ -1379,18 +1382,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   baitMetaText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
   },
   baitSpecies: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 11,
     marginTop: 2,
   },
 
   // Conditions Correlation
   correlationCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
   },
@@ -1398,7 +1401,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   correlationGroupLabel: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '600',
     marginBottom: 8,
@@ -1410,13 +1413,13 @@ const styles = StyleSheet.create({
   },
   correlationLabel: {
     width: 80,
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
   },
   correlationBarTrack: {
     flex: 1,
     height: 12,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 6,
     overflow: 'hidden',
     marginHorizontal: 8,
@@ -1424,16 +1427,16 @@ const styles = StyleSheet.create({
   correlationBarFill: {
     height: 12,
     borderRadius: 6,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
   },
   correlationValue: {
     width: 90,
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 11,
     textAlign: 'right',
   },
   correlationEmpty: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 13,
     textAlign: 'center',
     padding: 20,
@@ -1442,12 +1445,12 @@ const styles = StyleSheet.create({
 
   // Catch Rate Trend
   trendCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
   },
   trendSubtitle: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
     marginBottom: 12,
   },
@@ -1468,7 +1471,7 @@ const styles = StyleSheet.create({
   rateTrendBar: {
     width: '80%',
     borderRadius: 4,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     minHeight: 4,
   },
   rateTrendAvgDot: {
@@ -1476,11 +1479,11 @@ const styles = StyleSheet.create({
     width: 6,
     height: 6,
     borderRadius: 3,
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     zIndex: 1,
   },
   rateTrendLabel: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 8,
     marginTop: 4,
   },
@@ -1501,7 +1504,7 @@ const styles = StyleSheet.create({
     borderRadius: 2,
   },
   rateTrendLegendText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 11,
   },
 });

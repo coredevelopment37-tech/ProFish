@@ -14,6 +14,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 import { TIER_META } from '../services/subscriptionService';
 
 const { width } = Dimensions.get('window');
@@ -74,6 +75,8 @@ export default function PurchaseSuccessModal({
   onClose,
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const scaleAnim = useRef(new Animated.Value(0)).current;
   const tierMeta = TIER_META[tier] || TIER_META.pro;
 
@@ -148,21 +151,21 @@ export default function PurchaseSuccessModal({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.8)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
   card: {
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 24,
     padding: 32,
     marginHorizontal: 24,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2a2a3e',
+    borderColor: colors.surfaceLight,
     maxWidth: 360,
   },
   emoji: {
@@ -172,7 +175,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 8,
     textAlign: 'center',
   },
@@ -188,7 +191,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   featureItem: {
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 14,
     marginBottom: 8,
     paddingLeft: 4,
@@ -201,7 +204,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   buttonText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
   },

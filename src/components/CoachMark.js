@@ -16,6 +16,7 @@ import {
   shouldShowCoachMark,
   dismissCoachMark,
 } from '../services/coachMarkService';
+import useTheme from '../hooks/useTheme';
 
 const { width: SCREEN_W } = Dimensions.get('window');
 
@@ -25,6 +26,8 @@ const { width: SCREEN_W } = Dimensions.get('window');
  * @param {React.ReactNode} children — the wrapped element
  */
 export default function CoachMark({ markId, anchorStyle, children }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [mark, setMark] = useState(null);
   const opacity = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(10)).current;
@@ -106,18 +109,18 @@ export default function CoachMark({ markId, anchorStyle, children }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   tooltip: {
     position: 'absolute',
     left: 16,
     right: 16,
     maxWidth: SCREEN_W - 32,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#0080FF',
-    shadowColor: '#0080FF',
+    borderColor: colors.primary,
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 12,
@@ -132,25 +135,25 @@ const styles = StyleSheet.create({
   tooltipTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#FFF',
+    color: colors.text,
     marginBottom: 4,
   },
-  tooltipMessage: { fontSize: 13, color: '#AAA', lineHeight: 18 },
+  tooltipMessage: { fontSize: 13, color: colors.textSecondary, lineHeight: 18 },
   dismissBtn: {
     alignSelf: 'flex-end',
     marginTop: 12,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 16,
   },
-  dismissText: { fontSize: 13, fontWeight: '600', color: '#FFF' },
+  dismissText: { fontSize: 13, fontWeight: '600', color: colors.text },
   arrow: {
     position: 'absolute',
     width: 12,
     height: 12,
-    backgroundColor: '#1A1A2E',
-    borderColor: '#0080FF',
+    backgroundColor: colors.surface,
+    borderColor: colors.primary,
     transform: [{ rotate: '45deg' }],
     left: 30,
   },

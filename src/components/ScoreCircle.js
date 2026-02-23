@@ -5,21 +5,14 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
-const COLORS = {
-  excellent: '#4CAF50',
-  veryGood: '#8BC34A',
-  good: '#FFC107',
-  fair: '#FF9800',
-  poor: '#F44336',
-};
-
-function getScoreColor(score) {
-  if (score >= 85) return COLORS.excellent;
-  if (score >= 70) return COLORS.veryGood;
-  if (score >= 55) return COLORS.good;
-  if (score >= 40) return COLORS.fair;
-  return COLORS.poor;
+function getScoreColor(score, colors) {
+  if (score >= 85) return colors.success;
+  if (score >= 70) return '#8BC34A';
+  if (score >= 55) return '#FFC107';
+  if (score >= 40) return colors.accent;
+  return colors.error;
 }
 
 function getScoreEmoji(score) {
@@ -31,9 +24,11 @@ function getScoreEmoji(score) {
 }
 
 export default function ScoreCircle({ score = 0, label = '', size = 180 }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const animValue = useRef(new Animated.Value(0)).current;
   const scaleValue = useRef(new Animated.Value(0.8)).current;
-  const color = getScoreColor(score);
+  const color = getScoreColor(score, colors);
   const emoji = getScoreEmoji(score);
 
   useEffect(() => {
@@ -99,6 +94,8 @@ export default function ScoreCircle({ score = 0, label = '', size = 180 }) {
 }
 
 function AnimatedNumber({ value, color, size }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [display, setDisplay] = React.useState(0);
 
   useEffect(() => {
@@ -113,11 +110,11 @@ function AnimatedNumber({ value, color, size }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(26, 26, 46, 0.8)',
+    backgroundColor: colors.overlay,
     overflow: 'visible',
   },
   inner: {

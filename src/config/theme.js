@@ -78,6 +78,30 @@ export const FONTS = {
   buttonSmall: { fontSize: 14, fontWeight: '600', color: COLORS.text },
 };
 
+/**
+ * Build FONTS for a given color palette (used by useTheme hook)
+ */
+export function buildFonts(c) {
+  return {
+    h1: { fontSize: 28, fontWeight: 'bold', color: c.text },
+    h2: { fontSize: 22, fontWeight: '600', color: c.text },
+    h3: { fontSize: 18, fontWeight: '600', color: c.text },
+    body: { fontSize: 16, color: c.text },
+    bodySecondary: { fontSize: 16, color: c.textSecondary },
+    caption: { fontSize: 13, color: c.textTertiary },
+    captionSmall: { fontSize: 11, color: c.textTertiary },
+    label: {
+      fontSize: 13,
+      fontWeight: '600',
+      color: c.textTertiary,
+      textTransform: 'uppercase',
+      letterSpacing: 0.5,
+    },
+    button: { fontSize: 16, fontWeight: '600', color: c.text },
+    buttonSmall: { fontSize: 14, fontWeight: '600', color: c.text },
+  };
+}
+
 // ── Spacing (4px grid) ─────────────────────────────
 export const SPACING = {
   xs: 4,
@@ -172,6 +196,43 @@ export const COMMON = {
     color: '#fff',
   },
 };
+
+/**
+ * Build COMMON styles for a given color palette + fonts (used by useTheme hook)
+ */
+export function buildCommon(c, f) {
+  return {
+    screenContainer: { flex: 1, backgroundColor: c.background },
+    card: { backgroundColor: c.surface, borderRadius: RADIUS.lg, padding: SPACING.lg },
+    chip: {
+      paddingHorizontal: SPACING.md,
+      paddingVertical: SPACING.sm,
+      borderRadius: RADIUS.round,
+      borderWidth: 1,
+      borderColor: c.border,
+      backgroundColor: c.surface,
+    },
+    chipActive: { backgroundColor: 'rgba(0, 128, 255, 0.15)', borderColor: c.primary },
+    divider: { height: 1, backgroundColor: c.divider, marginVertical: SPACING.lg },
+    input: {
+      backgroundColor: c.surface,
+      borderRadius: RADIUS.md,
+      padding: 14,
+      color: c.text,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: c.borderLight,
+    },
+    primaryButton: {
+      backgroundColor: c.primary,
+      borderRadius: RADIUS.md,
+      paddingHorizontal: SPACING.xl,
+      paddingVertical: 14,
+      alignItems: 'center',
+    },
+    primaryButtonText: { ...f.button, color: '#fff' },
+  };
+}
 
 // ── Score helpers ──────────────────────────────────
 export function getScoreColor(score) {

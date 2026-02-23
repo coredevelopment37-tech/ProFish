@@ -9,6 +9,7 @@
  */
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { COLORS } from '../config/theme';
 
 // ── Scoring Weights ──────────────────────────────────────
 
@@ -290,7 +291,7 @@ const mlConditionsService = {
     if (score >= 80) {
       rating = 'Excellent';
       emoji = '🎣';
-      color = '#4CAF50';
+      color = COLORS.success;
     } else if (score >= 65) {
       rating = 'Good';
       emoji = '👍';
@@ -298,11 +299,11 @@ const mlConditionsService = {
     } else if (score >= 50) {
       rating = 'Fair';
       emoji = '🤔';
-      color = '#FF9800';
+      color = COLORS.accent;
     } else if (score >= 35) {
       rating = 'Poor';
       emoji = '👎';
-      color = '#F44336';
+      color = COLORS.error;
     } else {
       rating = 'Bad';
       emoji = '⛈️';

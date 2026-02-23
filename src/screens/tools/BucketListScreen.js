@@ -13,16 +13,7 @@ import {
   TextInput,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
+import useTheme from '../../hooks/useTheme';
 
 const SUGGESTED_BUCKET_LIST = [
   {
@@ -148,6 +139,8 @@ const SUGGESTED_BUCKET_LIST = [
 ];
 
 export default function BucketListScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [bucketList, setBucketList] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [customSpecies, setCustomSpecies] = useState('');
@@ -243,13 +236,13 @@ export default function BucketListScreen({ navigation }) {
           <Text style={styles.statLabel}>Target</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={[styles.statValue, { color: THEME.accent }]}>
+          <Text style={[styles.statValue, { color: colors.accent }]}>
             {stats.caught}
           </Text>
           <Text style={styles.statLabel}>Caught</Text>
         </View>
         <View style={styles.statBox}>
-          <Text style={[styles.statValue, { color: THEME.primary }]}>
+          <Text style={[styles.statValue, { color: colors.primary }]}>
             {stats.pct}%
           </Text>
           <Text style={styles.statLabel}>Complete</Text>
@@ -272,7 +265,7 @@ export default function BucketListScreen({ navigation }) {
           value={customSpecies}
           onChangeText={setCustomSpecies}
           placeholder="Add custom species..."
-          placeholderTextColor={THEME.muted}
+          placeholderTextColor={colors.textTertiary}
         />
         <TouchableOpacity style={styles.addBtn} onPress={addCustom}>
           <Text style={styles.addBtnText}>+</Text>
@@ -366,12 +359,12 @@ export default function BucketListScreen({ navigation }) {
 
 export { SUGGESTED_BUCKET_LIST };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 8 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
-  headerDesc: { fontSize: 14, color: THEME.muted, marginTop: 4 },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
+  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
   statsRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -380,18 +373,18 @@ const styles = StyleSheet.create({
   },
   statBox: {
     flex: 1,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  statValue: { fontSize: 24, fontWeight: '800', color: THEME.text },
-  statLabel: { fontSize: 12, color: THEME.muted, marginTop: 2 },
+  statValue: { fontSize: 24, fontWeight: '800', color: colors.text },
+  statLabel: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
   progressContainer: { paddingHorizontal: 16, marginTop: 12 },
-  progressBar: { height: 6, backgroundColor: THEME.border, borderRadius: 3 },
-  progressFill: { height: 6, backgroundColor: THEME.accent, borderRadius: 3 },
+  progressBar: { height: 6, backgroundColor: colors.border, borderRadius: 3 },
+  progressFill: { height: 6, backgroundColor: colors.accent, borderRadius: 3 },
   addRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -400,47 +393,47 @@ const styles = StyleSheet.create({
   },
   addInput: {
     flex: 1,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 12,
     fontSize: 14,
-    color: THEME.text,
+    color: colors.text,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   addBtn: {
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     width: 44,
     height: 44,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  addBtnText: { fontSize: 24, color: '#FFF', fontWeight: '700' },
+  addBtnText: { fontSize: 24, color: colors.text, fontWeight: '700' },
   suggestBtn: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     width: 44,
     height: 44,
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   suggestBtnText: { fontSize: 20 },
   suggestionsCard: {
     margin: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     maxHeight: 250,
     borderWidth: 1,
-    borderColor: THEME.accent + '40',
+    borderColor: colors.accent + '40',
   },
   suggestionsTitle: {
     fontSize: 14,
     fontWeight: '700',
-    color: THEME.accent,
+    color: colors.accent,
     marginBottom: 8,
   },
   suggestList: { maxHeight: 200 },
@@ -449,41 +442,41 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: THEME.border,
+    borderBottomColor: colors.border,
   },
   suggestItemAdded: { opacity: 0.5 },
   suggestEmoji: { fontSize: 18, marginRight: 8 },
-  suggestSpecies: { flex: 1, fontSize: 14, color: THEME.text },
-  suggestRegion: { fontSize: 12, color: THEME.muted, marginRight: 8 },
-  suggestDiff: { fontSize: 16, color: THEME.primary },
+  suggestSpecies: { flex: 1, fontSize: 14, color: colors.text },
+  suggestRegion: { fontSize: 12, color: colors.textTertiary, marginRight: 8 },
+  suggestDiff: { fontSize: 16, color: colors.primary },
   listContent: { padding: 16, paddingBottom: 100 },
   bucketItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   bucketItemCaught: {
-    borderColor: THEME.accent + '60',
-    backgroundColor: THEME.accent + '08',
+    borderColor: colors.accent + '60',
+    backgroundColor: colors.accent + '08',
   },
   bucketCheck: { fontSize: 20, marginRight: 10 },
   bucketEmoji: { fontSize: 24, marginRight: 10 },
   bucketContent: { flex: 1 },
-  bucketSpecies: { fontSize: 16, fontWeight: '600', color: THEME.text },
+  bucketSpecies: { fontSize: 16, fontWeight: '600', color: colors.text },
   bucketSpeciesCaught: {
     textDecorationLine: 'line-through',
-    color: THEME.accent,
+    color: colors.accent,
   },
-  bucketRegion: { fontSize: 12, color: THEME.muted, marginTop: 2 },
-  bucketDate: { fontSize: 11, color: THEME.accent, marginTop: 4 },
+  bucketRegion: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
+  bucketDate: { fontSize: 11, color: colors.accent, marginTop: 4 },
   emptyText: {
     fontSize: 15,
-    color: THEME.muted,
+    color: colors.textTertiary,
     textAlign: 'center',
     marginTop: 40,
     lineHeight: 22,

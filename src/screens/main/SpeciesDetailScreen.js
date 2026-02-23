@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import Geolocation from '@react-native-community/geolocation';
+import useTheme from '../../hooks/useTheme';
 import speciesDatabase from '../../services/speciesDatabase';
 import catchService from '../../services/catchService';
 import {
@@ -25,6 +26,8 @@ import { useApp } from '../../store/AppContext';
 import { formatWeight, formatLength } from '../../utils/units';
 
 export default function SpeciesDetailScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state } = useApp();
   const units = state.units || 'metric';
@@ -243,7 +246,7 @@ export default function SpeciesDetailScreen({ route, navigation }) {
           </Text>
           {fishCastLoading ? (
             <View style={styles.fishCastLoading}>
-              <ActivityIndicator size="small" color="#0080FF" />
+              <ActivityIndicator size="small" color={colors.primary} />
               <Text style={styles.fishCastLoadText}>
                 {t('common.calculating', 'Calculating...')}
               </Text>
@@ -261,10 +264,10 @@ export default function SpeciesDetailScreen({ route, navigation }) {
                     {
                       borderColor:
                         fishCast.score >= 70
-                          ? '#4CAF50'
+                          ? colors.success
                           : fishCast.score >= 40
-                          ? '#FF9800'
-                          : '#F44336',
+                          ? colors.accent
+                          : colors.error,
                     },
                   ]}
                 >
@@ -336,8 +339,8 @@ function FactChip({ icon, label }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -345,27 +348,27 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === 'ios' ? 56 : 16,
     paddingBottom: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   backBtn: { width: 40 },
-  backText: { fontSize: 24, color: '#0080FF' },
+  backText: { fontSize: 24, color: colors.primary },
   headerCenter: { flex: 1, alignItems: 'center' },
   name: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     textTransform: 'capitalize',
   },
   scientific: {
     fontSize: 14,
-    color: '#888',
+    color: colors.textTertiary,
     fontStyle: 'italic',
     marginTop: 2,
   },
   scroll: { flex: 1 },
   scrollContent: { padding: 20 },
   illustrationBox: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     height: 160,
     justifyContent: 'center',
@@ -374,7 +377,7 @@ const styles = StyleSheet.create({
   },
   illustrationEmoji: { fontSize: 64, marginBottom: 8 },
   familyBadge: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '600',
     backgroundColor: 'rgba(0,128,255,0.15)',
@@ -391,19 +394,19 @@ const styles = StyleSheet.create({
   factChip: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     paddingHorizontal: 12,
     paddingVertical: 8,
     gap: 6,
   },
   factIcon: { fontSize: 14 },
-  factLabel: { color: '#ccc', fontSize: 13, textTransform: 'capitalize' },
+  factLabel: { color: colors.textSecondary, fontSize: 13, textTransform: 'capitalize' },
   section: { marginBottom: 20 },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   row: {
@@ -411,24 +414,24 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
-  rowLabel: { fontSize: 15, color: '#888' },
-  rowValue: { fontSize: 15, color: '#fff', textTransform: 'capitalize' },
+  rowLabel: { fontSize: 15, color: colors.textTertiary },
+  rowValue: { fontSize: 15, color: colors.text, textTransform: 'capitalize' },
   chipRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: 8,
   },
   techChip: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 20,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
-  techChipText: { color: '#ccc', fontSize: 14 },
+  techChipText: { color: colors.textSecondary, fontSize: 14 },
   baitChip: {
     backgroundColor: 'rgba(255,152,0,0.1)',
     borderRadius: 20,
@@ -437,10 +440,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(255,152,0,0.3)',
   },
-  baitChipText: { color: '#FF9800', fontSize: 14 },
+  baitChipText: { color: colors.accent, fontSize: 14 },
   seasonText: {
     fontSize: 15,
-    color: '#ccc',
+    color: colors.textSecondary,
     lineHeight: 22,
   },
   catchRow: {
@@ -448,7 +451,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   catchSpecies: {
     fontSize: 20,
@@ -459,17 +462,17 @@ const styles = StyleSheet.create({
   },
   catchWeight: {
     fontSize: 15,
-    color: '#fff',
+    color: colors.text,
     fontWeight: '600',
   },
   catchDate: {
     fontSize: 12,
-    color: '#666',
+    color: colors.textTertiary,
     marginTop: 2,
   },
   catchArrow: {
     fontSize: 16,
-    color: '#555',
+    color: colors.textDisabled,
   },
   errorContainer: {
     flex: 1,
@@ -479,18 +482,18 @@ const styles = StyleSheet.create({
   },
   errorIcon: { fontSize: 48, marginBottom: 16 },
   error: {
-    color: '#F44336',
+    color: colors.error,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 16,
   },
   backButton: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingHorizontal: 24,
     paddingVertical: 12,
   },
-  backButtonText: { color: '#0080FF', fontSize: 16, fontWeight: '600' },
+  backButtonText: { color: colors.primary, fontSize: 16, fontWeight: '600' },
 
   // FishCast for species
   fishCastLoading: {
@@ -499,13 +502,13 @@ const styles = StyleSheet.create({
     gap: 10,
     padding: 16,
   },
-  fishCastLoadText: { color: '#888', fontSize: 14 },
+  fishCastLoadText: { color: colors.textTertiary, fontSize: 14 },
   fishCastCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   fishCastScoreRow: {
     flexDirection: 'row',
@@ -524,37 +527,37 @@ const styles = StyleSheet.create({
   fishCastScore: {
     fontSize: 24,
     fontWeight: '800',
-    color: '#fff',
+    color: colors.text,
   },
   fishCastLabel: {
     fontSize: 10,
-    color: '#888',
+    color: colors.textTertiary,
     fontWeight: '600',
     textTransform: 'uppercase',
   },
   fishCastMeta: { flex: 1, gap: 4 },
   fishCastAdjusted: {
     fontSize: 12,
-    color: '#0080FF',
+    color: colors.primary,
     fontWeight: '600',
   },
   fishCastInsight: {
     fontSize: 13,
-    color: '#ccc',
+    color: colors.textSecondary,
   },
   fishCastCondition: {
     fontSize: 12,
-    color: '#888',
+    color: colors.textTertiary,
     marginTop: 2,
   },
   fishCastHint: {
     fontSize: 12,
-    color: '#0080FF',
+    color: colors.primary,
     textAlign: 'right',
     marginTop: 10,
   },
   fishCastUnavailable: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 14,
     paddingVertical: 12,
   },

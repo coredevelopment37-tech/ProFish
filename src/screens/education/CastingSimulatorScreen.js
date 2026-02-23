@@ -22,11 +22,14 @@ import {
   loadProgress,
   getUnlockedTechniques,
 } from '../../services/castingService';
+import useTheme from '../../hooks/useTheme';
 
 const { width: W } = Dimensions.get('window');
 const CARD_W = (W - 48) / 2;
 
 export default function CastingSimulatorScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [progress, setProgress] = useState({
     techniques: {},
     totalStars: 0,
@@ -229,10 +232,10 @@ export default function CastingSimulatorScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
   },
   header: {
     paddingTop: 50,
@@ -249,7 +252,7 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   title: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 28,
     fontWeight: '800',
   },
@@ -278,7 +281,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   progressValue: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 22,
     fontWeight: '700',
   },
@@ -386,7 +389,7 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   techName: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 4,

@@ -18,10 +18,13 @@ import { useTranslation } from 'react-i18next';
 import { useApp } from '../../store/AppContext';
 import cacheService from '../../services/cacheService';
 import offlineQueue from '../../services/offlineQueue';
+import useTheme from '../../hooks/useTheme';
 
 const NOTIF_PREFS_KEY = '@profish_notification_prefs';
 
 export default function SettingsScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state } = useApp();
 
@@ -135,7 +138,7 @@ export default function SettingsScreen({ navigation }) {
           <Switch
             value={notifications.fishCast}
             onValueChange={() => toggleNotification('fishCast')}
-            trackColor={{ false: '#333', true: '#0080FF' }}
+            trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor="#fff"
           />
         </View>
@@ -152,7 +155,7 @@ export default function SettingsScreen({ navigation }) {
           <Switch
             value={notifications.tideAlerts}
             onValueChange={() => toggleNotification('tideAlerts')}
-            trackColor={{ false: '#333', true: '#0080FF' }}
+            trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor="#fff"
           />
         </View>
@@ -172,7 +175,7 @@ export default function SettingsScreen({ navigation }) {
           <Switch
             value={notifications.community}
             onValueChange={() => toggleNotification('community')}
-            trackColor={{ false: '#333', true: '#0080FF' }}
+            trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor="#fff"
           />
         </View>
@@ -192,7 +195,7 @@ export default function SettingsScreen({ navigation }) {
           <Switch
             value={notifications.weeklyReport}
             onValueChange={() => toggleNotification('weeklyReport')}
-            trackColor={{ false: '#333', true: '#0080FF' }}
+            trackColor={{ false: colors.border, true: colors.primary }}
             thumbColor="#fff"
           />
         </View>
@@ -278,8 +281,8 @@ export default function SettingsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -288,13 +291,13 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  backText: { fontSize: 28, color: colors.text },
+  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
   section: { paddingHorizontal: 20, marginBottom: 24 },
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: colors.textTertiary,
     textTransform: 'uppercase',
     marginBottom: 12,
   },
@@ -304,19 +307,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
-  rowText: { fontSize: 15, color: '#fff' },
-  rowValue: { fontSize: 14, color: '#888', maxWidth: 160 },
-  rowArrow: { fontSize: 16, color: '#555' },
-  rowDesc: { fontSize: 12, color: '#666', marginTop: 2 },
+  rowText: { fontSize: 15, color: colors.text },
+  rowValue: { fontSize: 14, color: colors.textTertiary, maxWidth: 160 },
+  rowArrow: { fontSize: 16, color: colors.textDisabled },
+  rowDesc: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
   switchRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   switchLabel: { flex: 1, marginRight: 12 },
 });

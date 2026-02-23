@@ -36,6 +36,7 @@ import LayerPicker from '../../components/LayerPicker';
 import WeatherCard from '../../components/WeatherCard';
 import tideService from '../../services/tideService';
 import { calculateFishCast } from '../../services/fishCastService';
+import useTheme from '../../hooks/useTheme';
 
 // Mapbox will be initialized once native modules are linked
 let MapboxGL = null;
@@ -52,6 +53,8 @@ try {
 export default function MapScreen({ navigation }) {
   const { t } = useTranslation();
   const { state } = useApp();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const mapRef = useRef(null);
   const cameraRef = useRef(null);
 
@@ -767,7 +770,7 @@ export default function MapScreen({ navigation }) {
         <TextInput
           style={styles.searchInput}
           placeholder={t('map.search', 'Search location...')}
-          placeholderTextColor="#666"
+          placeholderTextColor={colors.textTertiary}
           value={searchQuery}
           onChangeText={setSearchQuery}
           onSubmitEditing={() => {
@@ -841,7 +844,7 @@ export default function MapScreen({ navigation }) {
       {/* Tile loading indicator */}
       {tilesLoading && (
         <View style={styles.tileLoadingBanner}>
-          <ActivityIndicator size="small" color="#0080FF" />
+          <ActivityIndicator size="small" color={colors.primary} />
           <Text style={styles.tileLoadingText}>
             {t('map.loadingTiles', 'Loading map tiles...')}
           </Text>
@@ -1072,7 +1075,7 @@ export default function MapScreen({ navigation }) {
             </View>
             {tideLoading ? (
               <View style={styles.tideModalLoading}>
-                <ActivityIndicator size="large" color="#0080FF" />
+                <ActivityIndicator size="large" color={colors.primary} />
                 <Text style={styles.tideModalLoadText}>
                   {t('common.loading', 'Loading...')}
                 </Text>
@@ -1133,7 +1136,7 @@ export default function MapScreen({ navigation }) {
                                 5,
                                 (Math.abs(h) / maxH) * 100,
                               )}%`,
-                              backgroundColor: h >= 0 ? '#0080FF' : '#FF6B00',
+                              backgroundColor: h >= 0 ? colors.primary : '#FF6B00',
                             },
                           ]}
                         />
@@ -1155,8 +1158,8 @@ export default function MapScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   map: { flex: 1 },
   placeholder: {
     flex: 1,
@@ -1168,20 +1171,20 @@ const styles = StyleSheet.create({
   placeholderTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   placeholderText: {
     fontSize: 16,
-    color: '#888',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginBottom: 16,
   },
   setupStep: {
     fontSize: 14,
-    color: '#0080FF',
+    color: colors.primary,
     fontFamily: Platform.OS === 'ios' ? 'Menlo' : 'monospace',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
@@ -1255,7 +1258,7 @@ const styles = StyleSheet.create({
     width: 60,
     height: 60,
     borderRadius: 30,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     elevation: 8,
@@ -1274,13 +1277,13 @@ const styles = StyleSheet.create({
   },
   searchInput: {
     backgroundColor: 'rgba(26, 26, 46, 0.95)',
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   catchPopup: {
     position: 'absolute',
@@ -1291,7 +1294,7 @@ const styles = StyleSheet.create({
     borderRadius: 16,
     padding: 16,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   popupRow: {
     flexDirection: 'row',
@@ -1299,11 +1302,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  popupSpecies: { fontSize: 18, fontWeight: 'bold', color: '#fff' },
-  popupClose: { fontSize: 18, color: '#888', padding: 4 },
+  popupSpecies: { fontSize: 18, fontWeight: 'bold', color: colors.text },
+  popupClose: { fontSize: 18, color: colors.textTertiary, padding: 4 },
   popupStats: { flexDirection: 'row', gap: 12, marginBottom: 8 },
-  popupStat: { fontSize: 14, color: '#ccc' },
-  popupHint: { fontSize: 12, color: '#0080FF' },
+  popupStat: { fontSize: 14, color: colors.textSecondary },
+  popupHint: { fontSize: 12, color: colors.primary },
 
   // Tile loading
   tileLoadingBanner: {
@@ -1319,7 +1322,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   tileLoadingText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
   },
 
@@ -1327,10 +1330,10 @@ const styles = StyleSheet.create({
   tideModalOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.overlay,
   },
   tideModalSheet: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -1342,12 +1345,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  tideModalTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  tideModalClose: { color: '#888', fontSize: 22, padding: 4 },
+  tideModalTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
+  tideModalClose: { color: colors.textTertiary, fontSize: 22, padding: 4 },
   tideModalLoading: { alignItems: 'center', padding: 40 },
-  tideModalLoadText: { color: '#888', marginTop: 12, fontSize: 14 },
+  tideModalLoadText: { color: colors.textTertiary, marginTop: 12, fontSize: 14 },
   tideModalError: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
     textAlign: 'center',
     padding: 30,
@@ -1357,20 +1360,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 14,
     marginBottom: 16,
   },
-  tideCurrentLabel: { color: '#888', fontSize: 13 },
+  tideCurrentLabel: { color: colors.textTertiary, fontSize: 13 },
   tideCurrentValue: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 24,
     fontWeight: '800',
   },
-  tideCurrentState: { color: '#ccc', fontSize: 14 },
+  tideCurrentState: { color: colors.textSecondary, fontSize: 14 },
   tideSectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 12,
@@ -1380,17 +1383,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  tideBarTime: { width: 55, color: '#888', fontSize: 12 },
+  tideBarTime: { width: 55, color: colors.textTertiary, fontSize: 12 },
   tideBarTrack: {
     flex: 1,
     height: 16,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 8,
     overflow: 'hidden',
     marginHorizontal: 8,
   },
   tideBarFill: { height: 16, borderRadius: 8, minWidth: 4 },
-  tideBarValue: { width: 55, color: '#ccc', fontSize: 12, textAlign: 'right' },
+  tideBarValue: { width: 55, color: colors.textSecondary, fontSize: 12, textAlign: 'right' },
 
   // Distance measurement
   distanceBanner: {
@@ -1407,17 +1410,17 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   distanceText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
   },
   distanceHint: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 14,
     opacity: 0.9,
   },
   distanceClose: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     padding: 4,
     fontWeight: '700',
@@ -1427,10 +1430,10 @@ const styles = StyleSheet.create({
   hotspotOverlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.6)',
+    backgroundColor: colors.overlay,
   },
   hotspotSheet: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -1442,12 +1445,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 6,
   },
-  hotspotTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  hotspotClose: { color: '#888', fontSize: 22, padding: 4 },
-  hotspotCount: { color: '#888', fontSize: 14, marginBottom: 16 },
+  hotspotTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
+  hotspotClose: { color: colors.textTertiary, fontSize: 22, padding: 4 },
+  hotspotCount: { color: colors.textTertiary, fontSize: 14, marginBottom: 16 },
   hotspotSection: { marginBottom: 18 },
   hotspotSectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 10,
@@ -1457,11 +1460,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  hotspotBarLabel: { width: 100, color: '#ccc', fontSize: 13 },
+  hotspotBarLabel: { width: 100, color: colors.textSecondary, fontSize: 13 },
   hotspotBarTrack: {
     flex: 1,
     height: 14,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 7,
     overflow: 'hidden',
     marginHorizontal: 8,
@@ -1473,7 +1476,7 @@ const styles = StyleSheet.create({
   },
   hotspotBarValue: {
     width: 72,
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 12,
     textAlign: 'right',
   },
@@ -1482,16 +1485,16 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
-  hotspotTimeLabel: { color: '#ccc', fontSize: 14 },
-  hotspotTimeCount: { color: '#888', fontSize: 14 },
+  hotspotTimeLabel: { color: colors.textSecondary, fontSize: 14 },
+  hotspotTimeCount: { color: colors.textTertiary, fontSize: 14 },
   hotspotZoomBtn: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 12,
     paddingVertical: 12,
     alignItems: 'center',
     marginTop: 8,
   },
-  hotspotZoomText: { color: '#fff', fontSize: 15, fontWeight: '600' },
+  hotspotZoomText: { color: colors.text, fontSize: 15, fontWeight: '600' },
 });

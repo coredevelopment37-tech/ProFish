@@ -9,6 +9,7 @@ import { Text, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useApp } from '../store/AppContext';
+import useTheme from '../hooks/useTheme';
 import lazyScreen from '../components/LazyScreen';
 
 // Auth screens (eagerly loaded — first impression)
@@ -189,15 +190,16 @@ function AuthNavigator() {
 }
 
 function MainTabs() {
+  const { colors } = useTheme();
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarActiveTintColor: '#0080FF',
-        tabBarInactiveTintColor: '#888',
+        tabBarActiveTintColor: colors.primary,
+        tabBarInactiveTintColor: colors.textTertiary,
         tabBarStyle: {
-          backgroundColor: '#1a1a2e',
-          borderTopColor: '#333',
+          backgroundColor: colors.surface,
+          borderTopColor: colors.border,
           paddingBottom: 4,
           height: 56,
         },
@@ -245,13 +247,14 @@ function MainTabs() {
 
 export default function RootNavigator() {
   const { state } = useApp();
+  const { colors } = useTheme();
 
   // Show loading while checking auth
   if (state.isLoading) {
     return (
-      <View style={loadStyles.container}>
+      <View style={[loadStyles.container, { backgroundColor: colors.background }]}>
         <Text style={loadStyles.logo}>🐟</Text>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -422,7 +425,6 @@ export default function RootNavigator() {
 const loadStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
     justifyContent: 'center',
     alignItems: 'center',
     gap: 20,

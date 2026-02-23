@@ -14,10 +14,14 @@ import {
   Dimensions,
   StatusBar,
 } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 const { width, height } = Dimensions.get('window');
 
 export default function PhotoViewer({ visible, uri, onClose }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   if (!uri) return null;
 
   return (
@@ -38,10 +42,10 @@ export default function PhotoViewer({ visible, uri, onClose }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -56,13 +60,13 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'rgba(255,255,255,0.2)',
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
   },
   closeText: {
     fontSize: 20,
-    color: '#fff',
+    color: colors.text,
     fontWeight: 'bold',
   },
 });

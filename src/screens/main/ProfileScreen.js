@@ -25,6 +25,7 @@ import firebaseAuthService from '../../services/firebaseAuthService';
 import catchService from '../../services/catchService';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import PaywallModal from '../../components/PaywallModal';
+import useTheme from '../../hooks/useTheme';
 
 const LANGUAGES = [
   { code: 'en', label: 'English' },
@@ -54,6 +55,8 @@ const LANGUAGES = [
 ];
 
 export default function ProfileScreen({ navigation }) {
+  const { colors, fonts, spacing, shadows } = useTheme();
+  const styles = createStyles(colors);
   const { t, i18n } = useTranslation();
   const { state, dispatch } = useApp();
   const tierMeta = TIER_META[state.subscriptionTier];
@@ -347,7 +350,7 @@ export default function ProfileScreen({ navigation }) {
           <Text style={styles.email}>{state.user.email}</Text>
         )}
         <View
-          style={[styles.badge, { backgroundColor: tierMeta?.color || '#888' }]}
+          style={[styles.badge, { backgroundColor: tierMeta?.color || colors.textTertiary }]}
         >
           <Text style={styles.badgeText}>
             {tierMeta?.icon} {tierMeta?.label || 'Free'}
@@ -531,7 +534,7 @@ export default function ProfileScreen({ navigation }) {
             <View
               style={[
                 styles.subTierBadge,
-                { backgroundColor: tierMeta?.color || '#888' },
+                { backgroundColor: tierMeta?.color || colors.textTertiary },
               ]}
             >
               <Text style={styles.subTierText}>
@@ -542,7 +545,7 @@ export default function ProfileScreen({ navigation }) {
               <Text
                 style={[
                   styles.subDays,
-                  subInfo.expiring && { color: '#FF9800' },
+                  subInfo.expiring && { color: colors.warning },
                 ]}
               >
                 {subInfo.expiring
@@ -669,20 +672,20 @@ export default function ProfileScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     alignItems: 'center',
     paddingTop: 60,
     paddingBottom: 30,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   avatar: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
@@ -693,8 +696,8 @@ const styles = StyleSheet.create({
     height: 80,
     borderRadius: 40,
   },
-  name: { fontSize: 22, fontWeight: 'bold', color: '#fff', marginBottom: 4 },
-  email: { fontSize: 14, color: '#888', marginBottom: 8 },
+  name: { fontSize: 22, fontWeight: 'bold', color: colors.text, marginBottom: 4 },
+  email: { fontSize: 14, color: colors.textTertiary, marginBottom: 8 },
   badge: {
     paddingHorizontal: 16,
     paddingVertical: 6,
@@ -705,7 +708,7 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#666',
+    color: colors.textTertiary,
     textTransform: 'uppercase',
     marginBottom: 12,
   },
@@ -715,24 +718,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
-  rowLabel: { fontSize: 16, color: '#fff' },
-  rowValue: { fontSize: 16, color: '#888' },
-  rowArrow: { fontSize: 16, color: '#555' },
+  rowLabel: { fontSize: 16, color: colors.text },
+  rowValue: { fontSize: 16, color: colors.textTertiary },
+  rowArrow: { fontSize: 16, color: colors.textDisabled },
   signOutButton: {
     alignItems: 'center',
     paddingVertical: 14,
     borderRadius: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     marginBottom: 12,
   },
-  signOutText: { fontSize: 16, color: '#FF9800', fontWeight: '600' },
+  signOutText: { fontSize: 16, color: colors.warning, fontWeight: '600' },
   deleteButton: {
     alignItems: 'center',
     paddingVertical: 14,
   },
-  deleteText: { fontSize: 14, color: '#FF4444' },
+  deleteText: { fontSize: 14, color: colors.error },
   linkBanner: {
     margin: 16,
     padding: 16,
@@ -742,13 +745,13 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,152,0,0.3)',
   },
   linkBannerTitle: {
-    color: '#FF9800',
+    color: colors.warning,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 6,
   },
   linkBannerText: {
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 13,
     lineHeight: 19,
     marginBottom: 14,
@@ -767,15 +770,15 @@ const styles = StyleSheet.create({
   linkBtnApple: {
     backgroundColor: '#000',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   linkBtnText: {
     fontWeight: '600',
     fontSize: 14,
-    color: '#333',
+    color: colors.border,
   },
   subCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
   },
@@ -797,10 +800,10 @@ const styles = StyleSheet.create({
   },
   subDays: {
     fontSize: 13,
-    color: '#888',
+    color: colors.textTertiary,
   },
   subUpgradeBtn: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 10,
     paddingVertical: 12,
     alignItems: 'center',
@@ -817,7 +820,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   subManageText: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 15,
     fontWeight: '600',
   },

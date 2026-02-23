@@ -10,21 +10,23 @@
  * This module augments the base SPECIES_DB with enriched data.
  */
 
+import { COLORS } from '../config/theme';
+
 // ── IUCN Conservation Status (#203) ─────────────────────
 
 export const IUCN_STATUS = {
-  LC: { code: 'LC', label: 'Least Concern', color: '#4CAF50', icon: '🟢' },
+  LC: { code: 'LC', label: 'Least Concern', color: COLORS.success, icon: '🟢' },
   NT: { code: 'NT', label: 'Near Threatened', color: '#CDDC39', icon: '🟡' },
-  VU: { code: 'VU', label: 'Vulnerable', color: '#FF9800', icon: '🟠' },
-  EN: { code: 'EN', label: 'Endangered', color: '#F44336', icon: '🔴' },
+  VU: { code: 'VU', label: 'Vulnerable', color: COLORS.accent, icon: '🟠' },
+  EN: { code: 'EN', label: 'Endangered', color: COLORS.error, icon: '🔴' },
   CR: {
     code: 'CR',
     label: 'Critically Endangered',
     color: '#D32F2F',
     icon: '⛔',
   },
-  DD: { code: 'DD', label: 'Data Deficient', color: '#888', icon: '❓' },
-  NE: { code: 'NE', label: 'Not Evaluated', color: '#666', icon: '—' },
+  DD: { code: 'DD', label: 'Data Deficient', color: COLORS.textTertiary, icon: '❓' },
+  NE: { code: 'NE', label: 'Not Evaluated', color: COLORS.textTertiary, icon: '—' },
 };
 
 /**
@@ -382,7 +384,7 @@ export const SPECIES_DISTRIBUTION = {
   largemouth_bass: [
     {
       name: 'Native Range (NA)',
-      color: '#4CAF50',
+      color: COLORS.success,
       polygon: [
         { lat: 25, lng: -100 },
         { lat: 25, lng: -75 },
@@ -393,7 +395,7 @@ export const SPECIES_DISTRIBUTION = {
     },
     {
       name: 'Introduced (EU)',
-      color: '#FF9800',
+      color: COLORS.accent,
       polygon: [
         { lat: 36, lng: -10 },
         { lat: 36, lng: 30 },
@@ -406,7 +408,7 @@ export const SPECIES_DISTRIBUTION = {
   bluefin_tuna: [
     {
       name: 'Atlantic (NA-EU)',
-      color: '#0080FF',
+      color: COLORS.primary,
       polygon: [
         { lat: 20, lng: -80 },
         { lat: 20, lng: 0 },
@@ -417,7 +419,7 @@ export const SPECIES_DISTRIBUTION = {
     },
     {
       name: 'Mediterranean',
-      color: '#4CAF50',
+      color: COLORS.success,
       polygon: [
         { lat: 30, lng: -6 },
         { lat: 30, lng: 36 },
@@ -430,7 +432,7 @@ export const SPECIES_DISTRIBUTION = {
   atlantic_salmon: [
     {
       name: 'North Atlantic',
-      color: '#0080FF',
+      color: COLORS.primary,
       polygon: [
         { lat: 40, lng: -70 },
         { lat: 40, lng: 20 },
@@ -443,7 +445,7 @@ export const SPECIES_DISTRIBUTION = {
   barramundi: [
     {
       name: 'Indo-Pacific',
-      color: '#4CAF50',
+      color: COLORS.success,
       polygon: [
         { lat: -30, lng: 95 },
         { lat: -30, lng: 160 },
@@ -456,7 +458,7 @@ export const SPECIES_DISTRIBUTION = {
   northern_pike: [
     {
       name: 'Holarctic',
-      color: '#4CAF50',
+      color: COLORS.success,
       polygon: [
         { lat: 35, lng: -130 },
         { lat: 35, lng: 150 },

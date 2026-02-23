@@ -6,13 +6,7 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import { getBannerConfig } from '../services/adService';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  border: '#2A2A40',
-  muted: '#8A8A9A',
-};
+import useTheme from '../hooks/useTheme';
 
 /**
  * AdBanner wraps the Google AdMob BannerAd component
@@ -24,6 +18,8 @@ const THEME = {
  *   <AdBanner screen="CommunityFeed" />
  */
 export default function AdBanner({ screen, style }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [config, setConfig] = useState(null);
   const [loaded, setLoaded] = useState(false);
   const [error, setError] = useState(false);
@@ -74,22 +70,22 @@ export default function AdBanner({ screen, style }) {
   }
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
-    backgroundColor: THEME.bg,
+    backgroundColor: colors.background,
   },
   fallback: {
     padding: 10,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderTopWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.surfaceLight,
     alignItems: 'center',
     width: '100%',
   },
   fallbackText: {
     fontSize: 13,
-    color: THEME.muted,
+    color: colors.textTertiary,
   },
 });

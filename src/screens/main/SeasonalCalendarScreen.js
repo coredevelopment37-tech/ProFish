@@ -17,6 +17,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../../hooks/useTheme';
 import catchService from '../../services/catchService';
 
 const MONTHS = [
@@ -121,6 +122,8 @@ function getMonthState(monthIdx, peak, good) {
 }
 
 export default function SeasonalCalendarScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [catches, setCatches] = useState([]);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
@@ -207,7 +210,7 @@ export default function SeasonalCalendarScreen({ navigation }) {
           <Text style={styles.legendText}>Good</Text>
         </View>
         <View style={styles.legendItem}>
-          <View style={[styles.legendDot, { backgroundColor: '#333' }]} />
+          <View style={[styles.legendDot, { backgroundColor: colors.border }]} />
           <Text style={styles.legendText}>Off-season</Text>
         </View>
         {personalSeasons.length > 0 && (
@@ -277,7 +280,7 @@ export default function SeasonalCalendarScreen({ navigation }) {
                       state === 'good' && {
                         backgroundColor: entry.color + '44',
                       },
-                      state === 'off' && { backgroundColor: '#222' },
+                      state === 'off' && { backgroundColor: colors.background },
                       mi === currentMonth && styles.calBarCurrent,
                     ]}
                   />
@@ -317,8 +320,8 @@ export default function SeasonalCalendarScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -326,11 +329,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   backBtn: { padding: 8 },
-  backText: { color: '#fff', fontSize: 22 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  backText: { color: colors.text, fontSize: 22 },
+  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
 
   legend: {
     flexDirection: 'row',
@@ -339,11 +342,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   legendItem: { flexDirection: 'row', alignItems: 'center', gap: 4 },
   legendDot: { width: 12, height: 12, borderRadius: 3 },
-  legendText: { color: '#888', fontSize: 11 },
+  legendText: { color: colors.textTertiary, fontSize: 11 },
 
   scrollContent: { paddingBottom: 40 },
 
@@ -351,29 +354,29 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#333',
+    borderBottomColor: colors.border,
   },
   speciesCol: { width: 100, paddingLeft: 12 },
   monthCell: { flex: 1, alignItems: 'center', paddingVertical: 4 },
   monthCellCurrent: {
-    backgroundColor: '#0080FF11',
+    backgroundColor: colors.primary + '11',
     borderRadius: 4,
   },
-  monthText: { color: '#666', fontSize: 10, fontWeight: '600' },
-  monthTextCurrent: { color: '#0080FF', fontWeight: '700' },
+  monthText: { color: colors.textTertiary, fontSize: 10, fontWeight: '600' },
+  monthTextCurrent: { color: colors.primary, fontWeight: '700' },
 
   speciesRow: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingVertical: 6,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#1a1a2e',
+    borderBottomColor: colors.surface,
   },
   speciesRowSelected: {
-    backgroundColor: '#0080FF0a',
+    backgroundColor: colors.primary + '0a',
   },
-  speciesName: { color: '#ccc', fontSize: 11, fontWeight: '600' },
-  catchCountLabel: { color: '#888', fontSize: 9, marginTop: 1 },
+  speciesName: { color: colors.textSecondary, fontSize: 11, fontWeight: '600' },
+  catchCountLabel: { color: colors.textTertiary, fontSize: 9, marginTop: 1 },
 
   calCell: {
     flex: 1,
@@ -382,21 +385,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   calBar: { width: '85%', height: 16, borderRadius: 3 },
-  calBarCurrent: { borderWidth: 1, borderColor: '#0080FF88' },
+  calBarCurrent: { borderWidth: 1, borderColor: colors.primary + '88' },
 
   detailPanel: {
     margin: 16,
     padding: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   detailTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 8,
   },
-  detailRow: { color: '#aaa', fontSize: 13, marginBottom: 4 },
+  detailRow: { color: colors.textSecondary, fontSize: 13, marginBottom: 4 },
 });

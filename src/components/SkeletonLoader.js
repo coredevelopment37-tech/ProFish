@@ -9,6 +9,7 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Animated } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 function usePulse() {
   const opacity = useRef(new Animated.Value(0.3)).current;
@@ -36,12 +37,16 @@ function usePulse() {
 }
 
 function Bone({ style }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const opacity = usePulse();
   return <Animated.View style={[styles.bone, style, { opacity }]} />;
 }
 
 /** Catch card skeleton */
 function Card() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.card}>
       <Bone style={styles.cardPhoto} />
@@ -59,6 +64,8 @@ function Card() {
 
 /** FishCast screen skeleton */
 function FishCast() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.fishcastContainer}>
       <Bone style={styles.fcHeader} />
@@ -74,6 +81,8 @@ function FishCast() {
 
 /** Species list skeleton */
 function Row() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.row}>
       <Bone style={styles.rowIcon} />
@@ -97,9 +106,9 @@ function List({ count = 4 }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   bone: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 8,
   },
   // Card
@@ -108,7 +117,7 @@ const styles = StyleSheet.create({
     padding: 12,
     marginHorizontal: 16,
     marginBottom: 12,
-    backgroundColor: '#111128',
+    backgroundColor: colors.surface,
     borderRadius: 14,
   },
   cardPhoto: {
@@ -183,7 +192,7 @@ const styles = StyleSheet.create({
     padding: 14,
     marginHorizontal: 16,
     marginBottom: 8,
-    backgroundColor: '#111128',
+    backgroundColor: colors.surface,
     borderRadius: 12,
   },
   rowIcon: {

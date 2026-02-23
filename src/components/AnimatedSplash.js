@@ -5,10 +5,13 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, Text, Animated, StyleSheet, Dimensions } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
 export default function AnimatedSplash({ onFinish }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const logoScale = useRef(new Animated.Value(0.8)).current;
   const logoOpacity = useRef(new Animated.Value(0)).current;
   const textOpacity = useRef(new Animated.Value(0)).current;
@@ -101,10 +104,10 @@ export default function AnimatedSplash({ onFinish }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A1A',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -114,16 +117,16 @@ const styles = StyleSheet.create({
     height: 200,
     borderRadius: 100,
     borderWidth: 3,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
   logoContainer: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: '#1A1A2E',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
-    shadowColor: '#0080FF',
+    shadowColor: colors.primary,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.5,
     shadowRadius: 20,
@@ -135,13 +138,13 @@ const styles = StyleSheet.create({
   appName: {
     fontSize: 36,
     fontWeight: '800',
-    color: '#FFFFFF',
+    color: colors.text,
     marginTop: 24,
     letterSpacing: 2,
   },
   tagline: {
     fontSize: 14,
-    color: '#0080FF',
+    color: colors.primary,
     marginTop: 8,
     letterSpacing: 1,
   },

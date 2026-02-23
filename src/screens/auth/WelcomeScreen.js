@@ -14,15 +14,18 @@ import {
   Dimensions,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
 export default function WelcomeScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#0a0a1a" />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
 
       {/* Hero */}
       <View style={styles.hero}>
@@ -96,10 +99,10 @@ function FeatureRow({ emoji, text }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     paddingHorizontal: 32,
     paddingTop: Platform.OS === 'ios' ? 60 : 40,
     justifyContent: 'space-between',
@@ -116,12 +119,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 42,
     fontWeight: '800',
-    color: '#fff',
+    color: colors.text,
     letterSpacing: -1,
   },
   subtitle: {
     fontSize: 18,
-    color: '#888',
+    color: colors.textTertiary,
     marginTop: 8,
     textAlign: 'center',
   },
@@ -140,14 +143,14 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 16,
-    color: '#ccc',
+    color: colors.textSecondary,
     flex: 1,
   },
   actions: {
     gap: 12,
   },
   primaryBtn: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
@@ -159,19 +162,19 @@ const styles = StyleSheet.create({
   },
   secondaryBtn: {
     borderWidth: 1.5,
-    borderColor: '#333',
+    borderColor: colors.border,
     paddingVertical: 16,
     borderRadius: 14,
     alignItems: 'center',
   },
   secondaryBtnText: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 16,
     fontWeight: '600',
   },
   legal: {
     fontSize: 12,
-    color: '#555',
+    color: colors.textDisabled,
     textAlign: 'center',
   },
 });

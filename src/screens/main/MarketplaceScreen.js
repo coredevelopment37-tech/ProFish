@@ -20,6 +20,7 @@ import {
   ActivityIndicator,
   Dimensions,
 } from 'react-native';
+import useTheme from '../../hooks/useTheme';
 import marketplaceService, {
   LISTING_TYPE,
   GEAR_CATEGORY,
@@ -141,7 +142,7 @@ const MOCK_CHARTERS = [
 
 // ── Components ───────────────────────────────────────────
 
-function GearCard({ item }) {
+function GearCard({ item, styles }) {
   const condition =
     GEAR_CONDITION[item.condition?.toUpperCase()] || GEAR_CONDITION.GOOD;
   const timeAgo = Math.floor((Date.now() - (item.createdAt || 0)) / 86400000);
@@ -184,7 +185,7 @@ function GearCard({ item }) {
   );
 }
 
-function GuideCard({ item }) {
+function GuideCard({ item, styles }) {
   return (
     <TouchableOpacity style={styles.guideCard}>
       <View style={styles.guideHeader}>
@@ -228,7 +229,7 @@ function GuideCard({ item }) {
   );
 }
 
-function CharterCard({ item }) {
+function CharterCard({ item, styles }) {
   return (
     <TouchableOpacity style={styles.charterCard}>
       <View style={styles.charterHeader}>
@@ -262,7 +263,7 @@ function CharterCard({ item }) {
   );
 }
 
-function AffiliateSection() {
+function AffiliateSection({ styles }) {
   const gear =
     marketplaceService.affiliate.getRecommendedGear('largemouth_bass');
 
@@ -298,6 +299,8 @@ function AffiliateSection() {
 // ── Main Screen ──────────────────────────────────────────
 
 export default function MarketplaceScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [activeTab, setActiveTab] = useState('gear');
   const [search, setSearch] = useState('');
   const [gearCategory, setGearCategory] = useState('all');
@@ -355,7 +358,7 @@ export default function MarketplaceScreen({ navigation }) {
             <FlatList
               data={filteredGear}
               keyExtractor={item => item.id}
-              renderItem={({ item }) => <GearCard item={item} />}
+              renderItem={({ item }) => <GearCard item={item} styles={styles} />}
               contentContainerStyle={styles.listContent}
               ListEmptyComponent={
                 <Text style={styles.emptyText}>No gear found</Text>
@@ -364,7 +367,7 @@ export default function MarketplaceScreen({ navigation }) {
                 <RefreshControl
                   refreshing={refreshing}
                   onRefresh={onRefresh}
-                  tintColor="#0a84ff"
+                  tintColor={colors.primary}
                 />
               }
             />
@@ -376,7 +379,7 @@ export default function MarketplaceScreen({ navigation }) {
           <FlatList
             data={guides}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => <GuideCard item={item} />}
+            renderItem={({ item }) => <GuideCard item={item} styles={styles} />}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No guides found nearby</Text>
@@ -385,7 +388,7 @@ export default function MarketplaceScreen({ navigation }) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor="#0a84ff"
+                tintColor={colors.primary}
               />
             }
           />
@@ -396,7 +399,7 @@ export default function MarketplaceScreen({ navigation }) {
           <FlatList
             data={charters}
             keyExtractor={item => item.id}
-            renderItem={({ item }) => <CharterCard item={item} />}
+            renderItem={({ item }) => <CharterCard item={item} styles={styles} />}
             contentContainerStyle={styles.listContent}
             ListEmptyComponent={
               <Text style={styles.emptyText}>No charters found nearby</Text>
@@ -405,7 +408,7 @@ export default function MarketplaceScreen({ navigation }) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor="#0a84ff"
+                tintColor={colors.primary}
               />
             }
           />
@@ -419,11 +422,11 @@ export default function MarketplaceScreen({ navigation }) {
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={onRefresh}
-                tintColor="#0a84ff"
+                tintColor={colors.primary}
               />
             }
           >
-            <AffiliateSection />
+            <AffiliateSection styles={styles} />
           </ScrollView>
         );
 
@@ -444,7 +447,7 @@ export default function MarketplaceScreen({ navigation }) {
         <TextInput
           style={styles.searchInput}
           placeholder="Search marketplace..."
-          placeholderTextColor="#666"
+          placeholderTextColor={colors.textTertiary}
           value={search}
           onChangeText={setSearch}
         />
@@ -476,7 +479,7 @@ export default function MarketplaceScreen({ navigation }) {
 
       {/* Content */}
       {loading ? (
-        <ActivityIndicator size="large" color="#0a84ff" style={{ flex: 1 }} />
+        <ActivityIndicator size="large" color={colors.primary} style={{ flex: 1 }} />
       ) : (
         renderContent()
       )}
@@ -486,18 +489,18 @@ export default function MarketplaceScreen({ navigation }) {
 
 // ── Styles ───────────────────────────────────────────────
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingHorizontal: 20, paddingTop: 60, paddingBottom: 8 },
-  headerTitle: { color: '#fff', fontSize: 28, fontWeight: '700' },
+  headerTitle: { color: colors.text, fontSize: 28, fontWeight: '700' },
 
   searchBox: { paddingHorizontal: 20, paddingBottom: 8 },
   searchInput: {
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     paddingHorizontal: 16,
     paddingVertical: 10,
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
   },
 
@@ -507,10 +510,10 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     marginRight: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
   },
-  tabActive: { backgroundColor: '#0a84ff' },
-  tabText: { color: '#888', fontSize: 14, fontWeight: '600' },
+  tabActive: { backgroundColor: colors.primary },
+  tabText: { color: colors.textTertiary, fontSize: 14, fontWeight: '600' },
   tabTextActive: { color: '#fff' },
 
   categoryScroll: { paddingHorizontal: 16, paddingVertical: 8, maxHeight: 44 },
@@ -519,17 +522,17 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     marginRight: 8,
     borderRadius: 16,
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#2a2a4e',
+    borderColor: colors.surfaceLight,
   },
-  categoryChipActive: { backgroundColor: '#0a84ff22', borderColor: '#0a84ff' },
-  categoryChipText: { color: '#888', fontSize: 12 },
-  categoryChipTextActive: { color: '#0a84ff' },
+  categoryChipActive: { backgroundColor: colors.primary + '22', borderColor: colors.primary },
+  categoryChipText: { color: colors.textTertiary, fontSize: 12 },
+  categoryChipTextActive: { color: colors.primary },
 
   listContent: { paddingHorizontal: 20, paddingBottom: 100 },
   emptyText: {
-    color: '#666',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginTop: 40,
     fontSize: 15,
@@ -538,7 +541,7 @@ const styles = StyleSheet.create({
   // Gear Card
   gearCard: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
     overflow: 'hidden',
@@ -546,16 +549,16 @@ const styles = StyleSheet.create({
   gearImagePlaceholder: {
     width: 100,
     height: 100,
-    backgroundColor: '#2a2a4e',
+    backgroundColor: colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
   },
   gearImage: { width: 100, height: 100 },
   gearImageEmoji: { fontSize: 32 },
   gearInfo: { flex: 1, padding: 10 },
-  gearTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  gearTitle: { color: colors.text, fontSize: 14, fontWeight: '600' },
   gearPrice: {
-    color: '#4CAF50',
+    color: colors.success,
     fontSize: 18,
     fontWeight: '700',
     marginTop: 2,
@@ -568,12 +571,12 @@ const styles = StyleSheet.create({
   },
   conditionBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
   conditionText: { fontSize: 10, fontWeight: '600' },
-  gearLocation: { color: '#888', fontSize: 11 },
-  gearSeller: { color: '#666', fontSize: 11, marginTop: 2 },
+  gearLocation: { color: colors.textTertiary, fontSize: 11 },
+  gearSeller: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
 
   // Guide Card
   guideCard: {
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 12,
@@ -583,17 +586,17 @@ const styles = StyleSheet.create({
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#0a84ff',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   guideAvatarText: { color: '#fff', fontSize: 18, fontWeight: '700' },
-  guideName: { color: '#fff', fontSize: 16, fontWeight: '700' },
-  guideLocation: { color: '#888', fontSize: 12, marginTop: 2 },
+  guideName: { color: colors.text, fontSize: 16, fontWeight: '700' },
+  guideLocation: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
   ratingBox: { alignItems: 'flex-end' },
   ratingText: { color: '#FFD700', fontSize: 14, fontWeight: '600' },
-  reviewCount: { color: '#666', fontSize: 10 },
-  guideBio: { color: '#aaa', fontSize: 13, marginTop: 8, lineHeight: 18 },
+  reviewCount: { color: colors.textTertiary, fontSize: 10 },
+  guideBio: { color: colors.textSecondary, fontSize: 13, marginTop: 8, lineHeight: 18 },
   guideSpecies: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -601,18 +604,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   speciesBadge: {
-    backgroundColor: '#0a84ff22',
+    backgroundColor: colors.primary + '22',
     borderRadius: 12,
     paddingHorizontal: 8,
     paddingVertical: 3,
   },
-  speciesText: { color: '#0a84ff', fontSize: 11 },
+  speciesText: { color: colors.primary, fontSize: 11 },
   guideRates: { flexDirection: 'row', gap: 16, marginTop: 8 },
-  rateText: { color: '#4CAF50', fontSize: 13, fontWeight: '600' },
+  rateText: { color: colors.success, fontSize: 13, fontWeight: '600' },
 
   // Charter Card
   charterCard: {
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 12,
@@ -622,48 +625,48 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  charterName: { color: '#fff', fontSize: 16, fontWeight: '700', flex: 1 },
-  charterCaptain: { color: '#0a84ff', fontSize: 13, marginTop: 2 },
-  charterVessel: { color: '#aaa', fontSize: 12, marginTop: 6 },
-  charterPort: { color: '#888', fontSize: 12, marginTop: 4 },
+  charterName: { color: colors.text, fontSize: 16, fontWeight: '700', flex: 1 },
+  charterCaptain: { color: colors.primary, fontSize: 13, marginTop: 2 },
+  charterVessel: { color: colors.textSecondary, fontSize: 12, marginTop: 6 },
+  charterPort: { color: colors.textTertiary, fontSize: 12, marginTop: 4 },
   tripTypes: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, marginTop: 8 },
   tripTypeBadge: {
-    backgroundColor: '#4CAF5022',
+    backgroundColor: colors.success + '22',
     borderRadius: 12,
     paddingHorizontal: 10,
     paddingVertical: 4,
   },
-  tripTypeText: { color: '#4CAF50', fontSize: 12, fontWeight: '600' },
+  tripTypeText: { color: colors.success, fontSize: 12, fontWeight: '600' },
 
   // Affiliate
   affiliateSection: { marginTop: 8 },
-  sectionTitle: { color: '#fff', fontSize: 20, fontWeight: '700' },
-  sectionSubtitle: { color: '#888', fontSize: 13, marginBottom: 12 },
+  sectionTitle: { color: colors.text, fontSize: 20, fontWeight: '700' },
+  sectionSubtitle: { color: colors.textTertiary, fontSize: 13, marginBottom: 12 },
   affiliateCard: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a3e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
     alignItems: 'center',
   },
   affiliateInfo: { flex: 1 },
-  affiliateTitle: { color: '#fff', fontSize: 14, fontWeight: '600' },
+  affiliateTitle: { color: colors.text, fontSize: 14, fontWeight: '600' },
   affiliatePrice: {
-    color: '#4CAF50',
+    color: colors.success,
     fontSize: 16,
     fontWeight: '700',
     marginTop: 2,
   },
   affiliateCategory: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 11,
     marginTop: 2,
     textTransform: 'uppercase',
   },
-  affiliateArrow: { color: '#0a84ff', fontSize: 24, fontWeight: '300' },
+  affiliateArrow: { color: colors.primary, fontSize: 24, fontWeight: '300' },
   affiliateDisclaimer: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 10,
     marginTop: 8,
     fontStyle: 'italic',

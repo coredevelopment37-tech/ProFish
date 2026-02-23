@@ -20,6 +20,7 @@ import {
   GIGGING_CONFIG,
   getConnectivitySummary,
 } from '../../services/nightFishingService';
+import useTheme from '../../hooks/useTheme';
 
 // ── Category config ──
 const CATEGORIES = [
@@ -53,6 +54,8 @@ const PRIORITY_BADGES = {
 };
 
 export default function NightGearScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const initialTab = route.params?.tab || 'all';
   const [category, setCategory] = useState(
@@ -343,182 +346,191 @@ export default function NightGearScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#050510' },
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#050510' },
 
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 56,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '800', color: '#fff' },
-  subtitle: { fontSize: 12, color: '#888', marginTop: 2 },
+    // Header
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 56,
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+    },
+    backBtn: { width: 44, height: 44, justifyContent: 'center' },
+    backText: { fontSize: 28, color: colors.text },
+    title: { fontSize: 22, fontWeight: '800', color: colors.text },
+    subtitle: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
 
-  // Connectivity Summary
-  connSummary: { paddingHorizontal: 16, marginBottom: 12 },
-  connSummaryRow: { flexDirection: 'row', gap: 8 },
-  connSummaryChip: {
-    flex: 1,
-    backgroundColor: '#0a0f20',
-    borderRadius: 10,
-    padding: 8,
-    alignItems: 'center',
-  },
-  connSummaryIcon: { fontSize: 18, marginBottom: 2 },
-  connSummaryNum: { fontSize: 18, fontWeight: '800', color: '#fff' },
-  connSummaryLabel: {
-    fontSize: 9,
-    color: '#666',
-    fontWeight: '600',
-    marginTop: 1,
-  },
+    // Connectivity Summary
+    connSummary: { paddingHorizontal: 16, marginBottom: 12 },
+    connSummaryRow: { flexDirection: 'row', gap: 8 },
+    connSummaryChip: {
+      flex: 1,
+      backgroundColor: '#0a0f20',
+      borderRadius: 10,
+      padding: 8,
+      alignItems: 'center',
+    },
+    connSummaryIcon: { fontSize: 18, marginBottom: 2 },
+    connSummaryNum: { fontSize: 18, fontWeight: '800', color: colors.text },
+    connSummaryLabel: {
+      fontSize: 9,
+      color: colors.textTertiary,
+      fontWeight: '600',
+      marginTop: 1,
+    },
 
-  // Category Tabs
-  tabScroll: { maxHeight: 48, marginBottom: 8 },
-  tabContainer: { paddingHorizontal: 12, gap: 8 },
-  tab: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#0a0f20',
-    borderRadius: 20,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderWidth: 1,
-    borderColor: '#1a2040',
-  },
-  tabActive: { borderColor: '#00FF88', backgroundColor: '#0a1a10' },
-  tabEmoji: { fontSize: 14, marginRight: 6 },
-  tabLabel: { fontSize: 12, fontWeight: '600', color: '#888' },
-  tabLabelActive: { color: '#00FF88' },
+    // Category Tabs
+    tabScroll: { maxHeight: 48, marginBottom: 8 },
+    tabContainer: { paddingHorizontal: 12, gap: 8 },
+    tab: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: '#0a0f20',
+      borderRadius: 20,
+      paddingHorizontal: 14,
+      paddingVertical: 8,
+      borderWidth: 1,
+      borderColor: '#1a2040',
+    },
+    tabActive: { borderColor: '#00FF88', backgroundColor: '#0a1a10' },
+    tabEmoji: { fontSize: 14, marginRight: 6 },
+    tabLabel: { fontSize: 12, fontWeight: '600', color: colors.textTertiary },
+    tabLabelActive: { color: '#00FF88' },
 
-  // Gear List
-  gearList: { paddingHorizontal: 16, paddingBottom: 40 },
-  gearCard: {
-    backgroundColor: '#0a0f20',
-    borderRadius: 14,
-    padding: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#1a2040',
-  },
-  gearCardChecked: {
-    borderColor: '#00FF88',
-    backgroundColor: '#0a1510',
-    opacity: 0.8,
-  },
-  gearHeader: { flexDirection: 'row', alignItems: 'center' },
-  checkbox: {
-    width: 24,
-    height: 24,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 10,
-  },
-  checkboxChecked: { backgroundColor: '#00FF88', borderColor: '#00FF88' },
-  checkmark: { fontSize: 14, fontWeight: '800', color: '#000' },
-  gearEmoji: { fontSize: 24, marginRight: 10 },
-  gearInfo: { flex: 1 },
-  gearName: { fontSize: 14, fontWeight: '700', color: '#fff' },
-  gearNameChecked: { textDecorationLine: 'line-through', color: '#666' },
-  badgeRow: { flexDirection: 'row', gap: 6, marginTop: 4, flexWrap: 'wrap' },
-  connBadge: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  connEmoji: { fontSize: 10, marginRight: 4 },
-  connLabel: { fontSize: 9, fontWeight: '700' },
-  priorityBadge: {
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-  },
-  priorityLabel: { fontSize: 9, fontWeight: '700' },
-  gearPrice: { fontSize: 11, color: '#FFD700', fontWeight: '600' },
-  gearDesc: { fontSize: 12, color: '#999', marginTop: 8, lineHeight: 18 },
+    // Gear List
+    gearList: { paddingHorizontal: 16, paddingBottom: 40 },
+    gearCard: {
+      backgroundColor: '#0a0f20',
+      borderRadius: 14,
+      padding: 14,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#1a2040',
+    },
+    gearCardChecked: {
+      borderColor: '#00FF88',
+      backgroundColor: '#0a1510',
+      opacity: 0.8,
+    },
+    gearHeader: { flexDirection: 'row', alignItems: 'center' },
+    checkbox: {
+      width: 24,
+      height: 24,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 10,
+    },
+    checkboxChecked: { backgroundColor: '#00FF88', borderColor: '#00FF88' },
+    checkmark: { fontSize: 14, fontWeight: '800', color: '#000' },
+    gearEmoji: { fontSize: 24, marginRight: 10 },
+    gearInfo: { flex: 1 },
+    gearName: { fontSize: 14, fontWeight: '700', color: colors.text },
+    gearNameChecked: {
+      textDecorationLine: 'line-through',
+      color: colors.textTertiary,
+    },
+    badgeRow: { flexDirection: 'row', gap: 6, marginTop: 4, flexWrap: 'wrap' },
+    connBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderRadius: 10,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+    },
+    connEmoji: { fontSize: 10, marginRight: 4 },
+    connLabel: { fontSize: 9, fontWeight: '700' },
+    priorityBadge: {
+      borderWidth: 1,
+      borderRadius: 10,
+      paddingHorizontal: 8,
+      paddingVertical: 2,
+    },
+    priorityLabel: { fontSize: 9, fontWeight: '700' },
+    gearPrice: { fontSize: 11, color: '#FFD700', fontWeight: '600' },
+    gearDesc: { fontSize: 12, color: '#999', marginTop: 8, lineHeight: 18 },
 
-  // Expanded
-  expandedSection: {
-    marginTop: 14,
-    borderTopWidth: 1,
-    borderTopColor: '#1a2040',
-    paddingTop: 12,
-  },
-  detailBlock: { marginBottom: 10 },
-  detailLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#888',
-    marginBottom: 3,
-  },
-  detailValue: { fontSize: 13, color: '#ccc' },
-  integrationBlock: {
-    backgroundColor: '#050a20',
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#0040FF33',
-  },
-  integrationText: { fontSize: 13, color: '#80BBFF', lineHeight: 20 },
-  proTipBlock: {
-    backgroundColor: '#1a1a0a',
-    borderRadius: 10,
-    padding: 12,
-    borderWidth: 1,
-    borderColor: '#FFD70033',
-  },
-  proTipLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#FFD700',
-    marginBottom: 3,
-  },
-  proTipText: { fontSize: 13, color: '#ddd', lineHeight: 20 },
+    // Expanded
+    expandedSection: {
+      marginTop: 14,
+      borderTopWidth: 1,
+      borderTopColor: '#1a2040',
+      paddingTop: 12,
+    },
+    detailBlock: { marginBottom: 10 },
+    detailLabel: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: colors.textTertiary,
+      marginBottom: 3,
+    },
+    detailValue: { fontSize: 13, color: colors.textSecondary },
+    integrationBlock: {
+      backgroundColor: '#050a20',
+      borderRadius: 10,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: '#0040FF33',
+    },
+    integrationText: { fontSize: 13, color: '#80BBFF', lineHeight: 20 },
+    proTipBlock: {
+      backgroundColor: '#1a1a0a',
+      borderRadius: 10,
+      padding: 12,
+      borderWidth: 1,
+      borderColor: '#FFD70033',
+    },
+    proTipLabel: {
+      fontSize: 11,
+      fontWeight: '700',
+      color: '#FFD700',
+      marginBottom: 3,
+    },
+    proTipText: { fontSize: 13, color: '#ddd', lineHeight: 20 },
 
-  // Gigging Guide
-  giggingGuide: {
-    backgroundColor: '#1a0f05',
-    borderRadius: 14,
-    padding: 16,
-    marginHorizontal: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#4a3010',
-  },
-  giggingSectionTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    color: '#FFD700',
-    marginTop: 10,
-    marginBottom: 8,
-  },
-  giggingConditions: { gap: 4 },
-  giggingCond: { fontSize: 12, color: '#ccc' },
-  giggingStep: { fontSize: 12, color: '#ccc', marginBottom: 4, lineHeight: 18 },
-  giggingTipBox: {
-    backgroundColor: '#0a0f20',
-    borderRadius: 10,
-    padding: 12,
-    marginVertical: 10,
-  },
-  giggingTipTitle: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#00FF88',
-    marginBottom: 4,
-  },
-  giggingTipText: { fontSize: 12, color: '#aaa', lineHeight: 18 },
-  giggingSafetyRule: { fontSize: 12, color: '#FF8800', marginBottom: 4 },
-});
+    // Gigging Guide
+    giggingGuide: {
+      backgroundColor: '#1a0f05',
+      borderRadius: 14,
+      padding: 16,
+      marginHorizontal: 16,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: '#4a3010',
+    },
+    giggingSectionTitle: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: '#FFD700',
+      marginTop: 10,
+      marginBottom: 8,
+    },
+    giggingConditions: { gap: 4 },
+    giggingCond: { fontSize: 12, color: colors.textSecondary },
+    giggingStep: {
+      fontSize: 12,
+      color: colors.textSecondary,
+      marginBottom: 4,
+      lineHeight: 18,
+    },
+    giggingTipBox: {
+      backgroundColor: '#0a0f20',
+      borderRadius: 10,
+      padding: 12,
+      marginVertical: 10,
+    },
+    giggingTipTitle: {
+      fontSize: 12,
+      fontWeight: '700',
+      color: '#00FF88',
+      marginBottom: 4,
+    },
+    giggingTipText: { fontSize: 12, color: '#aaa', lineHeight: 18 },
+    giggingSafetyRule: { fontSize: 12, color: '#FF8800', marginBottom: 4 },
+  });

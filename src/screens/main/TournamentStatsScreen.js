@@ -16,9 +16,12 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import tournamentService from '../../services/tournamentService';
+import useTheme from '../../hooks/useTheme';
 
 export default function TournamentStatsScreen({ navigation }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [stats, setStats] = useState(null);
   const [history, setHistory] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -46,7 +49,7 @@ export default function TournamentStatsScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -75,7 +78,7 @@ export default function TournamentStatsScreen({ navigation }) {
               <Text style={styles.statLabel}>Tournaments</Text>
             </View>
             <View style={styles.statCard}>
-              <Text style={[styles.statValue, { color: '#FF9800' }]}>
+              <Text style={[styles.statValue, { color: colors.accent }]}>
                 {stats.wins}
               </Text>
               <Text style={styles.statLabel}>Wins 🥇</Text>
@@ -156,11 +159,11 @@ export default function TournamentStatsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -173,8 +176,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  backText: { fontSize: 28, color: colors.text },
+  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
 
@@ -186,21 +189,21 @@ const styles = StyleSheet.create({
   },
   statCard: {
     width: '31%',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
   },
   statValue: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 24,
     fontWeight: '800',
     marginBottom: 4,
   },
-  statLabel: { color: '#888', fontSize: 11 },
+  statLabel: { color: colors.textTertiary, fontSize: 11 },
 
   sectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
     marginBottom: 12,
@@ -209,7 +212,7 @@ const styles = StyleSheet.create({
   historyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 10,
@@ -217,12 +220,12 @@ const styles = StyleSheet.create({
   historyLeft: { width: 40, alignItems: 'center' },
   historyMedal: { fontSize: 24 },
   historyInfo: { flex: 1, marginLeft: 10 },
-  historyName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  historyMeta: { color: '#888', fontSize: 12, marginTop: 2 },
-  historyDate: { color: '#666', fontSize: 11, marginTop: 2 },
-  historyScore: { color: '#FF9800', fontSize: 18, fontWeight: '800' },
+  historyName: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  historyMeta: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
+  historyDate: { color: colors.textTertiary, fontSize: 11, marginTop: 2 },
+  historyScore: { color: colors.accent, fontSize: 18, fontWeight: '800' },
 
   emptyState: { alignItems: 'center', paddingVertical: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: colors.textTertiary, fontSize: 15, textAlign: 'center' },
 });

@@ -16,8 +16,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import communityService from '../../services/communityService';
+import useTheme from '../../hooks/useTheme';
 
 export default function UserProfileScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { uid, displayName: routeName } = route.params || {};
   const { t } = useTranslation();
   const [profile, setProfile] = useState(null);
@@ -148,7 +151,7 @@ export default function UserProfileScreen({ route, navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -288,20 +291,20 @@ export default function UserProfileScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorText: { color: '#888', fontSize: 16 },
+  errorText: { color: colors.textTertiary, fontSize: 16 },
   backButton: {
     marginTop: 16,
     paddingHorizontal: 20,
     paddingVertical: 10,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 8,
   },
   backButtonText: { color: '#fff', fontWeight: '600' },
@@ -313,12 +316,12 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
+  backText: { fontSize: 28, color: colors.text },
   title: {
     flex: 1,
     fontSize: 20,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginLeft: 4,
   },
   menuBtn: {
@@ -327,10 +330,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
-  menuText: { fontSize: 24, color: '#888' },
+  menuText: { fontSize: 24, color: colors.textTertiary },
   listContent: { paddingBottom: 40 },
   profileCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     marginHorizontal: 16,
     borderRadius: 16,
     padding: 20,
@@ -348,7 +351,7 @@ const styles = StyleSheet.create({
     marginRight: 20,
   },
   avatarPlaceholder: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -363,10 +366,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
   },
   statItem: { alignItems: 'center' },
-  statNum: { color: '#fff', fontSize: 18, fontWeight: '800' },
-  statLabel: { color: '#888', fontSize: 12, marginTop: 2 },
+  statNum: { color: colors.text, fontSize: 18, fontWeight: '800' },
+  statLabel: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
   bio: {
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 16,
@@ -377,7 +380,7 @@ const styles = StyleSheet.create({
   },
   followBtn: {
     flex: 1,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     borderRadius: 10,
     paddingVertical: 10,
     alignItems: 'center',
@@ -385,7 +388,7 @@ const styles = StyleSheet.create({
   followingBtn: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
   followBtnText: {
     color: '#fff',
@@ -393,7 +396,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   followingBtnText: {
-    color: '#0080FF',
+    color: colors.primary,
   },
   blockBtn: {
     paddingHorizontal: 16,
@@ -404,56 +407,56 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   blockBtnText: {
-    color: '#FF4444',
+    color: colors.error,
     fontWeight: '600',
     fontSize: 14,
   },
   postsHeader: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginHorizontal: 16,
     marginBottom: 12,
   },
   postCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     marginHorizontal: 16,
     marginBottom: 10,
     borderRadius: 12,
     padding: 14,
   },
   postContent: {
-    color: '#ddd',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 8,
   },
   catchEmbed: {
     flexDirection: 'row',
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 10,
     marginBottom: 8,
     gap: 12,
   },
   catchSpecies: {
-    color: '#FF9800',
+    color: colors.accent,
     fontWeight: '700',
     fontSize: 14,
   },
   catchDetail: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
   },
   postMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
-  postMetaText: { color: '#888', fontSize: 12 },
-  postDate: { color: '#666', fontSize: 12 },
+  postMetaText: { color: colors.textTertiary, fontSize: 12 },
+  postDate: { color: colors.textTertiary, fontSize: 12 },
   emptyPosts: {
     alignItems: 'center',
     padding: 40,
   },
-  emptyPostsText: { color: '#666', fontSize: 14 },
+  emptyPostsText: { color: colors.textTertiary, fontSize: 14 },
 });

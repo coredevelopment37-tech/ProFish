@@ -16,18 +16,9 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { STORAGE_KEYS } from '../../config/constants';
+import useTheme from '../../hooks/useTheme';
 
 const { width, height } = Dimensions.get('window');
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFFFFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
 
 // ——— Step 1: Welcome + fishing style ———
 const FISHING_STYLES = [
@@ -94,7 +85,7 @@ const REGIONS = [
   { id: 'SA_ASIA', label: 'South Asia', emoji: '🇮🇳' },
 ];
 
-function Step1({ selections, setSelections }) {
+function Step1({ selections, setSelections, styles }) {
   const toggleStyle = id => {
     setSelections(prev => ({
       ...prev,
@@ -135,7 +126,7 @@ function Step1({ selections, setSelections }) {
   );
 }
 
-function Step2({ selections, setSelections }) {
+function Step2({ selections, setSelections, styles }) {
   const toggleSpecies = id => {
     setSelections(prev => ({
       ...prev,
@@ -172,7 +163,7 @@ function Step2({ selections, setSelections }) {
   );
 }
 
-function Step3({ selections, setSelections }) {
+function Step3({ selections, setSelections, styles }) {
   return (
     <View style={styles.step}>
       <Text style={styles.stepEmoji}>🌍</Text>
@@ -207,7 +198,7 @@ function Step3({ selections, setSelections }) {
   );
 }
 
-function Step4({ selections, setSelections }) {
+function Step4({ selections, setSelections, styles, colors }) {
   const toggle = key => {
     setSelections(prev => ({
       ...prev,
@@ -276,8 +267,8 @@ function Step4({ selections, setSelections }) {
           <Switch
             value={notifs[item.key] !== false}
             onValueChange={() => toggle(item.key)}
-            trackColor={{ false: '#333', true: THEME.primary }}
-            thumbColor="#fff"
+            trackColor={{ false: colors.border, true: colors.primary }}
+            thumbColor={colors.text}
           />
         </View>
       ))}
@@ -285,7 +276,7 @@ function Step4({ selections, setSelections }) {
   );
 }
 
-function Step5() {
+function Step5({ styles }) {
   return (
     <View style={styles.step}>
       <Text style={styles.stepEmoji}>🚀</Text>
@@ -314,6 +305,8 @@ function Step5() {
 const STEPS = [Step1, Step2, Step3, Step4, Step5];
 
 export default function OnboardingScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [currentStep, setCurrentStep] = useState(0);
   const [selections, setSelections] = useState({
     styles: [],
@@ -383,11 +376,13 @@ export default function OnboardingScreen({ navigation }) {
           <StepComponent
             selections={selections}
             setSelections={setSelections}
+            styles={styles}
+            colors={colors}
           />
         </View>
       );
     },
-    [selections],
+    [selections, styles, colors],
   );
 
   const progressWidth = progressAnim.interpolate({
@@ -440,26 +435,26 @@ export default function OnboardingScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   progressContainer: {
     height: 4,
-    backgroundColor: THEME.border,
+    backgroundColor: colors.border,
     marginTop: 50,
   },
-  progressBar: { height: 4, backgroundColor: THEME.primary, borderRadius: 2 },
+  progressBar: { height: 4, backgroundColor: colors.primary, borderRadius: 2 },
   step: { flex: 1, paddingHorizontal: 24, paddingTop: 32 },
   stepEmoji: { fontSize: 48, textAlign: 'center', marginBottom: 12 },
   stepTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: THEME.text,
+    color: colors.text,
     textAlign: 'center',
     marginBottom: 8,
   },
   stepSubtitle: {
     fontSize: 14,
-    color: THEME.muted,
+    color: colors.textTertiary,
     textAlign: 'center',
     marginBottom: 24,
   },
@@ -473,39 +468,39 @@ const styles = StyleSheet.create({
   gridItem: {
     width: (width - 64) / 2,
     padding: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     marginBottom: 12,
     borderWidth: 2,
     borderColor: 'transparent',
   },
   gridItemSelected: {
-    borderColor: THEME.primary,
-    backgroundColor: '#0080FF15',
+    borderColor: colors.primary,
+    backgroundColor: colors.primary + '15',
   },
   gridEmoji: { fontSize: 28, marginBottom: 8 },
   gridLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 4,
   },
-  gridLabelSelected: { color: THEME.primary },
-  gridDesc: { fontSize: 12, color: THEME.muted },
+  gridLabelSelected: { color: colors.primary },
+  gridDesc: { fontSize: 12, color: colors.textTertiary },
 
   // Chip items (species)
   chipItem: {
     paddingHorizontal: 16,
     paddingVertical: 10,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 20,
     marginRight: 8,
     marginBottom: 8,
     borderWidth: 1.5,
     borderColor: 'transparent',
   },
-  chipSelected: { borderColor: THEME.accent, backgroundColor: '#00D4AA15' },
-  chipText: { fontSize: 14, color: THEME.text },
+  chipSelected: { borderColor: colors.accent, backgroundColor: colors.accent + '15' },
+  chipText: { fontSize: 14, color: colors.text },
 
   // Region list
   regionList: { gap: 8 },
@@ -513,16 +508,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     padding: 14,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     borderWidth: 2,
     borderColor: 'transparent',
   },
-  regionSelected: { borderColor: THEME.primary },
+  regionSelected: { borderColor: colors.primary },
   regionEmoji: { fontSize: 24, marginRight: 12 },
-  regionLabel: { fontSize: 16, color: THEME.text, flex: 1 },
-  regionLabelSelected: { color: THEME.primary, fontWeight: '700' },
-  checkmark: { fontSize: 18, color: THEME.primary, fontWeight: '700' },
+  regionLabel: { fontSize: 16, color: colors.text, flex: 1 },
+  regionLabelSelected: { color: colors.primary, fontWeight: '700' },
+  checkmark: { fontSize: 18, color: colors.primary, fontWeight: '700' },
 
   // Notification toggles
   notifRow: {
@@ -530,12 +525,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: THEME.border,
+    borderBottomColor: colors.border,
   },
   notifEmoji: { fontSize: 24, marginRight: 12 },
   notifText: { flex: 1 },
-  notifLabel: { fontSize: 16, fontWeight: '600', color: THEME.text },
-  notifDesc: { fontSize: 12, color: THEME.muted, marginTop: 2 },
+  notifLabel: { fontSize: 16, fontWeight: '600', color: colors.text },
+  notifDesc: { fontSize: 12, color: colors.textTertiary, marginTop: 2 },
 
   // Feature list (step 5)
   featureList: { marginTop: 8 },
@@ -545,10 +540,10 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   featureEmoji: { fontSize: 24, marginRight: 14 },
-  featureText: { fontSize: 15, color: THEME.text, flex: 1 },
+  featureText: { fontSize: 15, color: colors.text, flex: 1 },
   letsGo: {
     fontSize: 14,
-    color: THEME.accent,
+    color: colors.accent,
     textAlign: 'center',
     marginTop: 24,
     fontWeight: '600',
@@ -564,14 +559,14 @@ const styles = StyleSheet.create({
     paddingTop: 16,
   },
   backBtn: { paddingVertical: 12, paddingHorizontal: 16 },
-  backText: { fontSize: 16, color: THEME.muted },
-  skipText: { fontSize: 16, color: THEME.muted },
-  stepIndicator: { fontSize: 14, color: THEME.muted },
+  backText: { fontSize: 16, color: colors.textTertiary },
+  skipText: { fontSize: 16, color: colors.textTertiary },
+  stepIndicator: { fontSize: 14, color: colors.textTertiary },
   nextBtn: {
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 24,
     borderRadius: 24,
   },
-  nextText: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  nextText: { fontSize: 16, fontWeight: '700', color: colors.text },
 });

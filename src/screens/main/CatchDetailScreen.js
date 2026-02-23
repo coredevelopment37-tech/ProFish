@@ -26,10 +26,13 @@ import {
   formatWind,
 } from '../../utils/units';
 import PhotoViewer from '../../components/PhotoViewer';
+import useTheme from '../../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
 export default function CatchDetailScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state } = useApp();
   const units = state.units || 'metric';
@@ -256,6 +259,8 @@ export default function CatchDetailScreen({ route, navigation }) {
 }
 
 function StatCard({ icon, label, value }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.statCard}>
       <Text style={styles.statIcon}>{icon}</Text>
@@ -266,6 +271,8 @@ function StatCard({ icon, label, value }) {
 }
 
 function ConditionPill({ icon, value }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.conditionPill}>
       <Text style={styles.conditionIcon}>{icon}</Text>
@@ -274,15 +281,15 @@ function ConditionPill({ icon, value }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
     paddingHorizontal: 16,
     paddingBottom: 12,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
   },
   backBtn: {
     width: 44,
@@ -290,12 +297,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  backText: { fontSize: 28, color: '#fff' },
+  backText: { fontSize: 28, color: colors.text },
   headerTitle: {
     flex: 1,
     fontSize: 20,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginLeft: 4,
   },
   deleteBtn: {
@@ -321,7 +328,7 @@ const styles = StyleSheet.create({
   photoPlaceholder: {
     width: width,
     height: 200,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -334,22 +341,22 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   badge: {
-    backgroundColor: 'rgba(76, 175, 80, 0.2)',
+    backgroundColor: colors.success + '33',
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: 'rgba(76, 175, 80, 0.4)',
+    borderColor: colors.success + '66',
   },
   badgeBlue: {
-    backgroundColor: 'rgba(0, 128, 255, 0.15)',
-    borderColor: 'rgba(0, 128, 255, 0.3)',
+    backgroundColor: colors.primary + '26',
+    borderColor: colors.primary + '4D',
   },
   badgeGray: {
-    backgroundColor: 'rgba(136, 136, 136, 0.15)',
-    borderColor: 'rgba(136, 136, 136, 0.3)',
+    backgroundColor: colors.textTertiary + '26',
+    borderColor: colors.textTertiary + '4D',
   },
-  badgeText: { color: '#ccc', fontSize: 13, fontWeight: '500' },
+  badgeText: { color: colors.textSecondary, fontSize: 13, fontWeight: '500' },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -358,14 +365,14 @@ const styles = StyleSheet.create({
   },
   statCard: {
     width: (width - 44) / 2,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     alignItems: 'center',
   },
   statIcon: { fontSize: 24, marginBottom: 4 },
-  statLabel: { color: '#888', fontSize: 12, marginBottom: 2 },
-  statValue: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  statLabel: { color: colors.textTertiary, fontSize: 12, marginBottom: 2 },
+  statValue: { color: colors.text, fontSize: 18, fontWeight: '700' },
   section: {
     paddingHorizontal: 16,
     paddingVertical: 12,
@@ -373,12 +380,12 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#0080FF',
+    color: colors.primary,
     textTransform: 'uppercase',
     letterSpacing: 1,
     marginBottom: 6,
   },
-  sectionText: { fontSize: 16, color: '#ccc', lineHeight: 22 },
+  sectionText: { fontSize: 16, color: colors.textSecondary, lineHeight: 22 },
   conditionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -388,12 +395,12 @@ const styles = StyleSheet.create({
   conditionPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 20,
     gap: 4,
   },
   conditionIcon: { fontSize: 16 },
-  conditionValue: { color: '#ccc', fontSize: 13, fontWeight: '500' },
+  conditionValue: { color: colors.textSecondary, fontSize: 13, fontWeight: '500' },
 });

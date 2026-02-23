@@ -17,20 +17,12 @@ import {
   getAvailableRegions,
   getRegionRules,
 } from '../../services/regulationsService';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-  danger: '#FF4444',
-  warning: '#FFA500',
-};
+import useTheme from '../../hooks/useTheme';
 
 export default function IsItLegalScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   const [selectedRegion, setSelectedRegion] = useState(null);
   const [selectedSpecies, setSelectedSpecies] = useState(null);
   const [fishLength, setFishLength] = useState('');
@@ -60,9 +52,9 @@ export default function IsItLegalScreen({ navigation }) {
   };
 
   const getStatusColor = status => {
-    if (status === 'LEGAL') return THEME.accent;
-    if (status === 'ILLEGAL') return THEME.danger;
-    return THEME.warning;
+    if (status === 'LEGAL') return colors.accent;
+    if (status === 'ILLEGAL') return colors.error;
+    return colors.warning;
   };
 
   const getStatusEmoji = status => {
@@ -158,7 +150,7 @@ export default function IsItLegalScreen({ navigation }) {
             value={fishLength}
             onChangeText={setFishLength}
             placeholder="e.g. 22"
-            placeholderTextColor={THEME.muted}
+            placeholderTextColor={colors.textTertiary}
             keyboardType="numeric"
           />
         </>
@@ -250,8 +242,8 @@ export default function IsItLegalScreen({ navigation }) {
                     {
                       color:
                         issue.severity === 'illegal'
-                          ? THEME.danger
-                          : THEME.warning,
+                          ? colors.error
+                          : colors.warning,
                     },
                   ]}
                 >
@@ -275,34 +267,34 @@ export default function IsItLegalScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   content: { paddingBottom: 100 },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 16 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
-  headerDesc: { fontSize: 14, color: THEME.muted, marginTop: 4 },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
+  headerDesc: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
   sectionLabel: {
     fontSize: 16,
     fontWeight: '700',
-    color: THEME.text,
+    color: colors.text,
     paddingHorizontal: 16,
     marginTop: 20,
     marginBottom: 10,
   },
   chipScroll: { paddingLeft: 16, maxHeight: 42 },
   chip: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     paddingHorizontal: 14,
     paddingVertical: 10,
     borderRadius: 20,
     marginRight: 8,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  chipActive: { borderColor: THEME.primary, backgroundColor: '#0080FF15' },
-  chipText: { fontSize: 13, color: THEME.muted },
-  chipTextActive: { color: THEME.primary },
+  chipActive: { borderColor: colors.primary, backgroundColor: colors.primary + '15' },
+  chipText: { fontSize: 13, color: colors.textTertiary },
+  chipTextActive: { color: colors.primary },
   speciesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -310,41 +302,41 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   speciesChip: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     paddingHorizontal: 12,
     paddingVertical: 8,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   speciesChipActive: {
-    borderColor: THEME.accent,
-    backgroundColor: THEME.accent + '15',
+    borderColor: colors.accent,
+    backgroundColor: colors.accent + '15',
   },
-  speciesText: { fontSize: 13, color: THEME.muted },
-  speciesTextActive: { color: THEME.accent },
+  speciesText: { fontSize: 13, color: colors.textTertiary },
+  speciesTextActive: { color: colors.accent },
   input: {
     marginHorizontal: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     fontSize: 16,
-    color: THEME.text,
+    color: colors.text,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   checkBtn: {
     marginHorizontal: 16,
     marginTop: 20,
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 16,
     borderRadius: 24,
     alignItems: 'center',
   },
-  checkBtnText: { fontSize: 18, fontWeight: '700', color: '#FFF' },
+  checkBtnText: { fontSize: 18, fontWeight: '700', color: colors.text },
   resultCard: {
     margin: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 20,
     borderWidth: 2,
@@ -358,44 +350,44 @@ const styles = StyleSheet.create({
   },
   resultMessage: {
     fontSize: 15,
-    color: THEME.text,
+    color: colors.text,
     textAlign: 'center',
     lineHeight: 22,
     marginBottom: 16,
   },
-  ruleDetails: { backgroundColor: THEME.bg, borderRadius: 12, padding: 14 },
+  ruleDetails: { backgroundColor: colors.background, borderRadius: 12, padding: 14 },
   ruleRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 6,
     borderBottomWidth: 1,
-    borderBottomColor: THEME.border,
+    borderBottomColor: colors.border,
   },
-  ruleLabel: { fontSize: 14, color: THEME.muted },
-  ruleValue: { fontSize: 14, fontWeight: '600', color: THEME.text },
+  ruleLabel: { fontSize: 14, color: colors.textTertiary },
+  ruleValue: { fontSize: 14, fontWeight: '600', color: colors.text },
   notesBox: {
     marginTop: 10,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     padding: 10,
     borderRadius: 8,
   },
-  notesText: { fontSize: 13, color: THEME.accent, lineHeight: 18 },
+  notesText: { fontSize: 13, color: colors.accent, lineHeight: 18 },
   issuesBox: { marginTop: 12, gap: 6 },
   issueText: { fontSize: 14, lineHeight: 20 },
   licenseLink: {
     marginTop: 12,
     padding: 10,
-    backgroundColor: THEME.primary + '15',
+    backgroundColor: colors.primary + '15',
     borderRadius: 8,
   },
-  licenseLinkText: { fontSize: 13, color: THEME.primary },
+  licenseLinkText: { fontSize: 13, color: colors.primary },
   disclaimer: {
     margin: 16,
     padding: 14,
-    backgroundColor: '#FFA50010',
+    backgroundColor: colors.warning + '10',
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#FFA50030',
+    borderColor: colors.warning + '30',
   },
-  disclaimerText: { fontSize: 12, color: THEME.warning, lineHeight: 18 },
+  disclaimerText: { fontSize: 12, color: colors.warning, lineHeight: 18 },
 });

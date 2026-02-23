@@ -28,9 +28,12 @@ import WeatherCard from '../../components/WeatherCard';
 import SolunarTimeline from '../../components/SolunarTimeline';
 import TideChart from '../../components/TideChart';
 import FactorBreakdown from '../../components/FactorBreakdown';
+import useTheme from '../../hooks/useTheme';
 
 export default function FishCastScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [forecast, setForecast] = useState(null);
   const [marine, setMarine] = useState(null);
   const [tide, setTide] = useState(null);
@@ -110,7 +113,7 @@ export default function FishCastScreen() {
   if (loading) {
     return (
       <View style={styles.centerContainer}>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
         <Text style={styles.loadingText}>
           {t('fishcast.loading', 'Calculating FishCast...')}
         </Text>
@@ -143,7 +146,7 @@ export default function FishCastScreen() {
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor="#0080FF"
+          tintColor={colors.primary}
         />
       }
       showsVerticalScrollIndicator={false}
@@ -222,10 +225,10 @@ export default function FishCastScreen() {
                       height: Math.max(8, (h.score / 100) * 60),
                       backgroundColor:
                         h.score >= 70
-                          ? '#4CAF50'
+                          ? colors.success
                           : h.score >= 40
-                          ? '#FF9800'
-                          : '#555',
+                          ? colors.accent
+                          : colors.textDisabled,
                     },
                   ]}
                 />
@@ -265,10 +268,10 @@ export default function FishCastScreen() {
                         width: `${day.score}%`,
                         backgroundColor:
                           day.score >= 70
-                            ? '#4CAF50'
+                            ? colors.success
                             : day.score >= 50
-                            ? '#FF9800'
-                            : '#F44336',
+                            ? colors.accent
+                            : colors.error,
                       },
                     ]}
                   />
@@ -279,10 +282,10 @@ export default function FishCastScreen() {
                     {
                       color:
                         day.score >= 70
-                          ? '#4CAF50'
+                          ? colors.success
                           : day.score >= 50
-                          ? '#FF9800'
-                          : '#F44336',
+                          ? colors.accent
+                          : colors.error,
                     },
                   ]}
                 >
@@ -355,12 +358,12 @@ function getSummaryText(score, t) {
   return t('fishcast.summaryPoor', '😴 Tough conditions — maybe try tomorrow.');
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   content: { padding: 20, paddingTop: 50 },
   centerContainer: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 40,
@@ -372,33 +375,33 @@ const styles = StyleSheet.create({
   headerTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 4,
   },
-  location: { fontSize: 14, color: '#888', marginBottom: 2 },
-  timestamp: { fontSize: 12, color: '#555' },
+  location: { fontSize: 14, color: colors.textTertiary, marginBottom: 2 },
+  timestamp: { fontSize: 12, color: colors.textDisabled },
   scoreContainer: {
     alignItems: 'center',
     marginVertical: 20,
   },
   summary: {
     fontSize: 16,
-    color: '#ccc',
+    color: colors.textSecondary,
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 22,
   },
-  loadingText: { color: '#888', marginTop: 16, fontSize: 16 },
+  loadingText: { color: colors.textTertiary, marginTop: 16, fontSize: 16 },
   errorIcon: { fontSize: 48, marginBottom: 16 },
   errorText: {
-    color: '#F44336',
+    color: colors.error,
     fontSize: 18,
     fontWeight: '600',
     marginBottom: 8,
   },
-  errorHint: { color: '#666', fontSize: 14, textAlign: 'center' },
+  errorHint: { color: colors.textTertiary, fontSize: 14, textAlign: 'center' },
   bestTimesCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -406,7 +409,7 @@ const styles = StyleSheet.create({
   bestTimesTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   bestTimesRow: {
@@ -415,7 +418,7 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   timeSlot: {
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
@@ -423,10 +426,10 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timeSlotIcon: { fontSize: 20, marginBottom: 4 },
-  timeSlotText: { fontSize: 13, color: '#fff', fontWeight: '600' },
-  timeSlotLabel: { fontSize: 11, color: '#888', marginTop: 2 },
+  timeSlotText: { fontSize: 13, color: colors.text, fontWeight: '600' },
+  timeSlotLabel: { fontSize: 11, color: colors.textTertiary, marginTop: 2 },
   hourlyCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -434,7 +437,7 @@ const styles = StyleSheet.create({
   hourlyTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   hourlySlot: {
@@ -442,15 +445,15 @@ const styles = StyleSheet.create({
     marginRight: 12,
     width: 36,
   },
-  hourlyTime: { fontSize: 10, color: '#888', marginBottom: 4 },
+  hourlyTime: { fontSize: 10, color: colors.textTertiary, marginBottom: 4 },
   hourlyBar: {
     width: 20,
     borderRadius: 4,
     minHeight: 8,
   },
-  hourlyScore: { fontSize: 10, color: '#ccc', marginTop: 4 },
+  hourlyScore: { fontSize: 10, color: colors.textSecondary, marginTop: 4 },
   outlookCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 16,
@@ -458,14 +461,14 @@ const styles = StyleSheet.create({
   outlookTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   outlookProBadge: {
     position: 'absolute',
     top: 16,
     right: 16,
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     borderRadius: 6,
     paddingHorizontal: 8,
     paddingVertical: 2,
@@ -494,7 +497,7 @@ const styles = StyleSheet.create({
   outlookDay: {
     width: 46,
     fontSize: 13,
-    color: '#ccc',
+    color: colors.textSecondary,
     fontWeight: '600',
   },
   outlookIcon: {
@@ -523,11 +526,11 @@ const styles = StyleSheet.create({
   outlookTemp: {
     width: 58,
     fontSize: 12,
-    color: '#666',
+    color: colors.textTertiary,
     textAlign: 'right',
   },
   outlookUpgrade: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 12,
     textAlign: 'center',
     marginTop: 12,

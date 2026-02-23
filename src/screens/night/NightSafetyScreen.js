@@ -23,6 +23,7 @@ import {
   setSafetyCheckIn,
   performCheckIn,
 } from '../../services/nightFishingService';
+import useTheme from '../../hooks/useTheme';
 
 // ── Safety Checklist ──
 const SAFETY_CHECKLIST = [
@@ -101,6 +102,8 @@ const EMERGENCY_NUMBERS = [
 ];
 
 export default function NightSafetyScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [checkedItems, setCheckedItems] = useState({});
   const [checkInInterval, setCheckInInterval] = useState('every_60');
@@ -355,7 +358,7 @@ export default function NightSafetyScreen({ navigation }) {
           value={emergencyContact}
           onChangeText={setEmergencyContact}
           placeholder="e.g. +1-555-123-4567"
-          placeholderTextColor="#555"
+          placeholderTextColor={colors.textDisabled}
           keyboardType="phone-pad"
         />
 
@@ -470,210 +473,232 @@ export default function NightSafetyScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#050510' },
+const createStyles = colors =>
+  StyleSheet.create({
+    container: { flex: 1, backgroundColor: '#050510' },
 
-  // Header
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: 56,
-    paddingHorizontal: 16,
-    paddingBottom: 12,
-  },
-  backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '800', color: '#fff' },
-  subtitle: { fontSize: 12, color: '#FF4444', fontWeight: '600', marginTop: 2 },
+    // Header
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: 56,
+      paddingHorizontal: 16,
+      paddingBottom: 12,
+    },
+    backBtn: { width: 44, height: 44, justifyContent: 'center' },
+    backText: { fontSize: 28, color: colors.text },
+    title: { fontSize: 22, fontWeight: '800', color: colors.text },
+    subtitle: {
+      fontSize: 12,
+      color: '#FF4444',
+      fontWeight: '600',
+      marginTop: 2,
+    },
 
-  // Sunrise
-  sunriseCard: {
-    marginHorizontal: 16,
-    marginBottom: 16,
-    backgroundColor: '#1a1000',
-    borderRadius: 16,
-    padding: 18,
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FFD70033',
-  },
-  sunriseIcon: { fontSize: 40, marginRight: 16 },
-  sunriseInfo: { flex: 1 },
-  sunriseLabel: {
-    fontSize: 10,
-    fontWeight: '700',
-    color: '#888',
-    letterSpacing: 1.5,
-  },
-  sunriseTime: {
-    fontSize: 22,
-    fontWeight: '800',
-    color: '#FFD700',
-    marginTop: 4,
-  },
+    // Sunrise
+    sunriseCard: {
+      marginHorizontal: 16,
+      marginBottom: 16,
+      backgroundColor: '#1a1000',
+      borderRadius: 16,
+      padding: 18,
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#FFD70033',
+    },
+    sunriseIcon: { fontSize: 40, marginRight: 16 },
+    sunriseInfo: { flex: 1 },
+    sunriseLabel: {
+      fontSize: 10,
+      fontWeight: '700',
+      color: colors.textTertiary,
+      letterSpacing: 1.5,
+    },
+    sunriseTime: {
+      fontSize: 22,
+      fontWeight: '800',
+      color: '#FFD700',
+      marginTop: 4,
+    },
 
-  // Section
-  section: { paddingHorizontal: 16, marginBottom: 24 },
-  sectionTitle: {
-    fontSize: 17,
-    fontWeight: '700',
-    color: '#fff',
-    marginBottom: 8,
-  },
-  sectionDesc: {
-    fontSize: 12,
-    color: '#888',
-    lineHeight: 18,
-    marginBottom: 12,
-  },
+    // Section
+    section: { paddingHorizontal: 16, marginBottom: 24 },
+    sectionTitle: {
+      fontSize: 17,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: 8,
+    },
+    sectionDesc: {
+      fontSize: 12,
+      color: colors.textTertiary,
+      lineHeight: 18,
+      marginBottom: 12,
+    },
 
-  // Progress bar
-  progressBar: {
-    height: 6,
-    backgroundColor: '#1a1a2e',
-    borderRadius: 3,
-    overflow: 'hidden',
-    marginBottom: 12,
-  },
-  progressFill: { height: '100%', backgroundColor: '#00FF88', borderRadius: 3 },
+    // Progress bar
+    progressBar: {
+      height: 6,
+      backgroundColor: colors.surface,
+      borderRadius: 3,
+      overflow: 'hidden',
+      marginBottom: 12,
+    },
+    progressFill: {
+      height: '100%',
+      backgroundColor: '#00FF88',
+      borderRadius: 3,
+    },
 
-  // Warning
-  warningBox: {
-    backgroundColor: '#2a1a0a',
-    borderRadius: 10,
-    padding: 12,
-    marginBottom: 12,
-    borderWidth: 1,
-    borderColor: '#FF880033',
-  },
-  warningText: { fontSize: 12, color: '#FF8800', lineHeight: 18 },
+    // Warning
+    warningBox: {
+      backgroundColor: '#2a1a0a',
+      borderRadius: 10,
+      padding: 12,
+      marginBottom: 12,
+      borderWidth: 1,
+      borderColor: '#FF880033',
+    },
+    warningText: { fontSize: 12, color: '#FF8800', lineHeight: 18 },
 
-  // Checklist
-  checkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
-  },
-  checkbox: {
-    width: 26,
-    height: 26,
-    borderRadius: 6,
-    borderWidth: 2,
-    borderColor: '#333',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
-  },
-  checkboxChecked: { backgroundColor: '#00FF88', borderColor: '#00FF88' },
-  checkboxCritical: { borderColor: '#FF4444' },
-  checkmark: { fontSize: 14, fontWeight: '800', color: '#000' },
-  checkText: { fontSize: 14, color: '#ccc', flex: 1 },
-  checkTextDone: { color: '#666', textDecorationLine: 'line-through' },
+    // Checklist
+    checkRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.surface,
+    },
+    checkbox: {
+      width: 26,
+      height: 26,
+      borderRadius: 6,
+      borderWidth: 2,
+      borderColor: colors.border,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginRight: 12,
+    },
+    checkboxChecked: { backgroundColor: '#00FF88', borderColor: '#00FF88' },
+    checkboxCritical: { borderColor: '#FF4444' },
+    checkmark: { fontSize: 14, fontWeight: '800', color: '#000' },
+    checkText: { fontSize: 14, color: colors.textSecondary, flex: 1 },
+    checkTextDone: {
+      color: colors.textTertiary,
+      textDecorationLine: 'line-through',
+    },
 
-  // Check-in timer
-  intervalRow: {
-    flexDirection: 'row',
-    gap: 8,
-    marginBottom: 16,
-    flexWrap: 'wrap',
-  },
-  intervalBtn: {
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    backgroundColor: '#0a0f20',
-    borderWidth: 1,
-    borderColor: '#1a2040',
-  },
-  intervalBtnActive: { borderColor: '#00FF88', backgroundColor: '#0a1a10' },
-  intervalLabel: { fontSize: 13, color: '#888', fontWeight: '600' },
-  intervalLabelActive: { color: '#00FF88' },
-  inputLabel: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#888',
-    marginBottom: 6,
-  },
-  input: {
-    backgroundColor: '#0a0f20',
-    borderRadius: 12,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 15,
-    color: '#fff',
-    borderWidth: 1,
-    borderColor: '#1a2040',
-    marginBottom: 16,
-  },
-  startBtn: {
-    backgroundColor: '#00FF88',
-    borderRadius: 14,
-    paddingVertical: 16,
-    alignItems: 'center',
-  },
-  startBtnText: { fontSize: 16, fontWeight: '800', color: '#000' },
-  activeBox: {
-    backgroundColor: '#0a2a0a',
-    borderRadius: 12,
-    padding: 14,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: '#00FF8833',
-  },
-  activeText: { fontSize: 13, color: '#00FF88', fontWeight: '600' },
-  stopBtn: {
-    backgroundColor: '#2a0a0a',
-    borderRadius: 14,
-    paddingVertical: 14,
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#FF444433',
-  },
-  stopBtnText: { fontSize: 14, fontWeight: '700', color: '#FF4444' },
+    // Check-in timer
+    intervalRow: {
+      flexDirection: 'row',
+      gap: 8,
+      marginBottom: 16,
+      flexWrap: 'wrap',
+    },
+    intervalBtn: {
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 20,
+      backgroundColor: '#0a0f20',
+      borderWidth: 1,
+      borderColor: '#1a2040',
+    },
+    intervalBtnActive: { borderColor: '#00FF88', backgroundColor: '#0a1a10' },
+    intervalLabel: {
+      fontSize: 13,
+      color: colors.textTertiary,
+      fontWeight: '600',
+    },
+    intervalLabelActive: { color: '#00FF88' },
+    inputLabel: {
+      fontSize: 12,
+      fontWeight: '600',
+      color: colors.textTertiary,
+      marginBottom: 6,
+    },
+    input: {
+      backgroundColor: '#0a0f20',
+      borderRadius: 12,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      fontSize: 15,
+      color: colors.text,
+      borderWidth: 1,
+      borderColor: '#1a2040',
+      marginBottom: 16,
+    },
+    startBtn: {
+      backgroundColor: '#00FF88',
+      borderRadius: 14,
+      paddingVertical: 16,
+      alignItems: 'center',
+    },
+    startBtnText: { fontSize: 16, fontWeight: '800', color: '#000' },
+    activeBox: {
+      backgroundColor: '#0a2a0a',
+      borderRadius: 12,
+      padding: 14,
+      marginBottom: 10,
+      borderWidth: 1,
+      borderColor: '#00FF8833',
+    },
+    activeText: { fontSize: 13, color: '#00FF88', fontWeight: '600' },
+    stopBtn: {
+      backgroundColor: '#2a0a0a',
+      borderRadius: 14,
+      paddingVertical: 14,
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: '#FF444433',
+    },
+    stopBtnText: { fontSize: 14, fontWeight: '700', color: '#FF4444' },
 
-  // Emergency
-  emergencyRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
-  },
-  emergencyInfo: { flex: 1 },
-  emergencyLabel: { fontSize: 14, fontWeight: '600', color: '#fff' },
-  emergencyRegion: { fontSize: 11, color: '#666', marginTop: 2 },
-  emergencyNote: {
-    fontSize: 11,
-    color: '#888',
-    fontStyle: 'italic',
-    marginTop: 2,
-  },
-  emergencyNumber: { fontSize: 16, fontWeight: '800', color: '#FF4444' },
-  emergencyNoCall: { fontSize: 12, color: '#555' },
+    // Emergency
+    emergencyRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: 14,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.surface,
+    },
+    emergencyInfo: { flex: 1 },
+    emergencyLabel: { fontSize: 14, fontWeight: '600', color: colors.text },
+    emergencyRegion: { fontSize: 11, color: colors.textTertiary, marginTop: 2 },
+    emergencyNote: {
+      fontSize: 11,
+      color: colors.textTertiary,
+      fontStyle: 'italic',
+      marginTop: 2,
+    },
+    emergencyNumber: { fontSize: 16, fontWeight: '800', color: '#FF4444' },
+    emergencyNoCall: { fontSize: 12, color: colors.textDisabled },
 
-  // Tips
-  tipRow: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    paddingVertical: 8,
-    borderBottomWidth: 1,
-    borderBottomColor: '#1a1a2e',
-  },
-  tipEmoji: { fontSize: 18, marginRight: 12, marginTop: 1 },
-  tipText: { fontSize: 13, color: '#ccc', lineHeight: 20, flex: 1 },
+    // Tips
+    tipRow: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+      paddingVertical: 8,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.surface,
+    },
+    tipEmoji: { fontSize: 18, marginRight: 12, marginTop: 1 },
+    tipText: {
+      fontSize: 13,
+      color: colors.textSecondary,
+      lineHeight: 20,
+      flex: 1,
+    },
 
-  // Disclaimer
-  disclaimerBox: {
-    marginHorizontal: 16,
-    backgroundColor: '#1a0a0a',
-    borderRadius: 12,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: '#FF444422',
-  },
-  disclaimerText: { fontSize: 11, color: '#FF8888', lineHeight: 18 },
-});
+    // Disclaimer
+    disclaimerBox: {
+      marginHorizontal: 16,
+      backgroundColor: '#1a0a0a',
+      borderRadius: 12,
+      padding: 16,
+      borderWidth: 1,
+      borderColor: '#FF444422',
+    },
+    disclaimerText: { fontSize: 11, color: '#FF8888', lineHeight: 18 },
+  });

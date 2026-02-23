@@ -6,10 +6,13 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useTheme from '../hooks/useTheme';
 
 const NOTIF_COUNT_KEY = '@profish_unread_notif_count';
 
 export default function NotificationBell({ onPress, size = 24 }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -72,7 +75,7 @@ export async function clearNotificationCount() {
   } catch {}
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     width: 44,
     height: 44,
@@ -89,15 +92,15 @@ const styles = StyleSheet.create({
     minWidth: 18,
     height: 18,
     borderRadius: 9,
-    backgroundColor: '#F44336',
+    backgroundColor: colors.error,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 4,
     borderWidth: 2,
-    borderColor: '#0a0a1a',
+    borderColor: colors.background,
   },
   badgeText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 10,
     fontWeight: 'bold',
   },

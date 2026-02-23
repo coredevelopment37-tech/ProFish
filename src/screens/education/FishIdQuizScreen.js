@@ -12,18 +12,7 @@ import {
   Animated,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-  wrong: '#FF4444',
-  correct: '#00D4AA',
-};
+import useTheme from '../../hooks/useTheme';
 
 // Quiz questions — species identification by description/characteristics
 const QUIZ_POOL = [
@@ -173,6 +162,8 @@ const BADGES = [
 ];
 
 export default function FishIdQuizScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [questionIndex, setQuestionIndex] = useState(0);
   const [score, setScore] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -372,70 +363,70 @@ export default function FishIdQuizScreen({ navigation }) {
 
 export { QUIZ_POOL, BADGES };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  headerTitle: { fontSize: 20, fontWeight: '800', color: THEME.text },
-  scoreText: { fontSize: 14, color: THEME.accent, fontWeight: '600' },
+  headerTitle: { fontSize: 20, fontWeight: '800', color: colors.text },
+  scoreText: { fontSize: 14, color: colors.accent, fontWeight: '600' },
   progressBar: {
     height: 4,
-    backgroundColor: THEME.border,
+    backgroundColor: colors.border,
     borderRadius: 2,
     marginTop: 12,
   },
-  progressFill: { height: 4, backgroundColor: THEME.primary, borderRadius: 2 },
+  progressFill: { height: 4, backgroundColor: colors.primary, borderRadius: 2 },
   questionCard: {
     margin: 16,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 24,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  questionNumber: { fontSize: 12, color: THEME.muted, marginBottom: 8 },
-  questionText: { fontSize: 17, color: THEME.text, lineHeight: 24 },
+  questionNumber: { fontSize: 12, color: colors.textTertiary, marginBottom: 8 },
+  questionText: { fontSize: 17, color: colors.text, lineHeight: 24 },
   optionsContainer: { paddingHorizontal: 16, gap: 10 },
   option: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     borderWidth: 2,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  optionSelected: { borderColor: THEME.primary },
+  optionSelected: { borderColor: colors.primary },
   optionCorrect: {
-    borderColor: THEME.correct,
-    backgroundColor: THEME.correct + '15',
+    borderColor: colors.success,
+    backgroundColor: colors.success + '15',
   },
   optionWrong: {
-    borderColor: THEME.wrong,
-    backgroundColor: THEME.wrong + '15',
+    borderColor: colors.error,
+    backgroundColor: colors.error + '15',
   },
   optionLetter: {
     fontSize: 16,
     fontWeight: '700',
-    color: THEME.muted,
+    color: colors.textTertiary,
     marginRight: 12,
     width: 24,
   },
-  optionText: { fontSize: 15, color: THEME.text, flex: 1 },
+  optionText: { fontSize: 15, color: colors.text, flex: 1 },
   factContainer: { padding: 16, marginTop: 8 },
   factText: {
     fontSize: 14,
-    color: THEME.accent,
+    color: colors.accent,
     lineHeight: 20,
     marginBottom: 16,
   },
   nextBtn: {
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 24,
     alignItems: 'center',
@@ -451,19 +442,19 @@ const styles = StyleSheet.create({
   resultTitle: {
     fontSize: 28,
     fontWeight: '800',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 12,
   },
-  resultScore: { fontSize: 18, color: THEME.muted, marginBottom: 8 },
-  resultStreak: { fontSize: 16, color: THEME.accent, marginBottom: 16 },
+  resultScore: { fontSize: 18, color: colors.textTertiary, marginBottom: 8 },
+  resultStreak: { fontSize: 16, color: colors.accent, marginBottom: 16 },
   resultBadge: {
     fontSize: 18,
-    color: THEME.primary,
+    color: colors.primary,
     fontWeight: '600',
     marginBottom: 24,
   },
   retryBtn: {
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 14,
     paddingHorizontal: 48,
     borderRadius: 24,

@@ -23,6 +23,7 @@ import tournamentService, {
   TOURNAMENT_SCORING,
 } from '../../services/tournamentService';
 import { canAccess, requireFeature } from '../../services/featureGate';
+import useTheme from '../../hooks/useTheme';
 
 const TABS = [
   { key: 'active', label: 'Active' },
@@ -33,6 +34,8 @@ const TABS = [
 
 export default function TournamentListScreen({ navigation }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [tab, setTab] = useState('active');
   const [tournaments, setTournaments] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -77,13 +80,13 @@ export default function TournamentListScreen({ navigation }) {
   function getStatusBadge(status) {
     switch (status) {
       case TOURNAMENT_STATUS.ACTIVE:
-        return { text: '● LIVE', color: '#4CAF50' };
+        return { text: '● LIVE', color: colors.success };
       case TOURNAMENT_STATUS.UPCOMING:
-        return { text: '◷ Upcoming', color: '#FF9800' };
+        return { text: '◷ Upcoming', color: colors.accent };
       case TOURNAMENT_STATUS.ENDED:
-        return { text: '✓ Ended', color: '#888' };
+        return { text: '✓ Ended', color: colors.textTertiary };
       default:
-        return { text: status, color: '#888' };
+        return { text: status, color: colors.textTertiary };
     }
   }
 
@@ -164,7 +167,7 @@ export default function TournamentListScreen({ navigation }) {
       {/* Tournament list */}
       {loading ? (
         <View style={styles.loadingState}>
-          <ActivityIndicator size="large" color="#0080FF" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : (
         <ScrollView
@@ -174,7 +177,7 @@ export default function TournamentListScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#0080FF"
+              tintColor={colors.primary}
             />
           }
         >
@@ -276,8 +279,8 @@ export default function TournamentListScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -286,11 +289,11 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
+  backText: { fontSize: 28, color: colors.text },
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     flex: 1,
     marginLeft: 8,
   },
@@ -308,10 +311,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
-  tabBtnActive: { backgroundColor: '#0080FF' },
-  tabText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  tabBtnActive: { backgroundColor: colors.primary },
+  tabText: { color: colors.textTertiary, fontSize: 13, fontWeight: '600' },
   tabTextActive: { color: '#fff' },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
@@ -328,28 +331,28 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   spotlightLabel: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 13,
     fontWeight: '700',
     marginBottom: 4,
   },
   spotlightName: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 18,
     fontWeight: '800',
     marginBottom: 4,
     textAlign: 'center',
   },
-  spotlightTime: { color: '#FF9800', fontSize: 14, fontWeight: '600' },
+  spotlightTime: { color: colors.accent, fontSize: 14, fontWeight: '600' },
 
   // Tournament card
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   cardHeader: {
     flexDirection: 'row',
@@ -359,11 +362,11 @@ const styles = StyleSheet.create({
   },
   statusBadge: { paddingHorizontal: 10, paddingVertical: 4, borderRadius: 8 },
   statusText: { fontSize: 12, fontWeight: '700' },
-  scoring: { color: '#888', fontSize: 12 },
-  cardName: { color: '#fff', fontSize: 17, fontWeight: '700', marginBottom: 6 },
+  scoring: { color: colors.textTertiary, fontSize: 12 },
+  cardName: { color: colors.text, fontSize: 17, fontWeight: '700', marginBottom: 6 },
   cardDesc: { color: '#aaa', fontSize: 13, marginBottom: 10, lineHeight: 18 },
   cardMeta: { flexDirection: 'row', gap: 16, marginBottom: 8 },
-  metaText: { color: '#888', fontSize: 12 },
+  metaText: { color: colors.textTertiary, fontSize: 12 },
   speciesRow: { flexDirection: 'row', gap: 6, marginBottom: 8 },
   speciesTag: {
     backgroundColor: 'rgba(0,128,255,0.15)',
@@ -371,11 +374,11 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     borderRadius: 8,
   },
-  speciesTagText: { color: '#0080FF', fontSize: 11, fontWeight: '600' },
-  prizeText: { color: '#FF9800', fontSize: 12, fontWeight: '600' },
+  speciesTagText: { color: colors.primary, fontSize: 11, fontWeight: '600' },
+  prizeText: { color: colors.accent, fontSize: 12, fontWeight: '600' },
 
   // Empty state
   emptyState: { alignItems: 'center', paddingVertical: 60 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: colors.textTertiary, fontSize: 15, textAlign: 'center' },
 });

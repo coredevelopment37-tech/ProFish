@@ -22,9 +22,10 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import communityService, { POST_TYPES } from '../../services/communityService';
+import useTheme from '../../hooks/useTheme';
 
 // ── Post Card Component ──────────────────────────────────
-function PostCard({ post, onLike, onComment, onReport, onProfile, t }) {
+function PostCard({ post, onLike, onComment, onReport, onProfile, t, styles, colors }) {
   const isLiked = post._isLiked || false;
   const typeIcon =
     post.type === POST_TYPES.CATCH_SHARE
@@ -64,7 +65,7 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t }) {
           onPress={() => onReport && onReport(post.id)}
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
-          <Text style={{ color: '#666', fontSize: 20 }}>⋯</Text>
+          <Text style={{ color: colors.textTertiary, fontSize: 20 }}>⋯</Text>
         </TouchableOpacity>
       </View>
 
@@ -155,6 +156,8 @@ function PostCard({ post, onLike, onComment, onReport, onProfile, t }) {
 
 // ── Main Screen ──────────────────────────────────────────
 export default function CommunityScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -317,6 +320,8 @@ export default function CommunityScreen({ navigation }) {
         onReport={handleReport}
         onProfile={handleProfile}
         t={t}
+        styles={styles}
+        colors={colors}
       />
     ),
     [handleLike, handleComment, handleReport, handleProfile, t],
@@ -326,7 +331,7 @@ export default function CommunityScreen({ navigation }) {
     if (!loadingMore) return null;
     return (
       <View style={styles.loadingMore}>
-        <ActivityIndicator size="small" color="#0080FF" />
+        <ActivityIndicator size="small" color={colors.primary} />
       </View>
     );
   }, [loadingMore]);
@@ -353,7 +358,7 @@ export default function CommunityScreen({ navigation }) {
   if (loading) {
     return (
       <View style={styles.centerLoader}>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -430,7 +435,7 @@ export default function CommunityScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            tintColor="#0080FF"
+            tintColor={colors.primary}
           />
         }
         contentContainerStyle={styles.feedContent}
@@ -494,7 +499,7 @@ export default function CommunityScreen({ navigation }) {
                   ? t('community.tipPlaceholder', 'Share a fishing tip...')
                   : t('community.questionPlaceholder', 'Ask the community...')
               }
-              placeholderTextColor="#555"
+              placeholderTextColor={colors.textDisabled}
               value={composeText}
               onChangeText={setComposeText}
               multiline
@@ -525,11 +530,11 @@ function formatTimeAgo(dateStr) {
   });
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   centerLoader: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -541,12 +546,12 @@ const styles = StyleSheet.create({
     paddingTop: 56,
     paddingBottom: 12,
   },
-  headerTitle: { fontSize: 28, fontWeight: 'bold', color: '#fff' },
+  headerTitle: { fontSize: 28, fontWeight: 'bold', color: colors.text },
   composeBtn: {
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -561,9 +566,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
-  typeChipText: { color: '#ccc', fontSize: 13 },
+  typeChipText: { color: colors.textSecondary, fontSize: 13 },
   feedContent: { paddingHorizontal: 16, paddingBottom: 100 },
   loadingMore: { paddingVertical: 20, alignItems: 'center' },
   emptyState: { alignItems: 'center', paddingTop: 80 },
@@ -571,14 +576,14 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 20,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 8,
   },
-  emptyText: { fontSize: 14, color: '#888', textAlign: 'center' },
+  emptyText: { fontSize: 14, color: colors.textTertiary, textAlign: 'center' },
 
   // Post Card
   postCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -589,22 +594,22 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
   authorAvatarText: { fontSize: 18 },
   authorInfo: { marginLeft: 10, flex: 1 },
-  authorName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  postTime: { color: '#666', fontSize: 12, marginTop: 2 },
+  authorName: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  postTime: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
   postContent: {
-    color: '#ddd',
+    color: colors.textSecondary,
     fontSize: 15,
     lineHeight: 22,
     marginBottom: 12,
   },
   catchEmbed: {
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 12,
     overflow: 'hidden',
     marginBottom: 12,
@@ -612,22 +617,22 @@ const styles = StyleSheet.create({
   catchPhoto: { width: '100%', height: 200 },
   catchEmbedInfo: { padding: 12 },
   catchSpecies: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 17,
     fontWeight: '700',
     textTransform: 'capitalize',
     marginBottom: 6,
   },
   catchStats: { flexDirection: 'row', gap: 12, marginBottom: 4 },
-  catchStat: { color: '#0080FF', fontSize: 13, fontWeight: '600' },
-  releasedTag: { color: '#4CAF50', fontSize: 12, marginTop: 4 },
+  catchStat: { color: colors.primary, fontSize: 13, fontWeight: '600' },
+  releasedTag: { color: colors.success, fontSize: 12, marginTop: 4 },
   postImage: {
     width: '100%',
     height: 200,
     borderRadius: 12,
     marginBottom: 12,
   },
-  postLocation: { color: '#888', fontSize: 12, marginBottom: 8 },
+  postLocation: { color: colors.textTertiary, fontSize: 12, marginBottom: 8 },
   actionsRow: {
     flexDirection: 'row',
     gap: 20,
@@ -637,8 +642,8 @@ const styles = StyleSheet.create({
   },
   actionBtn: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   actionIcon: { fontSize: 16 },
-  actionText: { color: '#888', fontSize: 13 },
-  actionLiked: { color: '#F44336' },
+  actionText: { color: colors.textTertiary, fontSize: 13 },
+  actionLiked: { color: colors.error },
 
   // Compose Modal
   composeOverlay: {
@@ -647,7 +652,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.6)',
   },
   composeSheet: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     padding: 20,
@@ -659,9 +664,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  composeCancel: { color: '#888', fontSize: 16 },
-  composeTitle: { color: '#fff', fontSize: 17, fontWeight: '700' },
-  composePost: { color: '#0080FF', fontSize: 16, fontWeight: '700' },
+  composeCancel: { color: colors.textTertiary, fontSize: 16 },
+  composeTitle: { color: colors.text, fontSize: 17, fontWeight: '700' },
+  composePost: { color: colors.primary, fontSize: 16, fontWeight: '700' },
   composeTypeRow: {
     flexDirection: 'row',
     gap: 10,
@@ -671,17 +676,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 10,
     borderRadius: 10,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     alignItems: 'center',
   },
   composeTypeBtnActive: {
-    backgroundColor: '#0080FF20',
+    backgroundColor: colors.primary + '20',
     borderWidth: 1,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
-  composeTypeText: { color: '#ccc', fontSize: 14 },
+  composeTypeText: { color: colors.textSecondary, fontSize: 14 },
   composeInput: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     lineHeight: 24,
     minHeight: 120,
@@ -689,7 +694,7 @@ const styles = StyleSheet.create({
     padding: 0,
   },
   charCount: {
-    color: '#555',
+    color: colors.textDisabled,
     fontSize: 12,
     textAlign: 'right',
     marginTop: 8,

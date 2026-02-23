@@ -34,6 +34,7 @@ import leaderboardService, {
   LEADERBOARD_REGIONS,
 } from '../../services/leaderboardService';
 import regionGatingService from '../../services/regionGatingService';
+import useTheme from '../../hooks/useTheme';
 
 const LEADERBOARD_TABS = [
   { key: 'global', label: 'Global', icon: '🌍' },
@@ -73,6 +74,8 @@ const TIME_FILTERS = [
 export default function LeaderboardScreen({ navigation }) {
   const { t } = useTranslation();
   const { state } = useApp();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [tab, setTab] = useState('global');
   const [category, setCategory] = useState('catches');
   const [timeFilter, setTimeFilter] = useState(TIME_FILTER.ALL_TIME);
@@ -331,7 +334,7 @@ export default function LeaderboardScreen({ navigation }) {
 
       {loading ? (
         <View style={styles.loadingState}>
-          <ActivityIndicator size="large" color="#0080FF" />
+          <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : tab !== 'badges' ? (
         <ScrollView
@@ -341,7 +344,7 @@ export default function LeaderboardScreen({ navigation }) {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={onRefresh}
-              tintColor="#0080FF"
+              tintColor={colors.primary}
             />
           }
         >
@@ -515,8 +518,8 @@ export default function LeaderboardScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -525,8 +528,8 @@ const styles = StyleSheet.create({
     paddingBottom: 12,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
-  title: { fontSize: 22, fontWeight: '700', color: '#fff', marginLeft: 8 },
+  backText: { fontSize: 28, color: colors.text },
+  title: { fontSize: 22, fontWeight: '700', color: colors.text, marginLeft: 8 },
 
   // Tabs (scrollable)
   tabScroll: { maxHeight: 44, marginBottom: 8 },
@@ -539,11 +542,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderRadius: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     alignItems: 'center',
   },
-  tabBtnActive: { backgroundColor: '#0080FF' },
-  tabText: { color: '#888', fontSize: 13, fontWeight: '600' },
+  tabBtnActive: { backgroundColor: colors.primary },
+  tabText: { color: colors.textTertiary, fontSize: 13, fontWeight: '600' },
   tabTextActive: { color: '#fff' },
 
   // Time filters (#362)
@@ -557,16 +560,16 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: 'transparent',
   },
   timeChipActive: {
     backgroundColor: 'rgba(255,152,0,0.15)',
-    borderColor: '#FF9800',
+    borderColor: colors.accent,
   },
-  timeChipText: { color: '#888', fontSize: 12, fontWeight: '600' },
-  timeChipTextActive: { color: '#FF9800' },
+  timeChipText: { color: colors.textTertiary, fontSize: 12, fontWeight: '600' },
+  timeChipTextActive: { color: colors.accent },
 
   // Region chips (#359)
   regionScroll: { maxHeight: 40, marginBottom: 8 },
@@ -579,17 +582,17 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 7,
     borderRadius: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderWidth: 1,
     borderColor: 'transparent',
   },
   regionChipActive: {
     backgroundColor: 'rgba(0,128,255,0.15)',
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
-  regionChipText: { color: '#888', fontSize: 12, fontWeight: '600' },
-  regionChipTextActive: { color: '#0080FF' },
-  emptyHint: { color: '#666', fontSize: 13, paddingHorizontal: 4 },
+  regionChipText: { color: colors.textTertiary, fontSize: 12, fontWeight: '600' },
+  regionChipTextActive: { color: colors.primary },
+  emptyHint: { color: colors.textTertiary, fontSize: 13, paddingHorizontal: 4 },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
 
@@ -603,15 +606,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   categoryChipActive: {
     backgroundColor: 'rgba(0,128,255,0.2)',
     borderWidth: 1,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
-  categoryText: { color: '#888', fontSize: 13, fontWeight: '600' },
-  categoryTextActive: { color: '#0080FF' },
+  categoryText: { color: colors.textTertiary, fontSize: 13, fontWeight: '600' },
+  categoryTextActive: { color: colors.primary },
 
   // Loading
   loadingState: { flex: 1, justifyContent: 'center', alignItems: 'center' },
@@ -619,41 +622,41 @@ const styles = StyleSheet.create({
   // Empty
   emptyState: { alignItems: 'center', padding: 60 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: colors.textTertiary, fontSize: 15, textAlign: 'center' },
 
   // Rank row
   rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
   },
   rankRowMe: {
     borderWidth: 1,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(0,128,255,0.08)',
   },
   rankBadge: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 12,
   },
   rankMedal: { fontSize: 20 },
-  rankNumber: { color: '#888', fontSize: 15, fontWeight: '700' },
+  rankNumber: { color: colors.textTertiary, fontSize: 15, fontWeight: '700' },
   rankInfo: { flex: 1 },
-  rankName: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  rankNameMe: { color: '#0080FF' },
-  rankValue: { color: '#FF9800', fontSize: 16, fontWeight: '800' },
+  rankName: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  rankNameMe: { color: colors.primary },
+  rankValue: { color: colors.accent, fontSize: 16, fontWeight: '800' },
 
   // Badge progress
   badgeProgress: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 16,
     marginBottom: 20,
@@ -662,30 +665,30 @@ const styles = StyleSheet.create({
   badgeProgressCount: {
     fontSize: 36,
     fontWeight: '800',
-    color: '#FF9800',
+    color: colors.accent,
   },
   badgeProgressLabel: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 14,
     marginBottom: 12,
   },
   badgeProgressBar: {
     height: 8,
     width: '100%',
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderRadius: 4,
     overflow: 'hidden',
   },
   badgeProgressFill: {
     height: 8,
-    backgroundColor: '#FF9800',
+    backgroundColor: colors.accent,
     borderRadius: 4,
   },
 
   // Badge sections
   badgeSection: { marginBottom: 20 },
   badgeSectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 12,
@@ -698,12 +701,12 @@ const styles = StyleSheet.create({
   },
   badgeCard: {
     width: '47%',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   badgeCardLocked: {
     opacity: 0.5,
@@ -712,15 +715,15 @@ const styles = StyleSheet.create({
   badgeIcon: { fontSize: 32, marginBottom: 8 },
   badgeIconLocked: { opacity: 0.4 },
   badgeName: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 14,
     fontWeight: '700',
     marginBottom: 4,
     textAlign: 'center',
   },
-  badgeNameLocked: { color: '#666' },
+  badgeNameLocked: { color: colors.textTertiary },
   badgeDesc: {
-    color: '#888',
+    color: colors.textTertiary,
     fontSize: 11,
     textAlign: 'center',
     lineHeight: 16,
@@ -736,13 +739,13 @@ const styles = StyleSheet.create({
     marginTop: 12,
   },
   newBadgeTitle: {
-    color: '#FF9800',
+    color: colors.accent,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 8,
   },
   newBadgeItem: {
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 14,
     marginBottom: 4,
   },

@@ -11,8 +11,11 @@ import {
   StyleSheet,
   Animated,
 } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 export default function LoadingScreen({ message = 'Loading…' }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const scaleAnim = useRef(new Animated.Value(0.8)).current;
 
@@ -43,16 +46,16 @@ export default function LoadingScreen({ message = 'Loading…' }) {
         <Text style={styles.logo}>🐟</Text>
         <Text style={styles.brandName}>ProFish</Text>
       </Animated.View>
-      <ActivityIndicator size="large" color="#0080FF" style={styles.spinner} />
+      <ActivityIndicator size="large" color={colors.primary} style={styles.spinner} />
       <Text style={styles.message}>{message}</Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -67,14 +70,14 @@ const styles = StyleSheet.create({
   brandName: {
     fontSize: 32,
     fontWeight: '800',
-    color: '#0080FF',
+    color: colors.primary,
     letterSpacing: 1,
   },
   spinner: {
     marginBottom: 16,
   },
   message: {
-    color: '#667',
+    color: colors.textTertiary,
     fontSize: 14,
   },
 });

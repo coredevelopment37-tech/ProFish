@@ -19,11 +19,14 @@ import { Swipeable } from 'react-native-gesture-handler';
 import catchService from '../../services/catchService';
 import { useApp } from '../../store/AppContext';
 import CatchCard from '../../components/CatchCard';
+import useTheme from '../../hooks/useTheme';
 
 const SORT_OPTIONS = ['date', 'weight', 'species'];
 const FILTER_OPTIONS = ['all', 'freshwater', 'saltwater', 'brackish'];
 
 export default function CatchesScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state } = useApp();
   const units = state.units || 'metric';
@@ -231,6 +234,7 @@ export default function CatchesScreen({ navigation }) {
             saltwater: '🌊',
             brackish: '🏝️',
           }}
+          styles={styles}
         />
         <TouchableOpacity
           style={styles.sortBtn}
@@ -275,7 +279,7 @@ export default function CatchesScreen({ navigation }) {
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            tintColor="#0080FF"
+            tintColor={colors.primary}
           />
         }
         showsVerticalScrollIndicator={false}
@@ -284,7 +288,7 @@ export default function CatchesScreen({ navigation }) {
   );
 }
 
-function ScrollableChips({ options, selected, onSelect, labelMap }) {
+function ScrollableChips({ options, selected, onSelect, labelMap, styles }) {
   return (
     <View style={styles.chips}>
       {options.map(opt => (
@@ -304,8 +308,8 @@ function ScrollableChips({ options, selected, onSelect, labelMap }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   headerRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -315,7 +319,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
     paddingBottom: 4,
@@ -326,14 +330,14 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     marginTop: Platform.OS === 'ios' ? 40 : 0,
   },
   statsBtnText: { fontSize: 20 },
   list: { padding: 16, paddingBottom: 100 },
   statsBar: {
     flexDirection: 'row',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 16,
@@ -341,16 +345,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   statBox: { alignItems: 'center' },
-  statNumber: { fontSize: 24, fontWeight: 'bold', color: '#0080FF' },
-  statLabel: { fontSize: 12, color: '#888', marginTop: 4 },
+  statNumber: { fontSize: 24, fontWeight: 'bold', color: colors.primary },
+  statLabel: { fontSize: 12, color: colors.textTertiary, marginTop: 4 },
   statDivider: {
     width: 1,
     height: 30,
-    backgroundColor: '#333',
+    backgroundColor: colors.border,
   },
   empty: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 40,
@@ -359,17 +363,17 @@ const styles = StyleSheet.create({
   emptyTitle: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 8,
   },
   emptySubtitle: {
     fontSize: 16,
-    color: '#888',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginBottom: 24,
   },
   logButton: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 32,
     paddingVertical: 14,
     borderRadius: 12,
@@ -390,21 +394,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 16,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   chipActive: {
     backgroundColor: 'rgba(0,128,255,0.2)',
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
   },
-  chipText: { color: '#888', fontSize: 13, fontWeight: '500' },
-  chipTextActive: { color: '#0080FF' },
+  chipText: { color: colors.textTertiary, fontSize: 13, fontWeight: '500' },
+  chipTextActive: { color: colors.primary },
   sortBtn: {
     width: 36,
     height: 36,
     borderRadius: 18,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: 8,
@@ -416,7 +420,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   editAction: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     width: 72,
@@ -424,7 +428,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   deleteAction: {
-    backgroundColor: '#F44336',
+    backgroundColor: colors.error,
     justifyContent: 'center',
     alignItems: 'center',
     width: 72,

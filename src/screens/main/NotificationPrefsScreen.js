@@ -20,8 +20,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import notificationService from '../../services/notificationService';
+import useTheme from '../../hooks/useTheme';
 
 function Section({ title, children }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.section}>
       <Text style={styles.sectionTitle}>{title}</Text>
@@ -31,6 +34,8 @@ function Section({ title, children }) {
 }
 
 function ToggleRow({ label, description, value, onToggle }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.row}>
       <View style={styles.rowText}>
@@ -40,9 +45,9 @@ function ToggleRow({ label, description, value, onToggle }) {
       <Switch
         value={value}
         onValueChange={onToggle}
-        trackColor={{ false: '#333', true: '#0060CC' }}
-        thumbColor={value ? '#0080FF' : '#888'}
-        ios_backgroundColor="#333"
+        trackColor={{ false: colors.border, true: colors.primaryDark }}
+        thumbColor={value ? colors.primary : colors.textTertiary}
+        ios_backgroundColor={colors.border}
         accessibilityLabel={`${label} toggle`}
         accessibilityRole="switch"
       />
@@ -51,6 +56,8 @@ function ToggleRow({ label, description, value, onToggle }) {
 }
 
 export default function NotificationPrefsScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [prefs, setPrefs] = useState(null);
 
@@ -204,8 +211,8 @@ export default function NotificationPrefsScreen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -213,11 +220,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingTop: 56,
     paddingBottom: 12,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
   },
   backBtn: { padding: 8 },
-  backText: { color: '#fff', fontSize: 22 },
-  headerTitle: { color: '#fff', fontSize: 18, fontWeight: '700' },
+  backText: { color: colors.text, fontSize: 22 },
+  headerTitle: { color: colors.text, fontSize: 18, fontWeight: '700' },
 
   scrollContent: { paddingBottom: 40 },
 
@@ -226,7 +233,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   sectionTitle: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 13,
     fontWeight: '700',
     textTransform: 'uppercase',
@@ -240,37 +247,37 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
   rowText: { flex: 1, marginRight: 12 },
-  rowLabel: { color: '#fff', fontSize: 15, fontWeight: '600' },
-  rowDesc: { color: '#888', fontSize: 12, marginTop: 2 },
+  rowLabel: { color: colors.text, fontSize: 15, fontWeight: '600' },
+  rowDesc: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
 
   thresholdRow: {
     paddingVertical: 14,
     borderBottomWidth: StyleSheet.hairlineWidth,
-    borderBottomColor: '#222',
+    borderBottomColor: colors.border,
   },
-  thresholdLabel: { color: '#ccc', fontSize: 14, marginBottom: 10 },
+  thresholdLabel: { color: colors.textSecondary, fontSize: 14, marginBottom: 10 },
   thresholdOptions: { flexDirection: 'row', gap: 10 },
   thresholdBtn: {
     paddingHorizontal: 18,
     paddingVertical: 8,
     borderRadius: 20,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#333',
+    borderColor: colors.border,
   },
   thresholdBtnActive: {
-    backgroundColor: '#0080FF22',
-    borderColor: '#0080FF',
+    backgroundColor: colors.primary + '22',
+    borderColor: colors.primary,
   },
-  thresholdText: { color: '#888', fontSize: 14, fontWeight: '600' },
-  thresholdTextActive: { color: '#0080FF' },
+  thresholdText: { color: colors.textTertiary, fontSize: 14, fontWeight: '600' },
+  thresholdTextActive: { color: colors.primary },
 
   footer: { padding: 24 },
   footerText: {
-    color: '#555',
+    color: colors.textDisabled,
     fontSize: 12,
     lineHeight: 18,
     textAlign: 'center',

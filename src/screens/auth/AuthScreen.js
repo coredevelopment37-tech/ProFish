@@ -19,8 +19,11 @@ import {
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import firebaseAuthService from '../../services/firebaseAuthService';
+import useTheme from '../../hooks/useTheme';
 
 export default function AuthScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [loadingProvider, setLoadingProvider] = useState(null);
@@ -160,7 +163,7 @@ export default function AuthScreen({ route, navigation }) {
 
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: '#0a0a1a' }}
+      style={{ flex: 1, backgroundColor: colors.background }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <ScrollView
@@ -168,7 +171,10 @@ export default function AuthScreen({ route, navigation }) {
         contentContainerStyle={{ flexGrow: 1, paddingBottom: 40 }}
         keyboardShouldPersistTaps="handled"
       >
-        <StatusBar barStyle="light-content" backgroundColor="#0a0a1a" />
+        <StatusBar
+          barStyle="light-content"
+          backgroundColor={colors.background}
+        />
 
         {/* Header */}
         <View style={styles.header}>
@@ -204,7 +210,7 @@ export default function AuthScreen({ route, navigation }) {
               activeOpacity={0.8}
             >
               {loadingProvider === 'google' ? (
-                <ActivityIndicator color="#333" size="small" />
+                <ActivityIndicator color={colors.border} size="small" />
               ) : (
                 <>
                   <Text style={styles.authBtnIcon}>G</Text>
@@ -254,7 +260,7 @@ export default function AuthScreen({ route, navigation }) {
             activeOpacity={0.8}
           >
             {loadingProvider === 'anonymous' ? (
-              <ActivityIndicator color="#888" size="small" />
+              <ActivityIndicator color={colors.textTertiary} size="small" />
             ) : (
               <>
                 <Text style={styles.authBtnIcon}>👤</Text>
@@ -293,7 +299,7 @@ export default function AuthScreen({ route, navigation }) {
                 <TextInput
                   style={styles.input}
                   placeholder={t('auth.displayName', 'Display Name')}
-                  placeholderTextColor="#555"
+                  placeholderTextColor={colors.textDisabled}
                   value={displayName}
                   onChangeText={setDisplayName}
                   autoCapitalize="words"
@@ -303,7 +309,7 @@ export default function AuthScreen({ route, navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.email', 'Email')}
-                placeholderTextColor="#555"
+                placeholderTextColor={colors.textDisabled}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
@@ -314,7 +320,7 @@ export default function AuthScreen({ route, navigation }) {
               <TextInput
                 style={styles.input}
                 placeholder={t('auth.password', 'Password')}
-                placeholderTextColor="#555"
+                placeholderTextColor={colors.textDisabled}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry
@@ -377,152 +383,153 @@ export default function AuthScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#0a0a1a',
-    paddingHorizontal: 24,
-    paddingBottom: 30,
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingTop: Platform.OS === 'ios' ? 60 : 20,
-    marginBottom: 20,
-  },
-  backBtn: {
-    width: 44,
-    height: 44,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backBtnText: {
-    fontSize: 28,
-    color: '#fff',
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#fff',
-    marginLeft: 8,
-  },
-  branding: {
-    alignItems: 'center',
-    marginBottom: 40,
-    marginTop: 20,
-  },
-  logo: {
-    fontSize: 54,
-    marginBottom: 8,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '800',
-    color: '#fff',
-  },
-  subtitle: {
-    fontSize: 15,
-    color: '#888',
-    marginTop: 8,
-    textAlign: 'center',
-    paddingHorizontal: 20,
-  },
-  buttons: {
-    gap: 12,
-  },
-  authBtn: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: 14,
-    gap: 10,
-    minHeight: 56,
-  },
-  googleBtn: {
-    backgroundColor: '#fff',
-  },
-  appleBtn: {
-    backgroundColor: '#000',
-    borderWidth: 1,
-    borderColor: '#333',
-  },
-  anonBtn: {
-    borderWidth: 1.5,
-    borderColor: '#333',
-  },
-  authBtnIcon: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: '#4285F4',
-  },
-  authBtnText: {
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  googleText: {
-    color: '#333',
-  },
-  appleText: {
-    color: '#fff',
-  },
-  anonText: {
-    color: '#888',
-  },
-  divider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 8,
-  },
-  dividerLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#333',
-  },
-  dividerText: {
-    color: '#555',
-    paddingHorizontal: 16,
-    fontSize: 14,
-  },
-  guestNote: {
-    fontSize: 13,
-    color: '#555',
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  legal: {
-    fontSize: 12,
-    color: '#555',
-    textAlign: 'center',
-  },
-  emailToggleBtn: {
-    borderWidth: 1.5,
-    borderColor: '#333',
-  },
-  emailForm: {
-    gap: 10,
-  },
-  input: {
-    backgroundColor: '#1a1a2e',
-    color: '#fff',
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: '#2a2a3e',
-  },
-  emailSubmitBtn: {
-    backgroundColor: '#0080FF',
-    marginTop: 4,
-  },
-  emailLinks: {
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 4,
-  },
-  linkText: {
-    color: '#0080FF',
-    fontSize: 14,
-  },
-});
+const createStyles = colors =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
+      paddingHorizontal: 24,
+      paddingBottom: 30,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingTop: Platform.OS === 'ios' ? 60 : 20,
+      marginBottom: 20,
+    },
+    backBtn: {
+      width: 44,
+      height: 44,
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    backBtnText: {
+      fontSize: 28,
+      color: colors.text,
+    },
+    headerTitle: {
+      fontSize: 20,
+      fontWeight: '600',
+      color: colors.text,
+      marginLeft: 8,
+    },
+    branding: {
+      alignItems: 'center',
+      marginBottom: 40,
+      marginTop: 20,
+    },
+    logo: {
+      fontSize: 54,
+      marginBottom: 8,
+    },
+    title: {
+      fontSize: 32,
+      fontWeight: '800',
+      color: colors.text,
+    },
+    subtitle: {
+      fontSize: 15,
+      color: colors.textTertiary,
+      marginTop: 8,
+      textAlign: 'center',
+      paddingHorizontal: 20,
+    },
+    buttons: {
+      gap: 12,
+    },
+    authBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingVertical: 16,
+      borderRadius: 14,
+      gap: 10,
+      minHeight: 56,
+    },
+    googleBtn: {
+      backgroundColor: '#fff',
+    },
+    appleBtn: {
+      backgroundColor: '#000',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    anonBtn: {
+      borderWidth: 1.5,
+      borderColor: colors.border,
+    },
+    authBtnIcon: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#4285F4',
+    },
+    authBtnText: {
+      fontSize: 16,
+      fontWeight: '600',
+    },
+    googleText: {
+      color: colors.border,
+    },
+    appleText: {
+      color: '#fff',
+    },
+    anonText: {
+      color: colors.textTertiary,
+    },
+    divider: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 8,
+    },
+    dividerLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: colors.border,
+    },
+    dividerText: {
+      color: colors.textDisabled,
+      paddingHorizontal: 16,
+      fontSize: 14,
+    },
+    guestNote: {
+      fontSize: 13,
+      color: colors.textDisabled,
+      textAlign: 'center',
+      marginTop: 4,
+    },
+    legal: {
+      fontSize: 12,
+      color: colors.textDisabled,
+      textAlign: 'center',
+    },
+    emailToggleBtn: {
+      borderWidth: 1.5,
+      borderColor: colors.border,
+    },
+    emailForm: {
+      gap: 10,
+    },
+    input: {
+      backgroundColor: colors.surface,
+      color: colors.text,
+      borderRadius: 14,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: colors.surfaceLight,
+    },
+    emailSubmitBtn: {
+      backgroundColor: colors.primary,
+      marginTop: 4,
+    },
+    emailLinks: {
+      alignItems: 'center',
+      gap: 8,
+      marginTop: 4,
+    },
+    linkText: {
+      color: colors.primary,
+      fontSize: 14,
+    },
+  });

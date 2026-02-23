@@ -6,9 +6,12 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 
 export default function TideChart({ tide }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
 
   if (!tide || tide.state === 'unknown') {
     return (
@@ -22,7 +25,7 @@ export default function TideChart({ tide }) {
   }
 
   const isRising = tide.state === 'rising';
-  const stateColor = isRising ? '#4CAF50' : '#FF9800';
+  const stateColor = isRising ? colors.success : colors.accent;
   const stateIcon = isRising ? '↗️' : '↘️';
   const stateLabel = isRising
     ? t('fishcast.tideRising', 'Rising')
@@ -98,9 +101,9 @@ function formatTime(dateStr) {
   return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   card: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     padding: 16,
     marginBottom: 12,
@@ -111,24 +114,24 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  title: { fontSize: 16, fontWeight: '600', color: '#fff' },
+  title: { fontSize: 16, fontWeight: '600', color: colors.text },
   badge: {
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
   },
   badgeText: { fontSize: 13, fontWeight: '600' },
-  noData: { fontSize: 14, color: '#666', marginTop: 8 },
+  noData: { fontSize: 14, color: colors.textTertiary, marginTop: 8 },
   progressContainer: { marginBottom: 12 },
   progressLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
   },
-  progressLabel: { fontSize: 11, color: '#888' },
+  progressLabel: { fontSize: 11, color: colors.textTertiary },
   progressBar: {
     height: 8,
-    backgroundColor: '#0d0d1a',
+    backgroundColor: colors.background,
     borderRadius: 4,
     overflow: 'visible',
     position: 'relative',
@@ -145,11 +148,11 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginLeft: -8,
     borderWidth: 2,
-    borderColor: '#1a1a2e',
+    borderColor: colors.surface,
   },
   progressPercent: {
     fontSize: 11,
-    color: '#666',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginTop: 4,
   },
@@ -159,9 +162,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingTop: 12,
     borderTopWidth: 1,
-    borderTopColor: '#333',
+    borderTopColor: colors.border,
   },
-  nextLabel: { fontSize: 13, color: '#888' },
-  nextTime: { fontSize: 15, color: '#0080FF', fontWeight: '600' },
-  nextHeight: { fontSize: 13, color: '#aaa' },
+  nextLabel: { fontSize: 13, color: colors.textTertiary },
+  nextTime: { fontSize: 15, color: colors.primary, fontWeight: '600' },
+  nextHeight: { fontSize: 13, color: colors.textSecondary },
 });

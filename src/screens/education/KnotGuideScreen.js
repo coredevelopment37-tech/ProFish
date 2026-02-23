@@ -12,17 +12,9 @@ import {
   ScrollView,
   Dimensions,
 } from 'react-native';
+import useTheme from '../../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
 
 const KNOT_STEPS = {
   knot_palomar: {
@@ -295,7 +287,7 @@ const KNOT_STEPS = {
   },
 };
 
-function KnotStepCard({ step, total, data }) {
+function KnotStepCard({ step, total, data, styles }) {
   return (
     <View style={styles.stepCard}>
       <View style={styles.stepHeader}>
@@ -313,6 +305,8 @@ function KnotStepCard({ step, total, data }) {
 }
 
 export default function KnotGuideScreen({ route, navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const knotId = route?.params?.knotId || 'knot_palomar';
   const knot = KNOT_STEPS[knotId];
   const [currentStep, setCurrentStep] = useState(0);
@@ -367,6 +361,7 @@ export default function KnotGuideScreen({ route, navigation }) {
             step={s.step}
             total={knot.steps.length}
             data={s}
+            styles={styles}
           />
         ))}
       </ScrollView>
@@ -401,11 +396,11 @@ export default function KnotGuideScreen({ route, navigation }) {
 
 export { KNOT_STEPS };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 24, fontWeight: '800', color: THEME.text },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 24, fontWeight: '800', color: colors.text },
   infoRow: {
     flexDirection: 'row',
     paddingHorizontal: 16,
@@ -414,14 +409,14 @@ const styles = StyleSheet.create({
   },
   infoPill: {
     flex: 1,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     padding: 12,
     borderRadius: 10,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  infoLabel: { fontSize: 11, color: THEME.muted, marginBottom: 4 },
-  infoValue: { fontSize: 14, fontWeight: '700', color: THEME.accent },
+  infoLabel: { fontSize: 11, color: colors.textTertiary, marginBottom: 4 },
+  infoValue: { fontSize: 14, fontWeight: '700', color: colors.accent },
   bestForRow: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -429,54 +424,54 @@ const styles = StyleSheet.create({
     marginBottom: 16,
     flexWrap: 'wrap',
   },
-  bestForLabel: { fontSize: 13, color: THEME.muted },
+  bestForLabel: { fontSize: 13, color: colors.textTertiary },
   bestForChip: {
-    backgroundColor: THEME.primary + '20',
+    backgroundColor: colors.primary + '20',
     paddingHorizontal: 10,
     paddingVertical: 4,
     borderRadius: 12,
     marginLeft: 6,
     marginBottom: 4,
   },
-  bestForText: { fontSize: 12, color: THEME.primary },
+  bestForText: { fontSize: 12, color: colors.primary },
   stepsContainer: { flex: 1 },
   stepsContent: { padding: 16, paddingBottom: 100 },
   stepCard: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
     marginBottom: 12,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   stepHeader: { flexDirection: 'row', alignItems: 'center', marginBottom: 12 },
   stepBadge: {
     width: 28,
     height: 28,
     borderRadius: 14,
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   stepBadgeText: { fontSize: 14, fontWeight: '700', color: '#FFF' },
-  stepOf: { fontSize: 12, color: THEME.muted, marginLeft: 8 },
+  stepOf: { fontSize: 12, color: colors.textTertiary, marginLeft: 8 },
   stepInstruction: {
     fontSize: 15,
-    color: THEME.text,
+    color: colors.text,
     lineHeight: 22,
     marginBottom: 12,
   },
   diagramBox: {
-    backgroundColor: '#0A0A1A',
+    backgroundColor: colors.background,
     borderRadius: 8,
     padding: 16,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   diagramText: {
     fontFamily: 'monospace',
     fontSize: 14,
-    color: THEME.accent,
+    color: colors.accent,
     lineHeight: 20,
   },
   nav: {
@@ -490,15 +485,15 @@ const styles = StyleSheet.create({
   navBtn: {
     paddingVertical: 10,
     paddingHorizontal: 20,
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     borderRadius: 20,
   },
   navBtnDisabled: { opacity: 0.3 },
   navBtnText: { fontSize: 14, fontWeight: '600', color: '#FFF' },
-  navStep: { fontSize: 14, color: THEME.muted },
+  navStep: { fontSize: 14, color: colors.textTertiary },
   errorText: {
     fontSize: 18,
-    color: THEME.muted,
+    color: colors.textTertiary,
     textAlign: 'center',
     marginTop: 100,
   },

@@ -13,16 +13,9 @@ import {
   Modal,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import useTheme from '../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
-
-const THEME = {
-  bg: 'rgba(0, 0, 0, 0.85)',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  text: '#FFFFFF',
-  muted: '#8A8A9A',
-};
 
 // ——— Tutorial Definitions ———
 
@@ -164,6 +157,8 @@ export function resetTutorial(tutorialId) {
  *   <TutorialOverlay tutorialId="FISHCAST" visible={showTut} onClose={() => setShowTut(false)} />
  */
 export default function TutorialOverlay({ tutorialId, visible, onClose }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [step, setStep] = useState(0);
   const tutorial = TUTORIALS[tutorialId];
 
@@ -226,50 +221,50 @@ export default function TutorialOverlay({ tutorialId, visible, onClose }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
-    backgroundColor: THEME.bg,
+    backgroundColor: colors.overlay,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 24,
   },
   card: {
     width: width - 48,
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 20,
     padding: 32,
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2A2A40',
+    borderColor: colors.surfaceLight,
   },
   dots: { flexDirection: 'row', marginBottom: 24, gap: 8 },
-  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#333' },
-  dotActive: { backgroundColor: THEME.primary, width: 24 },
+  dot: { width: 8, height: 8, borderRadius: 4, backgroundColor: colors.border },
+  dotActive: { backgroundColor: colors.primary, width: 24 },
   emoji: { fontSize: 56, marginBottom: 16 },
   title: {
     fontSize: 22,
     fontWeight: '800',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 12,
     textAlign: 'center',
   },
   message: {
     fontSize: 15,
-    color: THEME.muted,
+    color: colors.textTertiary,
     lineHeight: 22,
     textAlign: 'center',
     marginBottom: 32,
   },
   buttons: { flexDirection: 'row', gap: 16 },
   skipBtn: { paddingVertical: 12, paddingHorizontal: 24 },
-  skipText: { fontSize: 16, color: THEME.muted },
+  skipText: { fontSize: 16, color: colors.textTertiary },
   nextBtn: {
-    backgroundColor: THEME.primary,
+    backgroundColor: colors.primary,
     paddingVertical: 12,
     paddingHorizontal: 32,
     borderRadius: 24,
   },
-  nextText: { fontSize: 16, fontWeight: '700', color: '#fff' },
-  counter: { fontSize: 12, color: '#555', marginTop: 16 },
+  nextText: { fontSize: 16, fontWeight: '700', color: colors.text },
+  counter: { fontSize: 12, color: colors.textDisabled, marginTop: 16 },
 });

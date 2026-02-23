@@ -5,16 +5,12 @@
 
 import React, { useEffect, useRef } from 'react';
 import { View, Animated, StyleSheet, Dimensions } from 'react-native';
+import useTheme from '../hooks/useTheme';
 
 const { width } = Dimensions.get('window');
 
-const THEME = {
-  bg: '#1A1A2E',
-  bone: '#2A2A40',
-  shimmer: '#3A3A55',
-};
-
 function ShimmerBar({ width: w, height: h, style, delay = 0 }) {
+  const { colors } = useTheme();
   const shimmerAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
@@ -48,7 +44,7 @@ function ShimmerBar({ width: w, height: h, style, delay = 0 }) {
         {
           width: w,
           height: h,
-          backgroundColor: THEME.bone,
+          backgroundColor: colors.surfaceLight,
           borderRadius: h > 20 ? 12 : 6,
           opacity,
         },
@@ -59,6 +55,8 @@ function ShimmerBar({ width: w, height: h, style, delay = 0 }) {
 }
 
 function ListSkeleton() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.content}>
       {/* Header bar */}
@@ -95,6 +93,8 @@ function ListSkeleton() {
 }
 
 function MapSkeleton() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.content}>
       <ShimmerBar width={width - 32} height={width * 0.7} style={styles.mb16} />
@@ -114,6 +114,8 @@ function MapSkeleton() {
 }
 
 function DetailSkeleton() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.content}>
       <ShimmerBar width={width - 32} height={200} style={styles.mb16} />
@@ -159,6 +161,8 @@ function DetailSkeleton() {
 }
 
 function FormSkeleton() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.content}>
       <ShimmerBar width={width * 0.4} height={24} style={styles.mb24} />
@@ -184,6 +188,8 @@ function FormSkeleton() {
 }
 
 function ProfileSkeleton() {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   return (
     <View style={styles.content}>
       <View style={styles.profileHeader}>
@@ -236,6 +242,8 @@ const VARIANTS = {
 };
 
 export default function SkeletonScreen({ variant = 'list' }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const Component = VARIANTS[variant] || ListSkeleton;
   return (
     <View style={styles.container}>
@@ -244,10 +252,10 @@ export default function SkeletonScreen({ variant = 'list' }) {
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: THEME.bg,
+    backgroundColor: colors.surface,
   },
   content: {
     flex: 1,

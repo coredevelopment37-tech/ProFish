@@ -7,17 +7,7 @@ import { Component } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-  danger: '#FF4444',
-};
+import { COLORS } from '../config/theme';
 
 // ============================================
 // #558 — React Error Boundary
@@ -83,7 +73,7 @@ class ErrorBoundary extends Component {
 const errorStyles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: THEME.bg,
+    backgroundColor: COLORS.background,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 32,
@@ -92,24 +82,24 @@ const errorStyles = StyleSheet.create({
   title: {
     fontSize: 22,
     fontWeight: '700',
-    color: THEME.text,
+    color: COLORS.text,
     marginBottom: 8,
     textAlign: 'center',
   },
   message: {
     fontSize: 14,
-    color: THEME.muted,
+    color: COLORS.textTertiary,
     textAlign: 'center',
     marginBottom: 24,
     lineHeight: 20,
   },
   button: {
-    backgroundColor: THEME.primary,
+    backgroundColor: COLORS.primary,
     paddingVertical: 14,
     paddingHorizontal: 32,
     borderRadius: 24,
   },
-  buttonText: { fontSize: 16, fontWeight: '700', color: '#FFF' },
+  buttonText: { fontSize: 16, fontWeight: '700', color: COLORS.text },
 });
 
 // ============================================

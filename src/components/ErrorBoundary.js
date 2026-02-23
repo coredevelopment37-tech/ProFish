@@ -12,8 +12,9 @@ import {
   Platform,
 } from 'react-native';
 import crashReporter from '../services/crashReporter';
+import useTheme from '../hooks/useTheme';
 
-export default class ErrorBoundary extends React.Component {
+class ErrorBoundaryClass extends React.Component {
   state = { hasError: false, error: null };
 
   static getDerivedStateFromError(error) {
@@ -30,6 +31,7 @@ export default class ErrorBoundary extends React.Component {
 
   render() {
     if (this.state.hasError) {
+      const styles = createStyles(this.props.colors);
       return (
         <View style={styles.container}>
           <Text style={styles.icon}>⚠️</Text>
@@ -58,10 +60,15 @@ export default class ErrorBoundary extends React.Component {
   }
 }
 
-const styles = StyleSheet.create({
+export default function ErrorBoundary(props) {
+  const { colors } = useTheme();
+  return <ErrorBoundaryClass colors={colors} {...props} />;
+}
+
+const createStyles = (colors) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 32,
@@ -70,25 +77,25 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff',
+    color: colors.text,
     marginBottom: 12,
   },
   message: {
     fontSize: 15,
-    color: '#888',
+    color: colors.textTertiary,
     textAlign: 'center',
     marginBottom: 32,
     lineHeight: 22,
   },
   retryBtn: {
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingHorizontal: 40,
     paddingVertical: 14,
     borderRadius: 12,
     marginBottom: 12,
   },
   retryText: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
   },
@@ -97,7 +104,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
   },
   reportText: {
-    color: '#555',
+    color: colors.textDisabled,
     fontSize: 14,
   },
 });

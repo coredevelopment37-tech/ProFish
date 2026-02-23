@@ -12,16 +12,7 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-
-const THEME = {
-  bg: '#0A0A1A',
-  card: '#1A1A2E',
-  primary: '#0080FF',
-  accent: '#00D4AA',
-  text: '#FFF',
-  muted: '#8A8A9A',
-  border: '#2A2A40',
-};
+import useTheme from '../../hooks/useTheme';
 
 const CATEGORIES = [
   { id: 'all', label: 'All', emoji: '📚' },
@@ -649,7 +640,7 @@ const SKILL_LEVELS = [
   },
 ];
 
-function CategoryPill({ cat, selected, onPress }) {
+function CategoryPill({ cat, selected, onPress, styles }) {
   return (
     <TouchableOpacity
       style={[styles.pill, selected && styles.pillActive]}
@@ -662,7 +653,7 @@ function CategoryPill({ cat, selected, onPress }) {
   );
 }
 
-function LessonCard({ lesson, onPress }) {
+function LessonCard({ lesson, onPress, styles }) {
   const diffColor =
     lesson.difficulty === 'beginner'
       ? '#00D4AA'
@@ -694,6 +685,8 @@ function LessonCard({ lesson, onPress }) {
 }
 
 export default function FishingSchoolScreen({ navigation }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [selectedCategory, setSelectedCategory] = useState('all');
 
   const filtered = useMemo(() => {
@@ -725,6 +718,7 @@ export default function FishingSchoolScreen({ navigation }) {
             cat={cat}
             selected={selectedCategory === cat.id}
             onPress={() => setSelectedCategory(cat.id)}
+            styles={styles}
           />
         ))}
       </ScrollView>
@@ -736,6 +730,7 @@ export default function FishingSchoolScreen({ navigation }) {
         renderItem={({ item }) => (
           <LessonCard
             lesson={item}
+            styles={styles}
             onPress={() => {
               if (item.isSimulator) {
                 navigation.navigate('CastingSimulator');
@@ -755,50 +750,50 @@ export default function FishingSchoolScreen({ navigation }) {
 
 export { LESSONS, SKILL_LEVELS, CATEGORIES };
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: THEME.bg },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: { paddingTop: 50, paddingHorizontal: 16, paddingBottom: 12 },
-  backBtn: { fontSize: 16, color: THEME.primary, marginBottom: 8 },
-  headerTitle: { fontSize: 28, fontWeight: '800', color: THEME.text },
-  lessonCount: { fontSize: 14, color: THEME.muted, marginTop: 4 },
+  backBtn: { fontSize: 16, color: colors.primary, marginBottom: 8 },
+  headerTitle: { fontSize: 28, fontWeight: '800', color: colors.text },
+  lessonCount: { fontSize: 14, color: colors.textTertiary, marginTop: 4 },
   pillRow: { maxHeight: 48, marginBottom: 8 },
   pillContent: { paddingHorizontal: 16, gap: 8 },
   pill: {
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
-  pillActive: { borderColor: THEME.primary, backgroundColor: '#0080FF15' },
-  pillText: { fontSize: 13, color: THEME.text },
+  pillActive: { borderColor: colors.primary, backgroundColor: colors.primary + '15' },
+  pillText: { fontSize: 13, color: colors.text },
   listContent: { padding: 16, paddingBottom: 100 },
   lessonCard: {
     flexDirection: 'row',
-    backgroundColor: THEME.card,
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 10,
     borderWidth: 1,
-    borderColor: THEME.border,
+    borderColor: colors.border,
   },
   lessonEmoji: { fontSize: 32, marginRight: 12, marginTop: 4 },
   lessonContent: { flex: 1 },
   lessonTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: THEME.text,
+    color: colors.text,
     marginBottom: 4,
   },
   lessonDesc: {
     fontSize: 13,
-    color: THEME.muted,
+    color: colors.textTertiary,
     lineHeight: 18,
     marginBottom: 8,
   },
   lessonMeta: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   diffBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 8 },
   diffText: { fontSize: 11, fontWeight: '600', textTransform: 'capitalize' },
-  duration: { fontSize: 12, color: THEME.muted },
+  duration: { fontSize: 12, color: colors.textTertiary },
 });

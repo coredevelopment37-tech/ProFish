@@ -23,10 +23,13 @@ import tournamentService, {
   TOURNAMENT_SCORING,
 } from '../../services/tournamentService';
 import { canAccess, requireFeature } from '../../services/featureGate';
+import useTheme from '../../hooks/useTheme';
 
 export default function TournamentDetailScreen({ route, navigation }) {
   const { tournamentId } = route.params;
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const [tournament, setTournament] = useState(null);
   const [leaderboard, setLeaderboard] = useState([]);
   const [isJoined, setIsJoined] = useState(false);
@@ -138,7 +141,7 @@ export default function TournamentDetailScreen({ route, navigation }) {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0080FF" />
+        <ActivityIndicator size="large" color={colors.primary} />
       </View>
     );
   }
@@ -190,7 +193,7 @@ export default function TournamentDetailScreen({ route, navigation }) {
           style={[
             styles.statusText,
             {
-              color: isActive ? '#4CAF50' : isUpcoming ? '#FF9800' : '#888',
+              color: isActive ? colors.success : isUpcoming ? colors.accent : colors.textTertiary,
             },
           ]}
         >
@@ -410,15 +413,15 @@ export default function TournamentDetailScreen({ route, navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   loadingContainer: {
     flex: 1,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  errorText: { color: '#888', fontSize: 16 },
+  errorText: { color: colors.textTertiary, fontSize: 16 },
 
   header: {
     flexDirection: 'row',
@@ -428,12 +431,12 @@ const styles = StyleSheet.create({
     paddingBottom: 8,
   },
   backBtn: { width: 44, height: 44, justifyContent: 'center' },
-  backText: { fontSize: 28, color: '#fff' },
+  backText: { fontSize: 28, color: colors.text },
   headerTitle: {
     flex: 1,
     fontSize: 18,
     fontWeight: '700',
-    color: '#fff',
+    color: colors.text,
     marginLeft: 8,
   },
   shareBtn: {
@@ -442,7 +445,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  shareBtnText: { fontSize: 22, color: '#0080FF' },
+  shareBtnText: { fontSize: 22, color: colors.primary },
 
   statusBanner: {
     marginHorizontal: 16,
@@ -467,12 +470,12 @@ const styles = StyleSheet.create({
   myRankLeft: { flex: 1 },
   myRankRight: { alignItems: 'flex-end', justifyContent: 'center' },
   myRankLabel: {
-    color: '#0080FF',
+    color: colors.primary,
     fontSize: 12,
     fontWeight: '600',
     marginBottom: 2,
   },
-  myRankNumber: { color: '#fff', fontSize: 32, fontWeight: '900' },
+  myRankNumber: { color: colors.text, fontSize: 32, fontWeight: '900' },
   myRankStat: { color: '#aaa', fontSize: 13 },
 
   tabRow: {
@@ -485,17 +488,17 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 8,
     borderRadius: 10,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     alignItems: 'center',
   },
-  tabBtnActive: { backgroundColor: '#0080FF' },
-  tabText: { color: '#888', fontSize: 12, fontWeight: '600' },
+  tabBtnActive: { backgroundColor: colors.primary },
+  tabText: { color: colors.textTertiary, fontSize: 12, fontWeight: '600' },
   tabTextActive: { color: '#fff' },
 
   scroll: { flex: 1, paddingHorizontal: 16 },
 
   description: {
-    color: '#ccc',
+    color: colors.textSecondary,
     fontSize: 14,
     lineHeight: 20,
     marginBottom: 16,
@@ -504,23 +507,23 @@ const styles = StyleSheet.create({
   infoGrid: { flexDirection: 'row', gap: 10, marginBottom: 16 },
   infoItem: {
     flex: 1,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 12,
     alignItems: 'center',
   },
   infoValue: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '700',
     marginBottom: 4,
     textTransform: 'capitalize',
   },
-  infoLabel: { color: '#888', fontSize: 11 },
+  infoLabel: { color: colors.textTertiary, fontSize: 11 },
 
   section: { marginBottom: 16 },
   sectionTitle: {
-    color: '#fff',
+    color: colors.text,
     fontSize: 15,
     fontWeight: '700',
     marginBottom: 8,
@@ -532,7 +535,7 @@ const styles = StyleSheet.create({
     paddingVertical: 6,
     borderRadius: 8,
   },
-  speciesTagText: { color: '#0080FF', fontSize: 12, fontWeight: '600' },
+  speciesTagText: { color: colors.primary, fontSize: 12, fontWeight: '600' },
 
   prizeRow: {
     flexDirection: 'row',
@@ -541,50 +544,50 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   prizeMedal: { fontSize: 18, width: 30 },
-  prizeText: { color: '#ccc', fontSize: 14 },
+  prizeText: { color: colors.textSecondary, fontSize: 14 },
 
   sponsorCard: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     alignItems: 'center',
     marginTop: 8,
   },
-  sponsorLabel: { color: '#888', fontSize: 11, marginBottom: 4 },
-  sponsorName: { color: '#FF9800', fontSize: 16, fontWeight: '700' },
+  sponsorLabel: { color: colors.textTertiary, fontSize: 11, marginBottom: 4 },
+  sponsorName: { color: colors.accent, fontSize: 16, fontWeight: '700' },
 
   // Leaderboard
   rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 14,
     marginBottom: 8,
   },
   rankRowMe: {
     borderWidth: 1,
-    borderColor: '#0080FF',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(0,128,255,0.08)',
   },
   rankBadge: { width: 40, alignItems: 'center', marginRight: 12 },
-  rankNumber: { color: '#fff', fontSize: 16, fontWeight: '700' },
+  rankNumber: { color: colors.text, fontSize: 16, fontWeight: '700' },
   rankInfo: { flex: 1 },
-  rankName: { color: '#fff', fontSize: 14, fontWeight: '600' },
-  rankNameMe: { color: '#0080FF' },
-  rankCatches: { color: '#888', fontSize: 12, marginTop: 2 },
-  rankScore: { color: '#FF9800', fontSize: 18, fontWeight: '800' },
+  rankName: { color: colors.text, fontSize: 14, fontWeight: '600' },
+  rankNameMe: { color: colors.primary },
+  rankCatches: { color: colors.textTertiary, fontSize: 12, marginTop: 2 },
+  rankScore: { color: colors.accent, fontSize: 18, fontWeight: '800' },
 
   // Rules
   rulesSection: { paddingTop: 4 },
   ruleRow: { flexDirection: 'row', gap: 8, marginBottom: 10 },
-  ruleBullet: { color: '#0080FF', fontSize: 14, fontWeight: '700', width: 20 },
-  ruleText: { color: '#ccc', fontSize: 14, flex: 1, lineHeight: 20 },
+  ruleBullet: { color: colors.primary, fontSize: 14, fontWeight: '700', width: 20 },
+  ruleText: { color: colors.textSecondary, fontSize: 14, flex: 1, lineHeight: 20 },
 
   // Empty
   emptyState: { alignItems: 'center', paddingVertical: 40 },
   emptyIcon: { fontSize: 48, marginBottom: 12 },
-  emptyText: { color: '#888', fontSize: 15, textAlign: 'center' },
+  emptyText: { color: colors.textTertiary, fontSize: 15, textAlign: 'center' },
 
   // Action bar
   actionBar: {
@@ -593,13 +596,13 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingBottom: Platform.OS === 'ios' ? 32 : 12,
     gap: 10,
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
     borderTopColor: '#222',
   },
   joinBtn: {
     flex: 1,
-    backgroundColor: '#0080FF',
+    backgroundColor: colors.primary,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
@@ -607,7 +610,7 @@ const styles = StyleSheet.create({
   joinBtnText: { color: '#fff', fontSize: 16, fontWeight: '700' },
   submitBtn: {
     flex: 1,
-    backgroundColor: '#4CAF50',
+    backgroundColor: colors.success,
     paddingVertical: 14,
     borderRadius: 14,
     alignItems: 'center',
@@ -617,8 +620,8 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     paddingHorizontal: 20,
     borderRadius: 14,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     alignItems: 'center',
   },
-  leaveBtnText: { color: '#F44336', fontSize: 14, fontWeight: '600' },
+  leaveBtnText: { color: colors.error, fontSize: 14, fontWeight: '600' },
 });

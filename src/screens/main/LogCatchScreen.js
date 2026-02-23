@@ -26,6 +26,7 @@ import { useApp } from '../../store/AppContext';
 import { checkLimit, requireFeature } from '../../services/featureGate';
 import { notificationSuccess, notificationWarning } from '../../utils/haptics';
 import SpeciesPicker from '../../components/SpeciesPicker';
+import useTheme from '../../hooks/useTheme';
 
 // Image picker - graceful import
 let launchImageLibrary, launchCamera;
@@ -86,6 +87,8 @@ const BAIT_PRESETS = [
 ];
 
 export default function LogCatchScreen({ navigation, route }) {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { t } = useTranslation();
   const { state, dispatch } = useApp();
   const units = state.units || 'metric';
@@ -383,7 +386,7 @@ export default function LogCatchScreen({ navigation, route }) {
                 onChangeText={setWeight}
                 keyboardType="decimal-pad"
                 placeholder="0.0"
-                placeholderTextColor="#555"
+                placeholderTextColor={colors.textDisabled}
               />
             </View>
             <View style={styles.halfField}>
@@ -398,7 +401,7 @@ export default function LogCatchScreen({ navigation, route }) {
                 onChangeText={setLength}
                 keyboardType="decimal-pad"
                 placeholder="0"
-                placeholderTextColor="#555"
+                placeholderTextColor={colors.textDisabled}
               />
             </View>
           </View>
@@ -443,8 +446,8 @@ export default function LogCatchScreen({ navigation, route }) {
                 style={[
                   styles.chip,
                   method === m && {
-                    borderColor: '#0080FF',
-                    backgroundColor: 'rgba(0,128,255,0.15)',
+                    borderColor: colors.primary,
+                    backgroundColor: colors.primary + '26',
                   },
                 ]}
                 onPress={() => setMethod(method === m ? '' : m)}
@@ -452,7 +455,7 @@ export default function LogCatchScreen({ navigation, route }) {
                 <Text
                   style={[
                     styles.chipText,
-                    method === m && { color: '#0080FF' },
+                    method === m && { color: colors.primary },
                   ]}
                 >
                   {m}
@@ -468,7 +471,7 @@ export default function LogCatchScreen({ navigation, route }) {
             value={bait}
             onChangeText={setBait}
             placeholder={t('catch.baitPlaceholder', 'e.g. Worm, Spinner, Fly')}
-            placeholderTextColor="#555"
+            placeholderTextColor={colors.textDisabled}
           />
           <ScrollView
             horizontal
@@ -481,14 +484,14 @@ export default function LogCatchScreen({ navigation, route }) {
                 style={[
                   styles.chip,
                   bait === b && {
-                    borderColor: '#FF9800',
-                    backgroundColor: 'rgba(255,152,0,0.15)',
+                    borderColor: colors.accent,
+                    backgroundColor: colors.accent + '26',
                   },
                 ]}
                 onPress={() => setBait(bait === b ? '' : b)}
               >
                 <Text
-                  style={[styles.chipText, bait === b && { color: '#FF9800' }]}
+                  style={[styles.chipText, bait === b && { color: colors.accent }]}
                 >
                   {b}
                 </Text>
@@ -521,7 +524,7 @@ export default function LogCatchScreen({ navigation, route }) {
               'catch.notesPlaceholder',
               'Any details about the catch...',
             )}
-            placeholderTextColor="#555"
+            placeholderTextColor={colors.textDisabled}
           />
 
           {/* Auto-captured info */}
@@ -532,7 +535,7 @@ export default function LogCatchScreen({ navigation, route }) {
             <View style={styles.autoRow}>
               <Text style={styles.autoLabel}>📍 GPS</Text>
               {gpsLoading ? (
-                <ActivityIndicator size="small" color="#0080FF" />
+                <ActivityIndicator size="small" color={colors.primary} />
               ) : coords ? (
                 <Text style={styles.autoValue}>
                   {coords.latitude.toFixed(4)}, {coords.longitude.toFixed(4)}
@@ -559,8 +562,8 @@ export default function LogCatchScreen({ navigation, route }) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a1a' },
+const createStyles = (colors) => StyleSheet.create({
+  container: { flex: 1, backgroundColor: colors.background },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -568,18 +571,18 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingTop: Platform.OS === 'ios' ? 60 : 20,
   },
-  cancel: { color: '#888', fontSize: 16 },
-  title: { color: '#fff', fontSize: 18, fontWeight: 'bold' },
-  save: { color: '#0080FF', fontSize: 16, fontWeight: '600' },
+  cancel: { color: colors.textTertiary, fontSize: 16 },
+  title: { color: colors.text, fontSize: 18, fontWeight: 'bold' },
+  save: { color: colors.primary, fontSize: 16, fontWeight: '600' },
   photoBox: {
     margin: 20,
     height: 200,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 2,
-    borderColor: '#333',
+    borderColor: colors.border,
     borderStyle: 'dashed',
     overflow: 'hidden',
   },
@@ -589,10 +592,10 @@ const styles = StyleSheet.create({
     borderRadius: 14,
   },
   photoIcon: { fontSize: 48, marginBottom: 8 },
-  photoText: { color: '#888', fontSize: 16 },
+  photoText: { color: colors.textTertiary, fontSize: 16 },
   form: { padding: 20, paddingTop: 0 },
   label: {
-    color: '#999',
+    color: colors.textSecondary,
     fontSize: 13,
     marginBottom: 6,
     marginTop: 16,
@@ -601,13 +604,13 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
   },
   input: {
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 10,
     padding: 14,
-    color: '#fff',
+    color: colors.text,
     fontSize: 16,
     borderWidth: 1,
-    borderColor: '#2a2a3e',
+    borderColor: colors.surfaceLight,
   },
   textArea: { height: 80, textAlignVertical: 'top' },
   row: { flexDirection: 'row', gap: 12 },
@@ -619,12 +622,12 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 20,
     borderWidth: 1,
-    borderColor: '#333',
-    backgroundColor: '#1a1a2e',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     marginRight: 6,
     marginBottom: 6,
   },
-  chipText: { color: '#999', fontSize: 14 },
+  chipText: { color: colors.textSecondary, fontSize: 14 },
   releaseToggle: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -636,24 +639,24 @@ const styles = StyleSheet.create({
     height: 24,
     borderRadius: 6,
     borderWidth: 2,
-    borderColor: '#444',
+    borderColor: colors.border,
     justifyContent: 'center',
     alignItems: 'center',
   },
   checkboxActive: {
-    borderColor: '#4CAF50',
-    backgroundColor: 'rgba(76,175,80,0.2)',
+    borderColor: colors.success,
+    backgroundColor: colors.success + '33',
   },
-  checkmark: { color: '#4CAF50', fontSize: 14, fontWeight: 'bold' },
-  releaseText: { color: '#fff', fontSize: 16 },
+  checkmark: { color: colors.success, fontSize: 14, fontWeight: 'bold' },
+  releaseText: { color: colors.text, fontSize: 16 },
   autoSection: {
     marginTop: 24,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 12,
     padding: 16,
   },
   autoTitle: {
-    color: '#666',
+    color: colors.textTertiary,
     fontSize: 12,
     fontWeight: '600',
     textTransform: 'uppercase',
@@ -666,7 +669,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 8,
   },
-  autoLabel: { color: '#888', fontSize: 14 },
-  autoValue: { color: '#ccc', fontSize: 14 },
-  autoMissing: { color: '#555', fontSize: 14, fontStyle: 'italic' },
+  autoLabel: { color: colors.textTertiary, fontSize: 14 },
+  autoValue: { color: colors.textSecondary, fontSize: 14 },
+  autoMissing: { color: colors.textDisabled, fontSize: 14, fontStyle: 'italic' },
 });

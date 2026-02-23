@@ -13,6 +13,7 @@ import {
   Modal,
 } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import useTheme from '../hooks/useTheme';
 import { useApp } from '../store/AppContext';
 import {
   LAYERS,
@@ -22,13 +23,6 @@ import {
   getAvailableLayers,
 } from '../config/layerRegistry';
 
-const TIER_COLORS = {
-  free: '#888',
-  pro: '#FF9800',
-  team: '#4CAF50',
-  guide: '#2196F3',
-};
-
 export default function LayerPicker({
   visible,
   onClose,
@@ -36,8 +30,16 @@ export default function LayerPicker({
   onToggleLayer,
 }) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const { state } = useApp();
   const tier = state.subscriptionTier || 'free';
+  const tierColors = {
+    free: colors.tierFree,
+    pro: colors.tierPro,
+    team: colors.tierTeam,
+    guide: colors.tierGuide,
+  };
   const currentBudget = calculateBudget(activeLayers);
   const budgetPercent = (currentBudget / MAX_LAYER_BUDGET) * 100;
   const available = getAvailableLayers(tier);
@@ -82,10 +84,10 @@ export default function LayerPicker({
                       width: `${Math.min(budgetPercent, 100)}%`,
                       backgroundColor:
                         budgetPercent > 80
-                          ? '#F44336'
+                          ? colors.error
                           : budgetPercent > 50
                           ? '#FFC107'
-                          : '#4CAF50',
+                          : colors.success,
                     },
                   ]}
                 />
@@ -133,13 +135,13 @@ export default function LayerPicker({
                       <View
                         style={[
                           styles.tierBadge,
-                          { backgroundColor: TIER_COLORS[layer.tier] + '30' },
+                          { backgroundColor: tierColors[layer.tier] + '30' },
                         ]}
                       >
                         <Text
                           style={[
                             styles.tierText,
-                            { color: TIER_COLORS[layer.tier] },
+                            { color: tierColors[layer.tier] },
                           ]}
                         >
                           {layer.tier}
@@ -172,14 +174,14 @@ export default function LayerPicker({
   );
 }
 
-const styles = StyleSheet.create({
+const createStyles = (colors) => StyleSheet.create({
   overlay: {
     flex: 1,
     justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
+    backgroundColor: colors.overlay,
   },
   sheet: {
-    backgroundColor: '#0a0a1a',
+    backgroundColor: colors.background,
     borderTopLeftRadius: 24,
     borderTopRightRadius: 24,
     maxHeight: '80%',
@@ -201,19 +203,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: 16,
   },
-  title: { fontSize: 20, fontWeight: 'bold', color: '#fff' },
-  close: { fontSize: 22, color: '#888', padding: 4 },
+  title: { fontSize: 20, fontWeight: 'bold', color: colors.text },
+  close: { fontSize: 22, color: colors.textTertiary, padding: 4 },
   budgetContainer: { marginBottom: 16 },
   budgetLabels: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginBottom: 6,
   },
-  budgetLabel: { fontSize: 12, color: '#888' },
-  budgetValue: { fontSize: 12, color: '#fff', fontWeight: '600' },
+  budgetLabel: { fontSize: 12, color: colors.textTertiary },
+  budgetValue: { fontSize: 12, color: colors.text, fontWeight: '600' },
   budgetBar: {
     height: 6,
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 3,
     overflow: 'hidden',
   },
@@ -222,7 +224,7 @@ const styles = StyleSheet.create({
   layerRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1a1a2e',
+    backgroundColor: colors.surface,
     borderRadius: 14,
     padding: 14,
     marginBottom: 8,
@@ -230,18 +232,18 @@ const styles = StyleSheet.create({
   layerActive: {
     backgroundColor: '#1a2a3e',
     borderWidth: 1,
-    borderColor: '#0080FF40',
+    borderColor: colors.primary + '40',
   },
   layerLocked: { opacity: 0.5 },
   layerInfo: { flex: 1 },
   layerNameRow: { flexDirection: 'row', alignItems: 'center', gap: 6 },
   layerName: {
     fontSize: 15,
-    color: '#fff',
+    color: colors.text,
     fontWeight: '500',
     textTransform: 'capitalize',
   },
-  lockedText: { color: '#666' },
+  lockedText: { color: colors.textTertiary },
   lockIcon: { fontSize: 12 },
   layerMeta: {
     flexDirection: 'row',
@@ -249,28 +251,28 @@ const styles = StyleSheet.create({
     marginTop: 4,
     gap: 8,
   },
-  layerSource: { fontSize: 11, color: '#555' },
+  layerSource: { fontSize: 11, color: colors.textDisabled },
   tierBadge: { paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
   tierText: { fontSize: 10, fontWeight: '600', textTransform: 'uppercase' },
-  layerCost: { fontSize: 11, color: '#555' },
+  layerCost: { fontSize: 11, color: colors.textDisabled },
   toggle: {
     width: 44,
     height: 24,
     borderRadius: 12,
-    backgroundColor: '#333',
+    backgroundColor: colors.border,
     justifyContent: 'center',
     paddingHorizontal: 2,
   },
-  toggleOn: { backgroundColor: '#0080FF' },
+  toggleOn: { backgroundColor: colors.primary },
   toggleDisabled: { opacity: 0.3 },
   toggleDot: {
     width: 20,
     height: 20,
     borderRadius: 10,
-    backgroundColor: '#666',
+    backgroundColor: colors.textTertiary,
   },
   toggleDotOn: {
-    backgroundColor: '#fff',
+    backgroundColor: colors.text,
     alignSelf: 'flex-end',
   },
 });
