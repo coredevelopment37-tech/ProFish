@@ -12,8 +12,11 @@ import {
   Platform,
 } from 'react-native';
 import crashReporter from '../services/crashReporter';
-import useTheme from '../hooks/useTheme';
+import { COLORS } from '../config/theme';
 import { AppIcon } from '../constants/icons';
+
+// Fallback colors — ErrorBoundary sits ABOVE AppProvider so useTheme() is unavailable
+const FALLBACK_COLORS = COLORS;
 
 class ErrorBoundaryClass extends React.Component {
   state = { hasError: false, error: null };
@@ -62,8 +65,7 @@ class ErrorBoundaryClass extends React.Component {
 }
 
 export default function ErrorBoundary(props) {
-  const { colors } = useTheme();
-  return <ErrorBoundaryClass colors={colors} {...props} />;
+  return <ErrorBoundaryClass colors={FALLBACK_COLORS} {...props} />;
 }
 
 const createStyles = (colors) => StyleSheet.create({
